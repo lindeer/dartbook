@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:dartbook/html/glossary.dart';
 import 'package:dartbook/html/readme.dart';
 import 'package:test/test.dart';
@@ -12,9 +13,9 @@ void main() {
 <p>other content
 ...</p>
 """;
-    final result = readme(text);
-    expect(result['title'], 'Preface');
-    expect(result['description'], 'This is the book description.');
+    final result = Readme.from(text);
+    expect(result.title, 'Preface');
+    expect(result.desc, 'This is the book description.');
   });
 
   test('glossary', () {
@@ -59,8 +60,30 @@ void main() {
 
 <p>Awesome project. Really amazing, I'm really at a loss for words ...</p>
 """;
-    final entries = glossary(html);
+    final entries = Glossary.from(html);
     expect(entries.length, 5);
-    assert(entries.any((e) => e['name'] != null && e['description'] != null));
+    assert(entries.any((e) => e.name.isNotEmpty && e.desc != null));
+  });
+
+  test('empty desc', () {
+    const html = """
+<h1>Terms</h1>
+<h1>Names</h1>
+<h1>Addresses</h1>
+""";
+    final entries = Glossary.from(html);
+    expect(entries.length, 0);
+  });
+
+  test('empty glossary', () {
+    const html = """
+<h2>Terms</h2>
+<p>Some specific noums</p>
+<h2>Edinburg</h2>
+""";
+    final entries = Glossary.from(html);
+    expect(entries.length, 2);
+    final e = entries.firstWhereOrNull((e) => e.name == 'Edinburg');
+    assert(e != null && e.desc == null);
   });
 }
