@@ -2,9 +2,10 @@ library dartbook.markdown;
 
 import 'package:dartbook/html/glossary.dart';
 import 'package:dartbook/html/langs.dart';
+import 'package:dartbook/html/page.dart';
 import 'package:dartbook/html/readme.dart';
 import 'package:dartbook/html/summary.dart';
-import 'package:markdown/markdown.dart';
+import 'package:markdown/markdown.dart' show markdownToHtml;
 
 class MdParser {
 
@@ -15,4 +16,6 @@ class MdParser {
   Iterable<Glossary> glossary(String md) => Glossary.from(markdownToHtml(md));
 
   Summary summary(String md) => Summary.from(markdownToHtml(md));
+
+  Page page(String md) => Page(markdownToHtml(md));
 }
