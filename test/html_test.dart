@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:dartbook/html/glossary.dart';
 import 'package:dartbook/html/readme.dart';
+import 'package:dartbook/html/summary.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -85,5 +86,118 @@ void main() {
     expect(entries.length, 2);
     final e = entries.firstWhereOrNull((e) => e.name == 'Edinburg');
     assert(e != null && e.desc == null);
+  });
+
+  test('empty summary', () {
+    const html = """
+<h1>Summary</h1>
+
+<h2>First empty part</h2>
+
+<h2>Part 1</h2>
+
+<ul>
+    <li><a href="chapter-1/README.md">Chapter 1</a></li>
+    <li><a href="chapter-2/README.md">Chapter 2</a></li>
+    <li><a href="chapter-3/README.md">Chapter 3</a></li>
+</ul>
+
+<!-- Untitled part here -->
+
+<ul>
+    <li><a href="chapter-1/README.md">Chapter for untitled part</a></li>
+</ul>
+
+<h2>Empty part</h2>
+
+<h2>Part 2</h2>
+
+<ul>
+    <li><a href="chapter-1/README.md">Chapter for Part 2</a></li>
+</ul>
+
+<h2>Penultimate empty part</h2>
+
+<h2>Last empty part</h2>
+    """;
+    final summary = Summary.from(html);
+    expect(summary.parts.length, 7);
+    expect(summary.parts.map((e) => e.title), [
+      'First empty part',
+      'Part 1',
+      '',
+      'Empty part',
+      'Part 2',
+      'Penultimate empty part',
+      'Last empty part'
+    ], reason: 'should detect empty parts');
+  });
+
+  test('normal summary', () {
+    const html = """
+<h1>Summary</h1>
+
+<ul>
+    <li>
+        <a href="chapter-1/README.md">Chapter 1</a>
+        <ul>
+            <li><a href="chapter-1/ARTICLE1.md">Article 1</a></li>
+            <li
+                ><a href="chapter-1/ARTICLE2.md">Article 2</a>
+                <ul>
+                    <li><a href="\\chapter-1\\ARTICLE-1-2-1.md">article 1.2.1</a></li>
+                    <li><a href="/chapter-1/ARTICLE-1-2-2.md">article 1.2.2</a></li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li><a href="chapter-2/README.md">Chapter 2</a></li>
+    <li><a href="chapter-3/README.md">Chapter 3</a></li>
+    <li>
+        <a href="chapter-4/README.md">Chapter 4</a>
+        <ul>
+            <li>Unfinished article</li>
+        </ul>
+    </li>
+    <li>Unfinished Chapter</li>
+</ul>
+
+<h2>Part 2</h2>
+
+<ul>
+    <li>
+        <a href="chapter-1/README.md">Chapter 1</a>
+    </li>
+</ul>
+
+<ul>
+    <li>
+        <a href="chapter-1/README.md">Chapter 1</a>
+    </li>
+</ul>
+    """;
+    final summary = Summary.from(html);
+    final parts = summary.parts;
+    expect(parts.length, 3, reason: 'should detect parts');
+    expect(parts.take(3).map((e) => e.title), ['', 'Part 2', ''],
+        reason: 'should detect title');
+
+    final primary = parts.first;
+    expect(primary.articles?.length, 5, reason: 'should detect chapters');
+
+    final second = parts.toList(growable: false)[1];
+    expect(second.articles?.length, 1, reason: 'should detect chapters in other parts');
+    expect(primary.articles?.take(3).map((e) => e.articles?.length ?? 0), [2,0,0],
+        reason: 'should support articles');
+
+    final first5 = primary.articles?.take(5);
+    expect(first5?.map((e) => e.ref).last, null, reason: 'should detect paths');
+    expect(first5?.map((e) => e.title).contains(null), false, reason: 'should detect titles');
+
+    expect(primary.articles?.take(3).map((e) => e.ref), [
+      'chapter-1/README.md',
+      'chapter-2/README.md',
+      'chapter-3/README.md',
+    ], reason: 'should normalize paths from .md');
   });
 }
