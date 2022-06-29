@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:dartbook/html/glossary.dart';
+import 'package:dartbook/html/langs.dart';
 import 'package:dartbook/html/readme.dart';
 import 'package:dartbook/html/summary.dart';
 import 'package:test/test.dart';
@@ -199,5 +200,24 @@ void main() {
       'chapter-2/README.md',
       'chapter-3/README.md',
     ], reason: 'should normalize paths from .md');
+  });
+
+  test('Languages parsing', () {
+    const html = """
+<h1>Languages</h1>
+
+<ul>
+<li><a href="en/">English</a></li>
+<li><a href="fr/">French</a></li>
+</ul>
+    """;
+    final langs = Langs.from(html);
+    final first = langs.articles.first;
+    final last = langs.articles.last;
+    expect(first.ref, 'en/');
+    expect(first.title, 'English');
+
+    expect(last.ref, 'fr/');
+    expect(last.title, 'French');
   });
 }
