@@ -1,3 +1,5 @@
+library dartbook.html;
+
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:dartbook/html/glossary.dart';
 import 'package:dartbook/html/langs.dart';

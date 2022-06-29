@@ -1,3 +1,4 @@
+library dartbook.html;
 
 import 'summary.dart';
 

@@ -1,3 +1,5 @@
+library dartbook.html;
+
 import 'package:html/dom.dart';
 
 const _listSelector = 'ol, ul';
