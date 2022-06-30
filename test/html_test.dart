@@ -67,6 +67,10 @@ void main() {
     final entries = Glossary.from(html);
     expect(entries.length, 5);
     assert(entries.any((e) => e.name.isNotEmpty && e.desc != null));
+
+    final first = entries.first;
+    expect(first.name, 'Magic');
+    expect(first.desc, '<p>Sufficiently advanced technology, beyond the understanding of the observer producing a sense of wonder.</p>');
   });
 
   test('empty desc', () {

@@ -11,7 +11,11 @@ class Article {
   final String? ref;
   final Iterable<Article>? articles;
 
-  const Article._(this.title, this.ref, this.articles);
+  const Article({
+    required this.title,
+    this.ref,
+    this.articles,
+  });
 
   static Element? _findList(Element e) {
     final items = e.children.where((node) => node.localName == 'ol');
@@ -34,7 +38,7 @@ class Article {
       if (title == null) return null;
       final sub = _findList(li);
       final articles = sub == null ? null : _parseList(sub);
-      return Article._(title, ref, articles);
+      return Article(title: title, ref: ref, articles: articles);
     }).whereType<Article>();
   }
 }
@@ -43,11 +47,11 @@ class Part {
   final String title;
   final Iterable<Article>? articles;
 
-  Part._(this.title, this.articles);
+  Part({required this.title, this.articles});
 
   static Part make(String? title, Element? ul) {
     final articles = ul == null ? null : Article._parseList(ul);
-    return Part._(title ?? '', articles);
+    return Part(title: title ?? '', articles: articles);
   }
 }
 

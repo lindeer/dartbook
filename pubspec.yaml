@@ -12,6 +12,7 @@ dependencies:
 # functional
   markdown: 5.0.0
   html: 0.15.0
+  path: 1.8.2
 
 dev_dependencies:
   lints: ^2.0.0
