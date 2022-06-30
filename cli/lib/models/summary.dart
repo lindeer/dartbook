@@ -2,7 +2,7 @@
 import 'dart:io' show File;
 
 import 'package:collection/collection.dart' show IterableExtension;
-import 'package:dartbook/html/summary.dart';
+import 'package:dartbook_html/summary.dart';
 import 'package:dartbook/utils.dart';
 
 import 'article.dart';

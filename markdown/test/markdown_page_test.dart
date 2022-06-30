@@ -1,4 +1,4 @@
-import 'package:dartbook/markdown/md_parser.dart';
+import 'package:dartbook_markdown/md_parser.dart';
 import 'package:test/test.dart';
 
 void main() {

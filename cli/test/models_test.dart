@@ -1,7 +1,7 @@
 
 import 'dart:io' show File;
 
-import 'package:dartbook/html/summary.dart' show Article, Part;
+import 'package:dartbook_html/summary.dart' show Article, Part;
 import 'package:dartbook/models/article.dart';
 import 'package:dartbook/models/glossary.dart';
 import 'package:dartbook/models/part.dart';

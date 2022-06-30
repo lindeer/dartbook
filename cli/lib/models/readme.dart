@@ -1,6 +1,6 @@
 library dartbook;
 
-import 'package:dartbook/html/readme.dart';
+import 'package:dartbook_html/readme.dart';
 
 /// readme model in book context
 class BookReadme {
