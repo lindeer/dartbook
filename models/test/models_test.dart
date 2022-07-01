@@ -3,6 +3,7 @@ import 'dart:io' show File;
 
 import 'package:dartbook_html/summary.dart' show Article, Part;
 import 'package:dartbook_models/article.dart';
+import 'package:dartbook_models/config.dart';
 import 'package:dartbook_models/glossary.dart';
 import 'package:dartbook_models/part.dart';
 import 'package:dartbook_models/summary.dart';
@@ -90,5 +91,27 @@ void main() {
 
     final a4 = summary.byPath('NOT_EXISTING.md');
     expect(a4?.title, null);
+  });
+
+  test('config change', () {
+    final config = BookConfig('', {
+      "hello": {
+        "world": 1,
+        "test": 'Hello',
+        "isFalse": false
+      }
+    });
+
+    expect(config['hello'] is Map, true);
+    expect(config['hello.world'], 1, reason: 'must return deep value');
+    expect(config.opt('hello.nonExistant', 'defaultValue'), 'defaultValue');
+    expect(config.opt('hello.isFalse', true), false);
+
+    config['hello.world'] = 2;
+    final hello = config['hello'];
+    final world = config['hello.world'];
+    expect(hello is Map, true);
+    expect((hello as Map).length, 3);
+    expect(world, 2, reason: 'must set deep value');
   });
 }
