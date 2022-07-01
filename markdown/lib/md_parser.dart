@@ -7,6 +7,8 @@ import 'package:dartbook_html/readme.dart';
 import 'package:dartbook_html/summary.dart';
 import 'package:markdown/markdown.dart' show markdownToHtml;
 
+export 'package:dartbook_html/langs.dart';
+
 class MdParser {
 
   Langs langs(String md) => Langs.from(markdownToHtml(md));
