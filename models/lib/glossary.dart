@@ -1,5 +1,5 @@
 import 'dart:io' show File;
-import 'package:dartbook/utils.dart' show slug;
+import 'utils.dart' show slug;
 
 class GlossaryItem {
   final String name;

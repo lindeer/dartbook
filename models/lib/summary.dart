@@ -3,7 +3,7 @@ import 'dart:io' show File;
 
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:dartbook_html/summary.dart';
-import 'package:dartbook/utils.dart';
+import 'utils.dart' show PathUtils;
 
 import 'article.dart';
 import 'part.dart';
@@ -44,9 +44,9 @@ class BookSummary {
     final firstLevel = level.substring(0, index);
     final pos = int.parse(firstLevel) - 1;
     final root = SummaryArticle(
-        level: firstLevel,
-        title: '',
-        articles: parts[pos].articles,
+      level: firstLevel,
+      title: '',
+      articles: parts[pos].articles,
     );
 
     return root.byLevel(level.substring(index + 1));

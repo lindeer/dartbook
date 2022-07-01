@@ -3,7 +3,7 @@ import 'dart:io' show File;
 
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:dartbook_html/summary.dart' show Article;
-import 'package:dartbook/utils.dart' show PathUtils;
+import 'utils.dart' show PathUtils;
 
 class SummaryArticle {
   final String level;

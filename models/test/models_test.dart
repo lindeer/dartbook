@@ -2,10 +2,10 @@
 import 'dart:io' show File;
 
 import 'package:dartbook_html/summary.dart' show Article, Part;
-import 'package:dartbook/models/article.dart';
-import 'package:dartbook/models/glossary.dart';
-import 'package:dartbook/models/part.dart';
-import 'package:dartbook/models/summary.dart';
+import 'package:dartbook_models/article.dart';
+import 'package:dartbook_models/glossary.dart';
+import 'package:dartbook_models/part.dart';
+import 'package:dartbook_models/summary.dart';
 import 'package:test/test.dart';
 
 void main() {
