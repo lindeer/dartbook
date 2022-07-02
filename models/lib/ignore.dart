@@ -7,4 +7,11 @@ class BookIgnore {
 
   void add(String rule) {
   }
+
+  void addAll(Iterable<String> rules) {
+
+  }
+
+  void update(BookIgnore ignore) {
+  }
 }

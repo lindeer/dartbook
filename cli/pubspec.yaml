@@ -11,6 +11,8 @@ dependencies:
   path: 1.8.2
   dartbook_markdown:
     path: ../markdown
+  dartbook_models:
+    path: ../models
 
 dev_dependencies:
   lints: ^2.0.0

@@ -16,7 +16,14 @@ const _colors = {
 
 class Logger {
 
-  void log(String msg) {
+  void i(String msg) {
+    print(msg);
+  }
 
+  void d(String msg) {
+    print(msg);
+  }
+
+  void e(String msg) {
   }
 }

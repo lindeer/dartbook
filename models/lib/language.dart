@@ -24,4 +24,6 @@ class LanguageManager {
   }
 
   File get file => File(filename);
+
+  BookLanguage? operator [](String key) => items[key];
 }

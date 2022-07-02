@@ -1,5 +1,5 @@
 
-import 'dart:io' show Directory, File;
+import 'dart:io' show Directory;
 import 'package:path/path.dart' as path;
 
 import 'config.dart';
@@ -7,7 +7,6 @@ import 'glossary.dart';
 import 'ignore.dart';
 import 'language.dart';
 import 'logger.dart';
-import 'parser.dart';
 import 'readme.dart';
 import 'summary.dart';
 
@@ -22,7 +21,6 @@ class Book {
   final BookSummary summary;
   final BookGlossary glossary;
   final String? lang;
-  final Parser parser;
 
   Book({
     required this.logger,
@@ -32,7 +30,6 @@ class Book {
     required this.readme,
     required this.summary,
     required this.glossary,
-    required this.parser,
     this.lang,
   });
 
@@ -64,6 +61,7 @@ class Book {
     return isIgnoredFile(filename);
   }
 
+  /*
   /// Infers the default extension for files
   String get defaultExt {
     final exts = [
@@ -87,12 +85,12 @@ class Book {
   String summaryDefaultPath(bool absolute) => _defaultPath('SUMMARY', absolute);
 
   String glossaryDefaultPath(bool absolute) => _defaultPath('GLOSSARY', absolute);
+  */
 }
 
 class BookManager {
   final Logger logger;
   final Map<String, Book> books;
-  final ParserManager parserManager;
   final LanguageManager? langManager;
   final BookIgnore ignore;
   final BookConfig config;
@@ -100,7 +98,6 @@ class BookManager {
   BookManager({
     required this.logger,
     required this.books,
-    required this.parserManager,
     required this.langManager,
     required this.ignore,
     required this.config,
@@ -116,6 +113,7 @@ class BookManager {
   /// Add a new language book
   void operator []=(String lang, Book book) => books[lang] = book;
 
+  /*
   Book create(String lang) {
     final c = BookConfig(config.filename, config.values);
     c['language'] = lang;
@@ -130,4 +128,5 @@ class BookManager {
       parser: parserManager['md']!,
     );
   }
+   */
 }
