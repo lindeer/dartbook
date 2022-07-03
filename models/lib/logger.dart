@@ -15,15 +15,23 @@ const _colors = {
 };
 
 class Logger {
+  final bool verbose;
+
+  Logger(String? level): verbose = level == 'debug';
 
   void i(String msg) {
     print(msg);
   }
 
   void d(String msg) {
-    print(msg);
+    if (verbose) {
+      print(msg);
+    }
   }
 
   void e(String msg) {
+  }
+
+  void w(String msg) {
   }
 }

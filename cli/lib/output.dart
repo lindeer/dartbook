@@ -4,11 +4,13 @@ import 'package:dartbook_models/book.dart';
 import 'package:path/path.dart' as p;
 
 import 'generator.dart';
+import 'parser.dart';
 
 class Output {
   final Generator generator;
+  final ContentParser parser;
 
-  Output(this.generator);
+  Output(this.generator, this.parser);
 
   void generate(BookManager manager) {
     final out = generator.opt.root;
@@ -39,10 +41,16 @@ class Output {
       ));
       logger.i('generate ${lang == null ? "normal" : "language [${lang.title}]"} book');
 
+      final book = manager[k]!;
+      final pages = parser.pages(manager, book);
+      final assets = parser.assets(manager, book);
       gen.prepare(manager, k);
 
       _invokeHook('init', manager);
       gen.init(manager, k);
+
+      gen.generateAssets(manager, assets);
+      gen.generatePages(book, pages);
 
       _invokeHook('finish:before', manager);
       gen.finish(manager, k);

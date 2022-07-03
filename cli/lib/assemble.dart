@@ -1,5 +1,5 @@
 import 'dart:convert' show json;
-import 'dart:io' show Directory, File;
+import 'dart:io' show File;
 
 import 'package:dartbook_models/book.dart';
 import 'package:dartbook_models/config.dart';
@@ -44,11 +44,6 @@ class _ResultHolder {
   _ResultHolder(this.bookPath, this.logLevel): ignore = BookIgnore();
 
   String path(String filename) => p.join(bookPath, filename);
-
-  factory _ResultHolder.from(Iterable<String> args, Map<String, String> options) {
-    final dir = args.isNotEmpty ? args.first : Directory.current.path;
-    return _ResultHolder(dir, options['log'] ?? 'info');
-  }
 }
 
 class BookAssembler {
@@ -57,8 +52,8 @@ class BookAssembler {
 
   BookAssembler(this.logger, this.parser);
 
-  BookManager assemble(Iterable<String> args, Map<String, String> options) {
-    final holder = _ResultHolder.from(args, options);
+  BookManager assemble({required String root, String? log}) {
+    final holder = _ResultHolder(root, log ?? 'info');
     _parseIgnore(holder);
     _parseConfig(holder);
     final langs = _parseLanguages(holder);
@@ -71,6 +66,7 @@ class BookAssembler {
       books = { "" : result };
     }
     return BookManager(
+      root: root,
       logger: logger,
       books: books,
       langManager: langs,
@@ -103,12 +99,11 @@ class BookAssembler {
 
     for (final f in files) {
       File file = File(holder.path(f));
+      final config = holder.config ??= BookConfig.withDefault(file.path);
       try {
         final jsonObj = json.decode(file.readAsStringSync()) as Map<String, dynamic>;
         final result = _validateConfig(jsonObj);
-        final config = holder.config ?? BookConfig.withDefault(file.path);
         config.merge(result);
-        holder.config = config;
       } on Exception catch (e) {
         logger.d("parse config '${file.path}' error: $e");
       }
@@ -162,7 +157,12 @@ class BookAssembler {
   Book _parseSkeleton(_ResultHolder holder) {
     final readme = _parseStructure<BookReadme>(holder, 'readme', parser.readme);
     final summary = _parseStructure<BookSummary>(holder, 'summary', parser.summary);
-    final glossary = _parseStructure<BookGlossary>(holder, 'glossary', parser.glossary);
+    BookGlossary glossary;
+    try {
+      glossary = _parseStructure<BookGlossary>(holder, 'glossary', parser.glossary);
+    } on Exception catch (_) {
+      glossary = BookGlossary('', {});
+    }
 
     return Book(
       logger: logger,

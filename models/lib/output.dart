@@ -12,7 +12,7 @@ class Output {
   /// Map of plugins to use (String -> Plugin)
   final Map<String, Plugin> plugins;
   /// Map pages to generation (String -> Page)
-  final Map<String, Page> pages;
+  final Map<String, BookPage> pages;
   /// assets list
   final Iterable<String> assets;
   /// Options of generation
@@ -30,7 +30,7 @@ class Output {
     required this.state,
   });
 
-  Page? page(String file) => pages[PathUtils.normalize(file)];
+  BookPage? page(String file) => pages[PathUtils.normalize(file)];
 
   String? get root => options['root'];
 

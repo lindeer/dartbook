@@ -70,4 +70,23 @@ class BookSummary {
     }
     return result;
   }
+
+  static void _retrieve(Iterable<SummaryArticle> articles, void Function(SummaryArticle article) it) {
+    for (final a in articles) {
+      it(a);
+      final list = a.articles;
+      if (list != null) {
+        _retrieve(list, it);
+      }
+    }
+  }
+
+  void walk(void Function(SummaryArticle article) it) {
+    for (final part in parts) {
+      final list = part.articles;
+      if (list != null) {
+        _retrieve(list, it);
+      }
+    }
+  }
 }

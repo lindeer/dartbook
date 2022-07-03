@@ -1,5 +1,4 @@
 
-import 'dart:io' show Directory;
 import 'package:path/path.dart' as path;
 
 import 'config.dart';
@@ -89,6 +88,7 @@ class Book {
 }
 
 class BookManager {
+  final String root;
   final Logger logger;
   final Map<String, Book> books;
   final LanguageManager? langManager;
@@ -96,14 +96,13 @@ class BookManager {
   final BookConfig config;
 
   BookManager({
+    required this.root,
     required this.logger,
     required this.books,
     required this.langManager,
     required this.ignore,
     required this.config,
 });
-
-  Directory get root => Directory.current;
 
   /// Is this book the parent of language's books
   bool get isMultilingual => (langManager?.items.length ?? 1) > 1;
