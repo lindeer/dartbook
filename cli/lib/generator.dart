@@ -1,6 +1,7 @@
 
 import 'dart:io' show File;
 
+import 'package:dartbook/context.dart';
 import 'package:dartbook_markdown/md_parser.dart';
 import 'package:dartbook_models/book.dart';
 import 'package:dartbook_models/page.dart';
@@ -35,6 +36,14 @@ final _factories = <String, GeneratorFactory> {
   'website' : (Options opt) => WebGenerator(opt),
 };
 
+class GeneratorContext {
+  final AppContext context;
+  final BookManager manager;
+  final Book book;
+
+  GeneratorContext(this.context, this.manager, this.book);
+}
+
 abstract class Generator {
   final String name;
   final Options opt;
@@ -55,11 +64,11 @@ abstract class Generator {
     return pos > 0 ? '${filename.substring(0, pos)}.html' : filename;
   }
 
-  void generatePages(Book book, Map<String, BookPage> pages) {
-    final logger = book.logger;
+  void generatePages(GeneratorContext context, Map<String, BookPage> pages) {
+    final logger = context.context.logger;
     for (final page in pages.values) {
       try {
-        _generatePage(book, page);
+        _generatePage(context.book, page);
       } on Exception catch (e) {
         logger.d("generate page '${page.filename}' failed by ${e.toString()}, ignored.");
       }

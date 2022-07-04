@@ -6,14 +6,18 @@ import 'package:dartbook_markdown/md_parser.dart';
 import 'package:dartbook_models/book.dart';
 import 'package:dartbook_models/glossary.dart';
 import 'package:dartbook_models/language.dart';
+import 'package:dartbook_models/logger.dart';
 import 'package:dartbook_models/page.dart';
 import 'package:dartbook_models/part.dart';
 import 'package:dartbook_models/readme.dart';
 import 'package:dartbook_models/summary.dart';
 
 abstract class ContentParser {
+  final Logger logger;
 
-  factory ContentParser() => _DefaultParser();
+  ContentParser(this.logger);
+
+  factory ContentParser.of(Logger logger) => _DefaultParser(logger);
 
   LanguageManager langs(File file);
 
@@ -28,8 +32,10 @@ abstract class ContentParser {
   Iterable<String> assets(BookManager manager, Book book);
 }
 
-class _DefaultParser implements ContentParser {
+class _DefaultParser extends ContentParser {
   final _parser = MdParser();
+
+  _DefaultParser(Logger logger) : super(logger);
 
   @override
   BookGlossary glossary(File file) {
@@ -77,7 +83,6 @@ class _DefaultParser implements ContentParser {
 
   @override
   Map<String, BookPage> pages(BookManager manager, Book book) {
-    final logger = manager.logger;
     final summary = book.summary;
     final all = <String, BookPage>{};
     summary.walk((article) {

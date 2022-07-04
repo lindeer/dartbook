@@ -10,7 +10,6 @@ import 'readme.dart';
 import 'summary.dart';
 
 class Book {
-  final Logger logger;
   final String bookPath;
   final BookIgnore ignore;
 
@@ -22,7 +21,6 @@ class Book {
   final String? lang;
 
   Book({
-    required this.logger,
     required this.bookPath,
     required this.ignore,
     required this.config,
@@ -89,7 +87,6 @@ class Book {
 
 class BookManager {
   final String root;
-  final Logger logger;
   final Map<String, Book> books;
   final LanguageManager? langManager;
   final BookIgnore ignore;
@@ -97,7 +94,6 @@ class BookManager {
 
   BookManager({
     required this.root,
-    required this.logger,
     required this.books,
     required this.langManager,
     required this.ignore,

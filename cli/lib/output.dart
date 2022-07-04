@@ -1,20 +1,21 @@
 import 'dart:io' show Directory;
 
+import 'package:dartbook/context.dart';
 import 'package:dartbook_models/book.dart';
 import 'package:path/path.dart' as p;
 
 import 'generator.dart';
-import 'parser.dart';
 
 class Output {
+  final AppContext context;
+  final BookManager manager;
   final Generator generator;
-  final ContentParser parser;
 
-  Output(this.generator, this.parser);
+  Output(this.context, this.manager, this.generator);
 
-  void generate(BookManager manager) {
+  void generate() {
     final out = generator.opt.root;
-    final logger = manager.logger;
+    final logger = context.logger;
     logger.d('clean up folder: "$out"');
     final at = DateTime.now().millisecondsSinceEpoch;
     final folder = Directory(out);
@@ -31,7 +32,7 @@ class Output {
 
   void _process(BookManager manager) {
     final opt = generator.opt;
-    final logger = manager.logger;
+    final logger = context.logger;
     final langKeys = manager.langManager?.items.keys ?? [""];
     for (final k in langKeys) {
       final lang = manager.langManager?[k];
@@ -42,15 +43,17 @@ class Output {
       logger.i('generate ${lang == null ? "normal" : "language [${lang.title}]"} book');
 
       final book = manager[k]!;
+      final parser = context.parser;
       final pages = parser.pages(manager, book);
       final assets = parser.assets(manager, book);
+      final genContext = GeneratorContext(context, manager, book);
       gen.prepare(manager, k);
 
       _invokeHook('init', manager);
       gen.init(manager, k);
 
       gen.generateAssets(manager, assets);
-      gen.generatePages(book, pages);
+      gen.generatePages(genContext, pages);
 
       _invokeHook('finish:before', manager);
       gen.finish(manager, k);

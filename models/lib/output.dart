@@ -1,6 +1,5 @@
 
 import 'book.dart';
-import 'logger.dart';
 import 'page.dart';
 import 'plugin.dart';
 import 'utils.dart';
@@ -33,6 +32,4 @@ class Output {
   BookPage? page(String file) => pages[PathUtils.normalize(file)];
 
   String? get root => options['root'];
-
-  Logger? get logger => book.logger;
 }
