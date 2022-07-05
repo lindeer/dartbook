@@ -1,7 +1,6 @@
 
 import 'dart:io' show File;
 
-import 'package:dartbook_markdown/md_parser.dart';
 import 'package:dartbook_models/book.dart';
 import 'package:dartbook_models/page.dart';
 import 'package:path/path.dart' as p;
@@ -30,9 +29,8 @@ typedef _GeneratorCreator = Generator Function(Options opt);
 abstract class Generator {
   final String name;
   final Options opt;
-  final MdParser parser;
 
-  const Generator.__(this.name, this.opt, this.parser);
+  const Generator.__(this.name, this.opt);
 
   // TODO: prepare(BookContext context, Book book)
   void prepare(BookContext context, String bookKey);
@@ -72,7 +70,7 @@ class GeneratorFactory {
 class WebGenerator extends Generator {
   final BookContext context;
 
-  WebGenerator(this.context, Options opt) : super.__('website', opt, MdParser());
+  WebGenerator(this.context, Options opt) : super.__('website', opt);
 
   @override
   void prepare(BookContext context, String bookKey) {
@@ -106,14 +104,16 @@ class WebGenerator extends Generator {
 
   void _generatePage(Book book, BookPage page) {
     final filename = page.filename;
-    final file = File(p.join(book.root, filename));
-    final content = file.readAsStringSync();
-    final mdPage = parser.page(content);
+    final parser = context.parser;
+    final bookPage = parser.page(p.join(book.root, filename));
     final result = _toHtmlName(filename);
     final out = File(p.join(opt.root, result));
     if (!out.parent.existsSync()) {
       out.createSync(recursive: true);
     }
-    out.writeAsStringSync(mdPage.content);
+    final content = bookPage.content;
+    if (content != null) {
+      out.writeAsStringSync(content);
+    }
   }
 }

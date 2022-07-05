@@ -1,5 +1,5 @@
 import 'dart:convert' show json;
-import 'dart:io' show File;
+import 'dart:io' show File, IOException;
 
 import 'package:dartbook_models/book.dart';
 import 'package:dartbook_models/config.dart';
@@ -8,16 +8,16 @@ import 'package:dartbook_models/const/ignore.dart';
 import 'package:dartbook_models/glossary.dart';
 import 'package:dartbook_models/ignore.dart';
 import 'package:dartbook_models/language.dart';
+import 'package:dartbook_models/parser.dart';
 import 'package:dartbook_models/readme.dart';
 import 'package:dartbook_models/summary.dart';
 import 'package:path/path.dart' as p;
 
 import 'logger.dart';
-import 'parser.dart';
 
 class BookContext {
   final Logger logger;
-  final ContentParser parser;
+  final Parser parser;
   final String root;
   final Map<String, Book> books;
   final LanguageManager? langManager;
@@ -45,7 +45,7 @@ class BookContext {
   static BookContext assemble({
     required String root,
     required Logger logger,
-    required ContentParser parser,
+    required Parser parser,
   }) {
     return _Assembler(logger: logger, parser: parser)
         .assemble(root);
@@ -85,7 +85,7 @@ class _ResultHolder {
 
 class _Assembler {
   final Logger logger;
-  final ContentParser parser;
+  final Parser parser;
 
   _Assembler({required this.logger, required this.parser});
 
@@ -155,25 +155,11 @@ class _Assembler {
   }
 
   LanguageManager? _parseLanguages(_ResultHolder holder) {
-    final langs = _lookupStructure(holder, 'langs');
-    if (langs != null) {
-      final mgr = parser.langs(langs);
-      holder.langs = mgr;
+    try {
+      return holder.langs = _parseStructure(holder, 'langs', parser.langs);
+    } on Exception catch(_) {
+      return null;
     }
-    return holder.langs;
-  }
-
-  /// Lookup a structure file (ex: SUMMARY.md, GLOSSARY.md) in a book. Uses
-  /// book's config to find it.
-  File? _lookupStructure(_ResultHolder holder, String type) {
-    final filename = holder.config?['structure.$type'] as String?;
-    if (filename != null) {
-      final file = File(holder.path(filename));
-      if (file.existsSync()) {
-        return file;
-      }
-    }
-    return null;
   }
 
   Map<String, Book> _parseMultilingual(_ResultHolder parent) {
@@ -214,11 +200,20 @@ class _Assembler {
     return book;
   }
 
-  T _parseStructure<T>(_ResultHolder holder, String type, T Function(File file) func) {
-    final item = _lookupStructure(holder, type);
-    if (item == null) {
-      throw Exception("'${type.toUpperCase()}' not found!");
+  /// Lookup a structure file (ex: SUMMARY.md, GLOSSARY.md) in a book. Uses
+  /// book's config to find it.
+  T _parseStructure<T>(_ResultHolder holder, String type,
+      T Function(String file) func) {
+    final filename = holder.config?['structure.$type'] as String?;
+    if (filename == null) {
+      throw Exception("Not found '$type' type in config");
     }
-    return func(item);
+    final path = holder.path(filename);
+    try {
+      return func(path);
+    } on IOException catch (e) {
+      logger.e("Parse '$path' error by $e}");
+      rethrow;
+    }
   }
 }

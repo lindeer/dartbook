@@ -10,8 +10,9 @@ dependencies:
 # functional
   path: 1.8.2
   collection: 1.16.0
-  dartbook_markdown:
-    path: ../markdown
+  markdown: 5.0.0
+  dartbook_html:
+    path: ../html
   dartbook_models:
     path: ../models
 
