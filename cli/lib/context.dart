@@ -8,11 +8,11 @@ import 'package:dartbook_models/const/ignore.dart';
 import 'package:dartbook_models/glossary.dart';
 import 'package:dartbook_models/ignore.dart';
 import 'package:dartbook_models/language.dart';
-import 'package:dartbook_models/logger.dart';
 import 'package:dartbook_models/readme.dart';
 import 'package:dartbook_models/summary.dart';
 import 'package:path/path.dart' as p;
 
+import 'logger.dart';
 import 'parser.dart';
 
 class BookContext {

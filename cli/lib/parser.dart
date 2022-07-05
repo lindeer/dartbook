@@ -6,11 +6,12 @@ import 'package:dartbook_markdown/md_parser.dart';
 import 'package:dartbook_models/book.dart';
 import 'package:dartbook_models/glossary.dart';
 import 'package:dartbook_models/language.dart';
-import 'package:dartbook_models/logger.dart';
 import 'package:dartbook_models/page.dart';
 import 'package:dartbook_models/part.dart';
 import 'package:dartbook_models/readme.dart';
 import 'package:dartbook_models/summary.dart';
+
+import 'logger.dart';
 
 abstract class ContentParser {
 

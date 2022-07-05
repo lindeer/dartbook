@@ -1,8 +1,8 @@
 import 'package:dartbook/context.dart';
 import 'package:dartbook/generator.dart';
+import 'package:dartbook/logger.dart';
 import 'package:dartbook/output.dart';
 import 'package:dartbook/parser.dart';
-import 'package:dartbook_models/logger.dart';
 import 'package:path/path.dart' as p;
 
 void main(List<String> args) {
