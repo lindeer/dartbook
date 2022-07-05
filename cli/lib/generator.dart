@@ -37,7 +37,7 @@ abstract class Generator {
   // TODO: prepare(BookContext context, Book book)
   void prepare(BookContext context, String bookKey);
 
-  void generateAssets(BookContext context, Iterable<String> assets) {
+  void generateAssets(Iterable<String> assets) {
   }
 
   void generatePages(Book book) {

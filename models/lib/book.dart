@@ -21,6 +21,8 @@ class Book {
 
   /// pages in a book
   final pages = <String, BookPage>{};
+  /// assets in a book
+  final assets = <String>[];
 
   Book({
     required this.bookPath,

@@ -41,14 +41,11 @@ class Output {
       logger.i('generate ${lang == null ? "normal" : "language [${lang.title}]"} book');
 
       final book = context[k]!;
-      final parser = context.parser;
-      final assets = parser.assets(book);
       gen.prepare(context, k);
 
       _invokeHook('init', context);
       gen.init(context, k);
 
-      gen.generateAssets(context, assets);
       gen.generatePages(book);
 
       _invokeHook('finish:before', context);
@@ -56,6 +53,10 @@ class Output {
 
       _invokeHook('finish', context);
     }
+    final parser = context.parser;
+    final gen = factory.create();
+    final assets = parser.assets();
+    gen.generateAssets(assets);
   }
 
   void _invokeHook(String name, BookContext context) {

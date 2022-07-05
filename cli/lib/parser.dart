@@ -25,7 +25,7 @@ abstract class ContentParser {
 
   void pages(Book book);
 
-  Iterable<String> assets(Book book);
+  Iterable<String> assets();
 }
 
 class MarkdownParser extends ContentParser {
@@ -74,7 +74,7 @@ class MarkdownParser extends ContentParser {
   }
 
   @override
-  Iterable<String> assets(Book book) {
+  Iterable<String> assets() {
     return [];
   }
 
