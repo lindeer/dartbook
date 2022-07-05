@@ -202,7 +202,7 @@ class _Assembler {
       glossary = BookGlossary('', {});
     }
 
-    return Book(
+    final book = Book(
       bookPath: holder.bookPath,
       ignore: holder.ignore,
       config: holder.config!,
@@ -210,6 +210,8 @@ class _Assembler {
       summary: summary,
       glossary: glossary,
     );
+    parser.pages(book);
+    return book;
   }
 
   T _parseStructure<T>(_ResultHolder holder, String type, T Function(File file) func) {

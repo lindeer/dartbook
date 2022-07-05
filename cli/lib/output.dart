@@ -42,7 +42,6 @@ class Output {
 
       final book = context[k]!;
       final parser = context.parser;
-      final pages = parser.pages(book);
       final assets = parser.assets(book);
       gen.prepare(context, k);
 
@@ -50,7 +49,7 @@ class Output {
       gen.init(context, k);
 
       gen.generateAssets(context, assets);
-      gen.generatePages(book, pages);
+      gen.generatePages(book);
 
       _invokeHook('finish:before', context);
       gen.finish(context, k);

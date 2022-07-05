@@ -23,7 +23,7 @@ abstract class ContentParser {
 
   BookGlossary glossary(File file);
 
-  Map<String, BookPage> pages(Book book);
+  void pages(Book book);
 
   Iterable<String> assets(Book book);
 }
@@ -79,7 +79,7 @@ class MarkdownParser extends ContentParser {
   }
 
   @override
-  Map<String, BookPage> pages(Book book) {
+  void pages(Book book) {
     final summary = book.summary;
     final all = <String, BookPage>{};
     summary.walk((article) {
@@ -90,6 +90,6 @@ class MarkdownParser extends ContentParser {
         logger.w("path of article '${article.title}' is null!");
       }
     });
-    return all;
+    book.pages..clear()..addAll(all);
   }
 }

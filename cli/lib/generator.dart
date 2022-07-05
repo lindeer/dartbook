@@ -40,7 +40,7 @@ abstract class Generator {
   void generateAssets(BookContext context, Iterable<String> assets) {
   }
 
-  void generatePages(Book book, Map<String, BookPage> pages) {
+  void generatePages(Book book) {
   }
 
   void init(BookContext context, String bookKey);
@@ -92,8 +92,9 @@ class WebGenerator extends Generator {
   }
 
   @override
-  void generatePages(Book book, Map<String, BookPage> pages) {
+  void generatePages(Book book) {
     final logger = context.logger;
+    final pages = book.pages;
     for (final page in pages.values) {
       try {
         _generatePage(book, page);

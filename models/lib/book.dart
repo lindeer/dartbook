@@ -1,4 +1,5 @@
 
+import 'package:dartbook_models/page.dart';
 import 'package:path/path.dart' as path;
 
 import 'config.dart';
@@ -17,6 +18,9 @@ class Book {
   final BookSummary summary;
   final BookGlossary glossary;
   final String? lang;
+
+  /// pages in a book
+  final pages = <String, BookPage>{};
 
   Book({
     required this.bookPath,
