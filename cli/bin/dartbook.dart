@@ -1,4 +1,4 @@
-import 'package:dartbook/assemble.dart';
+import 'package:dartbook/context.dart';
 import 'package:dartbook/generator.dart';
 import 'package:dartbook/output.dart';
 import 'package:dartbook/parser.dart';
@@ -19,12 +19,15 @@ void main(List<String> args) {
   final parser = MarkdownParser(logger);
 
   final rootDir = p.absolute(root);
-  final assembler = BookAssembler(logger: logger, parser: parser);
 
-  final manager = assembler.assemble(rootDir);
+  final context = BookContext.assemble(
+    root: rootDir,
+    logger: logger,
+    parser: parser,
+  );
 
   final fmt = options['format'];
-  final generator = GeneratorFactory(manager, Options(
+  final generator = GeneratorFactory(context, Options(
     format: fmt!,
     root: p.join(rootDir, out),
   ));
