@@ -9,12 +9,12 @@ import 'generator.dart';
 class Output {
   final AppContext context;
   final BookManager manager;
-  final Generator generator;
+  final GeneratorFactory factory;
 
-  Output(this.context, this.manager, this.generator);
+  Output(this.context, this.manager, this.factory);
 
   void generate() {
-    final out = generator.opt.root;
+    final out = factory.opt.root;
     final logger = context.logger;
     logger.d('clean up folder: "$out"');
     final at = DateTime.now().millisecondsSinceEpoch;
@@ -31,29 +31,28 @@ class Output {
   }
 
   void _process(BookManager manager) {
-    final opt = generator.opt;
+    final opt = factory.opt;
     final logger = context.logger;
     final langKeys = manager.langManager?.items.keys ?? [""];
     for (final k in langKeys) {
       final lang = manager.langManager?[k];
-      final gen = lang == null ? generator
-          : Generator(generator.name, opt.copyWith(
+      final gen = lang == null ? factory.create()
+          : factory.create(
         root: p.join(opt.root, lang.path),
-      ));
+      );
       logger.i('generate ${lang == null ? "normal" : "language [${lang.title}]"} book');
 
       final book = manager[k]!;
       final parser = context.parser;
       final pages = parser.pages(manager, book);
       final assets = parser.assets(manager, book);
-      final genContext = GeneratorContext(context, manager, book);
       gen.prepare(manager, k);
 
       _invokeHook('init', manager);
       gen.init(manager, k);
 
       gen.generateAssets(manager, assets);
-      gen.generatePages(genContext, pages);
+      gen.generatePages(book, pages);
 
       _invokeHook('finish:before', manager);
       gen.finish(manager, k);

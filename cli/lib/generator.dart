@@ -1,13 +1,14 @@
 
 import 'dart:io' show File;
 
-import 'package:dartbook/context.dart';
 import 'package:dartbook_markdown/md_parser.dart';
 import 'package:dartbook_models/book.dart';
+import 'package:dartbook_models/logger.dart';
 import 'package:dartbook_models/page.dart';
 import 'package:path/path.dart' as p;
 
 class Options {
+  final String format;
   /// Root folder for the output
   final String root;
   /// Prefix for generation
@@ -16,33 +17,14 @@ class Options {
   final bool directoryIndex;
 
   const Options({
+    required this.format,
     required this.root,
     this.prefix,
     this.directoryIndex = true,
   });
-
-  Options copyWith({String? root, String? prefix, bool? index}) {
-    return Options(
-      root: root ?? this.root,
-      prefix: prefix ?? this.prefix,
-      directoryIndex: index ?? directoryIndex,
-    );
-  }
 }
 
-typedef GeneratorFactory = Generator Function(Options opt);
-
-final _factories = <String, GeneratorFactory> {
-  'website' : (Options opt) => WebGenerator(opt),
-};
-
-class GeneratorContext {
-  final AppContext context;
-  final BookManager manager;
-  final Book book;
-
-  GeneratorContext(this.context, this.manager, this.book);
-}
+typedef _GeneratorCreator = Generator Function(Options opt);
 
 abstract class Generator {
   final String name;
@@ -51,12 +33,57 @@ abstract class Generator {
 
   const Generator.__(this.name, this.opt, this.parser);
 
-  factory Generator(String name, Options opt) => _factories[name]!.call(opt);
-
   // TODO: prepare(BookContext context, Book book)
   void prepare(BookManager manager, String bookKey);
 
   void generateAssets(BookManager manager, Iterable<String> assets) {
+  }
+
+  void generatePages(Book book, Map<String, BookPage> pages) {
+  }
+
+  void init(BookManager manager, String bookKey);
+
+  void finish(BookManager manager, String bookKey);
+}
+
+class GeneratorFactory {
+  final BookManager manager;
+  final Logger logger;
+  final Options opt;
+  final Map<String, _GeneratorCreator> _factories;
+
+  GeneratorFactory(this.logger, this.manager, this.opt)
+      : _factories = <String, _GeneratorCreator> {
+    'website' : (Options opt) => WebGenerator(logger, opt),
+  };
+
+  Generator create({String? format, String? root, String? prefix, bool? index}) {
+    final newOpt = Options(
+      format: format ?? opt.format,
+      root: root ?? opt.root,
+      prefix: prefix ?? opt.prefix,
+      directoryIndex: index ?? opt.directoryIndex,
+    );
+    return _factories[newOpt.format]!.call(newOpt);
+  }
+}
+
+class WebGenerator extends Generator {
+  final Logger logger;
+
+  WebGenerator(this.logger, Options opt) : super.__('website', opt, MdParser());
+
+  @override
+  void prepare(BookManager manager, String bookKey) {
+  }
+
+  @override
+  void init(BookManager manager, String bookKey) {
+  }
+
+  @override
+  void finish(BookManager manager, String bookKey) {
   }
 
   static String _toHtmlName(String filename) {
@@ -64,11 +91,11 @@ abstract class Generator {
     return pos > 0 ? '${filename.substring(0, pos)}.html' : filename;
   }
 
-  void generatePages(GeneratorContext context, Map<String, BookPage> pages) {
-    final logger = context.context.logger;
+  @override
+  void generatePages(Book book, Map<String, BookPage> pages) {
     for (final page in pages.values) {
       try {
-        _generatePage(context.book, page);
+        _generatePage(book, page);
       } on Exception catch (e) {
         logger.d("generate page '${page.filename}' failed by ${e.toString()}, ignored.");
       }
@@ -86,25 +113,5 @@ abstract class Generator {
       out.createSync(recursive: true);
     }
     out.writeAsStringSync(mdPage.content);
-  }
-
-  void init(BookManager manager, String bookKey);
-
-  void finish(BookManager manager, String bookKey);
-}
-
-class WebGenerator extends Generator {
-  WebGenerator(Options opt) : super.__('website', opt, MdParser());
-
-  @override
-  void prepare(BookManager manager, String bookKey) {
-  }
-
-  @override
-  void init(BookManager manager, String bookKey) {
-  }
-
-  @override
-  void finish(BookManager manager, String bookKey) {
   }
 }

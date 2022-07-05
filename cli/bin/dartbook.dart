@@ -26,7 +26,8 @@ void main(List<String> args) {
   final manager = assembler.assemble();
 
   final fmt = options['format'];
-  final generator = Generator(fmt!, Options(
+  final generator = GeneratorFactory(logger, manager, Options(
+    format: fmt!,
     root: p.join(rootDir, out),
   ));
 
