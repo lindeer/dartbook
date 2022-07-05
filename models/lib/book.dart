@@ -4,8 +4,6 @@ import 'package:path/path.dart' as path;
 import 'config.dart';
 import 'glossary.dart';
 import 'ignore.dart';
-import 'language.dart';
-import 'logger.dart';
 import 'readme.dart';
 import 'summary.dart';
 
@@ -83,45 +81,4 @@ class Book {
 
   String glossaryDefaultPath(bool absolute) => _defaultPath('GLOSSARY', absolute);
   */
-}
-
-class BookManager {
-  final String root;
-  final Map<String, Book> books;
-  final LanguageManager? langManager;
-  final BookIgnore ignore;
-  final BookConfig config;
-
-  BookManager({
-    required this.root,
-    required this.books,
-    required this.langManager,
-    required this.ignore,
-    required this.config,
-});
-
-  /// Is this book the parent of language's books
-  bool get isMultilingual => (langManager?.items.length ?? 1) > 1;
-
-  Book? operator [](String lang) => books[lang];
-
-  /// Add a new language book
-  void operator []=(String lang, Book book) => books[lang] = book;
-
-  /*
-  Book create(String lang) {
-    final c = BookConfig(config.filename, config.values);
-    c['language'] = lang;
-    return Book(
-      logger: logger,
-      bookPath: path.join(root.path, lang),
-      ignore: ignore,
-      config: c,
-      readme: BookReadme(filename: 'README.md', title: ''),
-      summary: BookSummary('SUMMARY.md', []),
-      glossary: BookGlossary('GLOSSARY.md', {}),
-      parser: parserManager['md']!,
-    );
-  }
-   */
 }

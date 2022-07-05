@@ -1,7 +1,6 @@
 import 'dart:convert' show json;
 import 'dart:io' show File;
 
-import 'package:dartbook/context.dart';
 import 'package:dartbook_models/book.dart';
 import 'package:dartbook_models/config.dart';
 import 'package:dartbook_models/const/config.dart';
@@ -9,9 +8,13 @@ import 'package:dartbook_models/const/ignore.dart';
 import 'package:dartbook_models/glossary.dart';
 import 'package:dartbook_models/ignore.dart';
 import 'package:dartbook_models/language.dart';
+import 'package:dartbook_models/logger.dart';
 import 'package:dartbook_models/readme.dart';
 import 'package:dartbook_models/summary.dart';
 import 'package:path/path.dart' as p;
+
+import 'context.dart';
+import 'parser.dart';
 
 const _defaultIgnores = [
   // Skip Git stuff
@@ -45,12 +48,12 @@ class _ResultHolder {
 }
 
 class BookAssembler {
-  final String root;
-  final AppContext context;
+  final Logger logger;
+  final ContentParser parser;
 
-  BookAssembler({required this.root, required this.context});
+  BookAssembler({required this.logger, required this.parser});
 
-  BookManager assemble() {
+  BookContext assemble(String root) {
     final holder = _ResultHolder(root,'info');
     _parseIgnore(holder);
     _parseConfig(holder);
@@ -63,7 +66,9 @@ class BookAssembler {
       final result = _parseSkeleton(holder);
       books = { "" : result };
     }
-    return BookManager(
+    return BookContext(
+      logger: logger,
+      parser: parser,
       root: root,
       books: books,
       langManager: langs,
@@ -73,7 +78,6 @@ class BookAssembler {
   }
 
   BookIgnore _parseIgnore(_ResultHolder holder) {
-    final logger = context.logger;
     final ignore = holder.ignore;
     if (holder.isLangBook) {
       return ignore;
@@ -92,7 +96,6 @@ class BookAssembler {
   }
 
   BookConfig? _parseConfig(_ResultHolder holder) {
-    final logger = context.logger;
     final ignore = holder.ignore;
     final files = configFiles.where((f) => !ignore.isIgnored(f));
 
@@ -116,7 +119,6 @@ class BookAssembler {
   }
 
   LanguageManager? _parseLanguages(_ResultHolder holder) {
-    final parser = context.parser;
     final langs = _lookupStructure(holder, 'langs');
     if (langs != null) {
       final mgr = parser.langs(langs);
@@ -155,7 +157,6 @@ class BookAssembler {
   }
 
   Book _parseSkeleton(_ResultHolder holder) {
-    final parser = context.parser;
     final readme = _parseStructure<BookReadme>(holder, 'readme', parser.readme);
     final summary = _parseStructure<BookSummary>(holder, 'summary', parser.summary);
     BookGlossary glossary;

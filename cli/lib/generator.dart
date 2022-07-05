@@ -3,9 +3,10 @@ import 'dart:io' show File;
 
 import 'package:dartbook_markdown/md_parser.dart';
 import 'package:dartbook_models/book.dart';
-import 'package:dartbook_models/logger.dart';
 import 'package:dartbook_models/page.dart';
 import 'package:path/path.dart' as p;
+
+import 'context.dart';
 
 class Options {
   final String format;
@@ -34,28 +35,27 @@ abstract class Generator {
   const Generator.__(this.name, this.opt, this.parser);
 
   // TODO: prepare(BookContext context, Book book)
-  void prepare(BookManager manager, String bookKey);
+  void prepare(BookContext context, String bookKey);
 
-  void generateAssets(BookManager manager, Iterable<String> assets) {
+  void generateAssets(BookContext context, Iterable<String> assets) {
   }
 
   void generatePages(Book book, Map<String, BookPage> pages) {
   }
 
-  void init(BookManager manager, String bookKey);
+  void init(BookContext context, String bookKey);
 
-  void finish(BookManager manager, String bookKey);
+  void finish(BookContext context, String bookKey);
 }
 
 class GeneratorFactory {
-  final BookManager manager;
-  final Logger logger;
+  final BookContext context;
   final Options opt;
   final Map<String, _GeneratorCreator> _factories;
 
-  GeneratorFactory(this.logger, this.manager, this.opt)
+  GeneratorFactory(this.context, this.opt)
       : _factories = <String, _GeneratorCreator> {
-    'website' : (Options opt) => WebGenerator(logger, opt),
+    'website' : (Options opt) => WebGenerator(context, opt),
   };
 
   Generator create({String? format, String? root, String? prefix, bool? index}) {
@@ -70,20 +70,20 @@ class GeneratorFactory {
 }
 
 class WebGenerator extends Generator {
-  final Logger logger;
+  final BookContext context;
 
-  WebGenerator(this.logger, Options opt) : super.__('website', opt, MdParser());
+  WebGenerator(this.context, Options opt) : super.__('website', opt, MdParser());
 
   @override
-  void prepare(BookManager manager, String bookKey) {
+  void prepare(BookContext context, String bookKey) {
   }
 
   @override
-  void init(BookManager manager, String bookKey) {
+  void init(BookContext context, String bookKey) {
   }
 
   @override
-  void finish(BookManager manager, String bookKey) {
+  void finish(BookContext context, String bookKey) {
   }
 
   static String _toHtmlName(String filename) {
@@ -93,6 +93,7 @@ class WebGenerator extends Generator {
 
   @override
   void generatePages(Book book, Map<String, BookPage> pages) {
+    final logger = context.logger;
     for (final page in pages.values) {
       try {
         _generatePage(book, page);

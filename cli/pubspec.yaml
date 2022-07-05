@@ -9,6 +9,7 @@ environment:
 dependencies:
 # functional
   path: 1.8.2
+  collection: 1.16.0
   dartbook_markdown:
     path: ../markdown
   dartbook_models:
