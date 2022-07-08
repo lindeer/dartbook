@@ -15,6 +15,7 @@ import 'package:dartbook_models/part.dart';
 import 'package:dartbook_models/readme.dart';
 import 'package:dartbook_models/summary.dart';
 import 'package:markdown/markdown.dart' show markdownToHtml;
+import 'package:path/path.dart' as p;
 
 import 'logger.dart';
 
@@ -36,7 +37,7 @@ class MarkdownParser implements Parser {
     final items = glossary.map((e) {
       return GlossaryItem(e.name, desc: e.desc);
     });
-    return BookGlossary.fromItems(file.path, items);
+    return BookGlossary.fromItems(p.basename(file.path), items);
   }
 
   @override
@@ -46,7 +47,7 @@ class MarkdownParser implements Parser {
     final items = langs.articles.map((e) {
       return BookLanguage(e.title, e.ref!);
     });
-    return LanguageManager.create(file.path, items);
+    return LanguageManager.create(p.basename(file.path), items);
   }
 
   @override
@@ -54,7 +55,7 @@ class MarkdownParser implements Parser {
     final file = File(filePath);
     final readme = Readme.from(markdownToHtml(file.readAsStringSync()));
     return BookReadme(
-      filename: file.path,
+      filename: p.basename(file.path),
       title: readme.title,
       desc: readme.desc,
     );
@@ -69,7 +70,7 @@ class MarkdownParser implements Parser {
       final level = len > 1 ? '${i + 1}' : '';
       return SummaryPart.create(part, level);
     });
-    return BookSummary(file.path, parts.toList(growable: false));
+    return BookSummary(p.basename(file.path), parts.toList(growable: false));
   }
 
   @override
@@ -77,11 +78,6 @@ class MarkdownParser implements Parser {
     final file = File(filePath);
     final content = markdownToHtml(file.readAsStringSync());
     return BookPage(filename: file.path, content: content);
-  }
-
-  @override
-  Iterable<String> assets() {
-    return [];
   }
 
   @override

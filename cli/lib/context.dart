@@ -1,5 +1,6 @@
+import 'dart:collection' show Queue;
 import 'dart:convert' show json;
-import 'dart:io' show File, IOException;
+import 'dart:io' show Directory, File, FileSystemEntity, IOException;
 
 import 'package:dartbook_models/book.dart';
 import 'package:dartbook_models/config.dart';
@@ -35,7 +36,7 @@ class BookContext {
   });
 
   /// Is this book the parent of language's books
-  bool get isMultilingual => (langManager?.items.length ?? 1) > 1;
+  bool get isMultilingual => langManager != null;
 
   Book? operator [](String lang) => books[lang];
 
@@ -49,6 +50,36 @@ class BookContext {
   }) {
     return _Assembler(logger: logger, parser: parser)
         .assemble(root);
+  }
+
+  Iterable<String> listAssets() {
+    return [
+      if (isMultilingual)
+        ..._filterFilesIn(root, (f) => !ignore.isIgnored(f)),
+      for (final book in books.values)
+        ..._filterFilesIn(book.bookPath, book.isAsset),
+    ];
+  }
+
+  static Iterable<String> _filterFilesIn(String dir, bool Function(String path) filter) {
+    final queue = Queue.of([Directory(dir)]);
+    final result = <String>[];
+    while (queue.isNotEmpty) {
+      final d = queue.removeFirst();
+      for (final f in d.listSync(recursive: false)) {
+        final path = f.path;
+        final filename = p.relative(path, from: dir);
+
+        if (filter(filename)) {
+          if (FileSystemEntity.isDirectorySync(path)) {
+            queue.add(Directory(path));
+          } else {
+            result.add(path);
+          }
+        }
+      }
+    }
+    return result;
   }
 }
 
@@ -170,10 +201,13 @@ class _Assembler {
       child.ignore
         ..update(parent.ignore)
         ..add('$id/**');
+      parent.ignore.add(lang.path);
       _parseConfig(child);
       final book = _parseSkeleton(child);
       return MapEntry(id, book);
     });
+
+    parent.ignore.add(langs.filename);
 
     return Map.fromEntries(children);
   }

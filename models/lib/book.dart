@@ -62,6 +62,15 @@ class Book {
     return isIgnoredFile(filename);
   }
 
+  bool isAsset(String filename) {
+    return filename != readme.filename
+        && filename != summary.filename
+        && filename != glossary.filename
+        && filename != config.filename
+        && !pages.keys.contains(filename)
+        && !isIgnoredFile(filename);
+  }
+
   /*
   /// Infers the default extension for files
   String get defaultExt {

@@ -23,8 +23,6 @@ abstract class Parser {
 
   /// parse pages in book and put them all in it
   void pages(Book book);
-
-  Iterable<String> assets();
 }
 
 class ParserManager {

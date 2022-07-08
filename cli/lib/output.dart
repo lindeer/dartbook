@@ -53,9 +53,8 @@ class Output {
 
       _invokeHook('finish', context);
     }
-    final parser = context.parser;
     final gen = factory.create();
-    final assets = parser.assets();
+    final assets = context.listAssets();
     gen.generateAssets(assets);
   }
 
