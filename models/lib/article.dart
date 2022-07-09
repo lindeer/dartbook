@@ -1,8 +1,7 @@
 
-import 'dart:io' show File;
-
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:dartbook_html/summary.dart' show Article;
+
 import 'utils.dart' show PathUtils;
 
 class SummaryArticle {
@@ -48,8 +47,6 @@ class SummaryArticle {
     final pathname = pos < 0 ? r : r.substring(0, pos);
     return PathUtils.flatten(pathname);
   }
-
-  bool isFile(File file) => file.path == path;
 
   SummaryArticle? byLevel(String level) {
     final levels = level.split('.');

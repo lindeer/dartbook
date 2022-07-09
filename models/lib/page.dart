@@ -1,6 +1,4 @@
 
-import 'dart:io' show File;
-
 class BookPage {
   final String filename;
   final Map<String, String>? attributes;
@@ -13,6 +11,4 @@ class BookPage {
     this.content,
     this.dir = "ltr",
   });
-
-  File get file => File(filename);
 }

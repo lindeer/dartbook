@@ -1,7 +1,6 @@
 
-import 'dart:io' show File;
-
-import 'package:dartbook_html/summary.dart' show Article, Part;
+import 'package:dartbook_html/glossary.dart';
+import 'package:dartbook_html/summary.dart' show Article, Part, Summary;
 import 'package:dartbook_models/article.dart';
 import 'package:dartbook_models/config.dart';
 import 'package:dartbook_models/glossary.dart';
@@ -17,8 +16,8 @@ void main() {
 
   test('glossary creation', () {
     final glossary = BookGlossary.fromItems('', [
-      GlossaryItem('Hello World', desc: 'Awesome!'),
-      GlossaryItem('JavaScript', desc: 'This is a cool language!'),
+      Glossary(name: 'Hello World', desc: 'Awesome!'),
+      Glossary(name: 'JavaScript', desc: 'This is a cool language!'),
     ]);
     expect(glossary.items.length, 2);
     expect(glossary['hello-world']?.desc, 'Awesome!');
@@ -39,14 +38,13 @@ void main() {
 
   test('summary article isFile', () {
     final a1 = SummaryArticle.create(Article(title: '', ref: 'hello.md'), '1.1');
-    final file = File('hello.md');
-    expect(a1.isFile(file), true);
+    expect(a1.path == 'hello.md', true);
 
     final a2 = SummaryArticle.create(Article(title: '', ref: '/hello.md'), '1.1');
-    expect(a2.isFile(file), true);
+    expect(a2.path == 'hello.md', true);
 
     final a3 = SummaryArticle.create(Article(title: '', ref: '/hello.md#world'), '1.1');
-    expect(a3.isFile(file), true);
+    expect(a3.path == 'hello.md', true);
   });
 
   test('summary part level', () {
@@ -59,7 +57,7 @@ void main() {
   });
 
   test('summary test', () {
-    final summary = BookSummary.create('', [
+    final summary = BookSummary.create('', Summary([
       Part(
         title: '',
         articles: [
@@ -67,10 +65,10 @@ void main() {
           Article(title: 'My Second Article', ref: 'article.md',),
           Article(title: 'Article without ref'),
           Article(title: 'Article with absolute ref', ref: 'https://google.fr'),
-        ]
+        ],
       ),
       Part(title: 'Test'),
-    ]);
+    ]));
 
     expect(summary.parts.length, 2);
     expect(summary[0].articles?.length ?? 0, 4,

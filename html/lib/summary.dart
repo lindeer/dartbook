@@ -58,14 +58,14 @@ class Part {
 class Summary {
   final Iterable<Part> parts;
 
-  const Summary._(this.parts);
+  const Summary(this.parts);
 
   /// Parse an HTML content into a tree of parts
   static Summary from(String html) {
     final root = Element.html('<div>$html</div>');
     root.querySelector('$_listSelector, $_partSelector');
     final parts = _splitParts(root) ?? [];
-    return Summary._(parts);
+    return Summary(parts);
   }
 
   static bool _isPartNode(Element e) {

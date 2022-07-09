@@ -1,4 +1,5 @@
-import 'dart:io' show File;
+import 'package:dartbook_html/glossary.dart';
+
 import 'utils.dart' show slug;
 
 class GlossaryItem {
@@ -16,12 +17,11 @@ class BookGlossary {
 
   const BookGlossary(this.filename, this.items);
 
-  factory BookGlossary.fromItems(String file, Iterable<GlossaryItem> list) {
+  factory BookGlossary.fromItems(String file, Iterable<Glossary> items) {
+    final list = items.map((e) => GlossaryItem(e.name, desc: e.desc));
     final map = { for (final i in list) i.id : i };
     return BookGlossary(file, map);
   }
-
-  File get file => File(filename);
 
   GlossaryItem? operator [](String id) => items[id];
 

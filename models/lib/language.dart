@@ -1,4 +1,4 @@
-import 'dart:io' show File;
+import 'package:dartbook_html/langs.dart';
 
 class BookLanguage {
   final String title;
@@ -18,12 +18,11 @@ class LanguageManager {
 
   const LanguageManager(this.filename, this.items);
 
-  factory LanguageManager.create(String file, Iterable<BookLanguage> list) {
+  factory LanguageManager.create(String file, Langs langs) {
+    final list = langs.articles.map((e) => BookLanguage(e.title, e.ref ?? ''));
     final map = { for (final e in list) e.id : e };
     return LanguageManager(file, map);
   }
-
-  File get file => File(filename);
 
   BookLanguage? operator [](String key) => items[key];
 }

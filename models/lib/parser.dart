@@ -1,9 +1,10 @@
+import 'package:dartbook_html/glossary.dart';
+import 'package:dartbook_html/langs.dart';
+import 'package:dartbook_html/page.dart';
+import 'package:dartbook_html/readme.dart';
+import 'package:dartbook_html/summary.dart';
+
 import 'book.dart';
-import 'glossary.dart';
-import 'language.dart';
-import 'page.dart';
-import 'readme.dart';
-import 'summary.dart';
 
 abstract class Parser {
   String get name;
@@ -11,15 +12,15 @@ abstract class Parser {
   /// extension name of supported file
   Iterable<String> get ext;
 
-  LanguageManager langs(String filePath);
+  Langs langs(String content);
 
-  BookReadme readme(String filePath);
+  Readme readme(String content);
 
-  BookSummary summary(String filePath);
+  Summary summary(String content);
 
-  BookGlossary glossary(String filePath);
+  Iterable<Glossary> glossary(String content);
 
-  BookPage page(String filePath);
+  Page page(String content);
 
   /// parse pages in book and put them all in it
   void pages(Book book);

@@ -1,12 +1,10 @@
 
-import 'dart:io' show File;
-
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:dartbook_html/summary.dart';
-import 'utils.dart' show PathUtils;
 
 import 'article.dart';
 import 'part.dart';
+import 'utils.dart' show PathUtils;
 
 class BookSummary {
   final String filename;
@@ -14,14 +12,13 @@ class BookSummary {
 
   const BookSummary(this.filename, this.parts);
 
-  factory BookSummary.create(String file, Iterable<Part> parts) {
+  factory BookSummary.create(String file, Summary summary) {
+    final parts = summary.parts;
     final items = parts.mapIndexed((i, e) {
       return SummaryPart.create(e, '${i + 1}');
     });
     return BookSummary(file, items.toList(growable: false));
   }
-
-  File get file => File(filename);
 
   SummaryPart operator[](int pos) => parts[pos];
 

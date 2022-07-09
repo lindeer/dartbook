@@ -124,7 +124,8 @@ class _Assembler {
     final holder = _ResultHolder(root,'info');
     _parseIgnore(holder);
     _parseConfig(holder);
-    final langs = _parseLanguages(holder);
+    final langs = holder.langs =
+        _safeParseStructure(holder, 'langs', _makeLanguageManager);
     Map<String, Book> books;
     if ((langs?.items.length ?? 0) > 0) {
       holder.isLangBook = true;
@@ -185,14 +186,6 @@ class _Assembler {
     return config;
   }
 
-  LanguageManager? _parseLanguages(_ResultHolder holder) {
-    try {
-      return holder.langs = _parseStructure(holder, 'langs', parser.langs);
-    } on Exception catch(_) {
-      return null;
-    }
-  }
-
   Map<String, Book> _parseMultilingual(_ResultHolder parent) {
     final langs = parent.langs!;
     final children = langs.items.values.map((lang) {
@@ -213,14 +206,10 @@ class _Assembler {
   }
 
   Book _parseSkeleton(_ResultHolder holder) {
-    final readme = _parseStructure<BookReadme>(holder, 'readme', parser.readme);
-    final summary = _parseStructure<BookSummary>(holder, 'summary', parser.summary);
-    BookGlossary glossary;
-    try {
-      glossary = _parseStructure<BookGlossary>(holder, 'glossary', parser.glossary);
-    } on Exception catch (_) {
-      glossary = BookGlossary('', {});
-    }
+    final readme = _parseStructure(holder, 'readme', _makeReadme);
+    final summary = _parseStructure(holder, 'summary', _makeSummary);
+    final glossary = _safeParseStructure(holder, 'glossary', _makeGlossary)
+        ?? BookGlossary('', {});
 
     final book = Book(
       bookPath: holder.bookPath,
@@ -234,20 +223,42 @@ class _Assembler {
     return book;
   }
 
+  LanguageManager _makeLanguageManager(String filename, String content) =>
+      LanguageManager.create(filename, parser.langs(content));
+
+  BookReadme _makeReadme(String filename, String content) =>
+      BookReadme.create(filename, parser.readme(content));
+
+  BookSummary _makeSummary(String filename, String content) =>
+      BookSummary.create(filename, parser.summary(content));
+
+  BookGlossary _makeGlossary(String filename, String content) =>
+      BookGlossary.fromItems(filename, parser.glossary(content));
+
   /// Lookup a structure file (ex: SUMMARY.md, GLOSSARY.md) in a book. Uses
   /// book's config to find it.
   T _parseStructure<T>(_ResultHolder holder, String type,
-      T Function(String file) func) {
+      T Function(String filename, String content) func) {
     final filename = holder.config?['structure.$type'] as String?;
     if (filename == null) {
       throw Exception("Not found '$type' type in config");
     }
     final path = holder.path(filename);
     try {
-      return func(path);
+      final content = File(path).readAsStringSync();
+      return func(filename, content);
     } on IOException catch (e) {
       logger.e("Parse '$path' error by $e}");
       rethrow;
+    }
+  }
+
+  T? _safeParseStructure<T>(_ResultHolder holder, String type,
+      T Function(String filename, String content) func) {
+    try {
+      return _parseStructure(holder, type, func);
+    } on Exception {
+      return null;
     }
   }
 }
