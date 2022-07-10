@@ -84,9 +84,13 @@ class WebGenerator extends Generator {
   void finish(BookContext context, String bookKey) {
   }
 
-  static String _toHtmlName(String filename) {
-    int pos = filename.lastIndexOf(p.extension(filename));
-    return pos > 0 ? '${filename.substring(0, pos)}.html' : filename;
+  static _toOutputName(Book book, String filename) {
+    final readme = book.readme;
+    final base = p.basename(filename);
+    final name = base == 'README' || readme.filename == filename
+        ? p.normalize(p.join(p.dirname(filename), 'index.html'))
+        : p.setExtension(filename, '.html');
+    return name;
   }
 
   @override
@@ -106,7 +110,7 @@ class WebGenerator extends Generator {
     final filename = page.filename;
     final parser = context.parser;
     final bookPage = parser.page(p.join(book.root, filename));
-    final result = _toHtmlName(filename);
+    final result = _toOutputName(book, filename);
     final out = File(p.join(opt.root, result));
     if (!out.parent.existsSync()) {
       out.createSync(recursive: true);
