@@ -48,4 +48,36 @@ class BookConfig {
   }
 
   void merge(Map<String, dynamic> v) => values.addAll(v);
+
+  static Map<String, dynamic> schemaDefault({Map<String, dynamic>? defaults}) {
+    final schema = configSchema;
+    final def = schema['definitions'] as Map<String, dynamic>?;
+    if (defaults != null) {
+      def?.addAll(defaults);
+    }
+    return _makeDefault(schema, def) ?? {};
+  }
+
+  /// returns a object that built with default values from json schema
+  static dynamic _makeDefault(
+      Map<String, dynamic> schema,
+      Map<String, dynamic>? defVal) {
+    final type = schema['type'];
+    if (type == 'object') {
+      final properties = schema['properties'] as Map<String, dynamic>?;
+      final result = <String, dynamic>{};
+      for (final k in (properties?.keys ?? <String>[])) {
+        final value = properties?[k] as Map<String, dynamic>?;
+        final v = value != null ? _makeDefault(value, defVal) : null;
+        if (v != null) {
+          result[k] = v;
+        }
+      }
+      return result;
+    } else if (schema.containsKey('default')) {
+      return schema['default'];
+    } else if (defVal != null && defVal.containsKey('default')) {
+      return defVal['default'];
+    }
+  }
 }

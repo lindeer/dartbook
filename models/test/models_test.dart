@@ -3,6 +3,7 @@ import 'package:dartbook_html/glossary.dart';
 import 'package:dartbook_html/summary.dart' show Article, Part, Summary;
 import 'package:dartbook_models/article.dart';
 import 'package:dartbook_models/config.dart';
+import 'package:dartbook_models/const/configDefault.dart';
 import 'package:dartbook_models/glossary.dart';
 import 'package:dartbook_models/part.dart';
 import 'package:dartbook_models/summary.dart';
@@ -112,4 +113,26 @@ void main() {
     expect((hello as Map).length, 3);
     expect(world, 2, reason: 'must set deep value');
   });
+
+  test('config default', () {
+    final def = BookConfig.schemaDefault();
+    expect(def.keys, configDefault.keys);
+    // MapEquality not work as expected!
+    expect(_mapEqual(def, configDefault), true);
+  });
+}
+
+bool _mapEqual(Map m1, Map m2) {
+  final keys = m1.keys;
+  if (keys.length != m2.keys.length) {
+    return false;
+  }
+  for (final k in keys) {
+    final v = m1[k];
+    final b = v is Map ? _mapEqual(v, m2[k] as Map) : v == m2[k];
+    if (!b) {
+      return false;
+    }
+  }
+  return true;
 }
