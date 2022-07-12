@@ -45,4 +45,12 @@ void main() {
       '$root2/assets/css/normal.css',
     });
   });
+
+  test('context config', () {
+    final topConfig = multilingual.config;
+    final book = multilingual['en']!;
+    expect(topConfig['title'], null);
+    expect(book.config['title'], 'A Great journey to Sicily');
+    expect(normal.config['title'], 'A Great journey to Sicily');
+  });
 }

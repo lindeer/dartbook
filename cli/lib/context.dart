@@ -5,6 +5,7 @@ import 'dart:io' show Directory, File, FileSystemEntity, IOException;
 import 'package:dartbook_models/book.dart';
 import 'package:dartbook_models/config.dart';
 import 'package:dartbook_models/const/config.dart';
+import 'package:dartbook_models/const/configDefault.dart';
 import 'package:dartbook_models/const/ignore.dart';
 import 'package:dartbook_models/glossary.dart';
 import 'package:dartbook_models/ignore.dart';
@@ -12,6 +13,7 @@ import 'package:dartbook_models/language.dart';
 import 'package:dartbook_models/parser.dart';
 import 'package:dartbook_models/readme.dart';
 import 'package:dartbook_models/summary.dart';
+import 'package:json_schema2/json_schema2.dart';
 import 'package:path/path.dart' as p;
 
 import 'logger.dart';
@@ -169,20 +171,31 @@ class _Assembler {
 
     for (final f in files) {
       File file = File(holder.path(f));
-      final config = holder.config ??= BookConfig.withDefault(file.path);
+      if (!file.existsSync()) {
+        continue;
+      }
+      final config = BookConfig.schemaDefault();
       try {
         final jsonObj = json.decode(file.readAsStringSync()) as Map<String, dynamic>;
         final result = _validateConfig(jsonObj);
-        config.merge(result);
+        config.addAll(result);
+        holder.config ??= BookConfig(f, config);
       } on Exception catch (e) {
         logger.d("parse config '${file.path}' error: $e");
       }
     }
+    holder.config ??= BookConfig.withDefault('');
     return holder.config;
   }
 
-  // TODO: need json_schema: 4.0.3
   Map<String, dynamic> _validateConfig(Map<String, dynamic> config) {
+    final schema = JsonSchema.createSchema(configSchema);
+    final errors = schema.validateWithErrors(config);
+    if (errors.isNotEmpty) {
+      final error = errors.first;
+      throw Exception("Config validation failed: '${error.message}', "
+          "by '${error.instancePath}' but schema is '${error.schemaPath}'");
+    }
     return config;
   }
 

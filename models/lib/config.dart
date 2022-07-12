@@ -4,7 +4,7 @@ class BookConfig {
   final String filename;
   final Map<String, dynamic> values;
 
-  BookConfig.withDefault(this.filename): values = Map.of(configDefault);
+  BookConfig.withDefault(this.filename): values = Map.of(schemaDefault());
 
   const BookConfig(this.filename, this.values);
 
