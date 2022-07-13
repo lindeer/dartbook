@@ -1,5 +1,5 @@
 
-    {% for article in _articles %}
+    {% for article in _articles recursive %}
         <li class="chapter {% if article.path == file.path and not article.anchor %}active{% endif %}" data-level="{{ article.level }}" {% if article.path %}data-path="{{ article.path|resolveFile }}"{% endif %}>
             {% if article.path and getPageByPath(article.path) %}
                 <a href="{{ article.path|resolveFile }}{{ article.anchor }}">
@@ -18,11 +18,10 @@
                 </span>
             {% endif %}
 
-            {% if article.articles.length > 0 %}
+            {% if article.articles %}
             <ul class="articles">
-                {{ articles(article.articles, file, config) }}
+                {{ loop(article.articles) }}
             </ul>
             {% endif %}
         </li>
     {% endfor %}
-
