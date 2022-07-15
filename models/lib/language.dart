@@ -25,4 +25,16 @@ class LanguageManager {
   }
 
   BookLanguage? operator [](String key) => items[key];
+
+  Map<String, dynamic> get json => {
+    'languages': {
+      'file': {
+        'path': filename,
+      },
+      'list': items.entries.map((e) => <String, String>{
+        'id': e.key,
+        'title': e.value.title,
+      }),
+    }
+  };
 }

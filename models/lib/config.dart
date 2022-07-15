@@ -49,6 +49,10 @@ class BookConfig {
 
   void merge(Map<String, dynamic> v) => values.addAll(v);
 
+  Map<String, dynamic> get json => {
+    'config': values,
+  };
+
   static Map<String, dynamic> schemaDefault({Map<String, dynamic>? defaults}) {
     final schema = configSchema;
     final def = schema['definitions'] as Map<String, dynamic>?;

@@ -16,6 +16,7 @@ dependencies:
   dartbook_models:
     path: ../models
   json_schema2: ^2.0.2+6
+  jinja: 0.4.0-dev.31
 
 dev_dependencies:
   lints: ^2.0.0
