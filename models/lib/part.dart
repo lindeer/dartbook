@@ -31,4 +31,14 @@ class SummaryPart {
   }
 
   String get childLevel => '$level.${(articles?.length ?? 0) + 1}';
+
+  Map<String, dynamic> get json {
+    final items = articles;
+    return {
+      'title': title,
+      'level': level,
+      if (items != null)
+        'articles': items.map((e) => e.json),
+    };
+  }
 }

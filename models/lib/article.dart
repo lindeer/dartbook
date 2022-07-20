@@ -70,4 +70,19 @@ class SummaryArticle {
     }
     return null;
   }
+
+  static Map<String, dynamic> _toJson(SummaryArticle article) {
+    final r = article.ref;
+    final items = article.articles;
+    return {
+      'level': article.level,
+      'title': article.title,
+      if (r != null)
+        'path': r,
+      if (items != null)
+        'articles': items.map(_toJson),
+    };
+  }
+
+  Map<String, dynamic> get json => _toJson(this);
 }

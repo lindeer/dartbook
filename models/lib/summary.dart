@@ -22,6 +22,12 @@ class BookSummary {
 
   SummaryPart operator[](int pos) => parts[pos];
 
+  Map<String, dynamic> get json => {
+    'summary': {
+      'parts': parts.map((e) => e.json),
+    }
+  };
+
   String parentLevel(String level) {
     final levels = level.split('.');
     final sub = levels.sublist(0, levels.length - 1);

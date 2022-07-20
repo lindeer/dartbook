@@ -163,16 +163,17 @@ class WebGenerator extends Generator {
 
   Map<String, dynamic> _makeBookRenderData(Book book, BookPage page) {
     final config = context.config;
+    final summary = book.summary.json;
 
     final result = <String, dynamic>{
       'page': {
         'dir': page.dir,
         'content': page.content,
       },
-      'summary': {
-        'parts': [],
-      },
+      ...summary,
       'glossary': {
+      },
+      'file': {
       },
       'gitbook': {
       },

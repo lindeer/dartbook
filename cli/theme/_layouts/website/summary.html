@@ -20,7 +20,7 @@
         {% elif not loop.first %}
         <li class="divider"></li>
         {% endif %}
-        {% with _articles=part.articles, file=file, config=config %}
+        {% with _articles=part.articles, file=file, config=config, getPageByPath=getPageByPath %}
             {% include "articles.html" %}
         {% endwith %}
     {% endfor %}
