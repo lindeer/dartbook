@@ -1,8 +1,12 @@
 
-import 'dart:io' show File;
+import 'dart:convert';
+import 'dart:io' show File, Platform;
 
+import 'package:dartbook/template/template_loader.dart';
 import 'package:dartbook_models/book.dart';
 import 'package:dartbook_models/page.dart';
+import 'package:jinja/jinja.dart';
+import 'package:jinja/loaders.dart';
 import 'package:path/path.dart' as p;
 
 import 'context.dart';
@@ -106,18 +110,125 @@ class WebGenerator extends Generator {
     }
   }
 
+  void _attachPageContent(BookPage page, String filePath) {
+    try {
+      final parser = context.parser;
+      final htmlPage = parser.page(File(filePath).readAsStringSync());
+      page.content = htmlPage.content;
+    } on Exception catch (e) {
+      final logger = context.logger;
+      logger.e('_attachPageContent error: $e');
+    }
+  }
+
   void _generatePage(Book book, BookPage page) {
     final filename = page.filename;
-    final parser = context.parser;
-    final bookPage = parser.page(p.join(book.root, filename));
-    final result = _toOutputName(book, filename);
-    final out = File(p.join(opt.root, result));
+    _attachPageContent(page, p.join(book.root, filename));
+    final outputName = _toOutputName(book, filename);
+    final out = File(p.join(opt.root, outputName));
     if (!out.parent.existsSync()) {
       out.createSync(recursive: true);
     }
-    final content = bookPage.content;
-    if (content != null) {
-      out.writeAsStringSync(content);
-    }
+    final pkgRoot = p.normalize(p.join(p.dirname(Platform.script.path), '..'));
+    final layoutDir = '$pkgRoot/theme/_layouts';
+    final prefix = opt.format;
+    final env = Environment(
+      filters: {
+        'resolveAsset': (f) {
+          final filepath = p.join('gitbook', f);
+          return filepath;
+        },
+        'resolveFile': (f) => f,
+        'contentURL': (path) => p.dirname(path),
+        'fileExists': (f) => true,
+        't': (id) => _i18n[id],
+        // auto escape
+        'safe': (f) => f,
+        // JSON.stringify
+        'dump': (f) => json.encode(f),
+      },
+      loader: TemplateLoader(
+        {
+          'layout.html': File('$layoutDir/layout.html').readAsStringSync(),
+        },
+        FileSystemLoader(
+          path: '$layoutDir/$prefix',
+        ),
+      ),
+    );
+    final data = _makeBookRenderData(book, page);
+    final result = env.getTemplate('page.html').render(data);
+    out.writeAsStringSync(result);
+  }
+
+  Map<String, dynamic> _makeBookRenderData(Book book, BookPage page) {
+    final config = context.config;
+
+    final result = <String, dynamic>{
+      'page': {
+        'dir': page.dir,
+        'content': page.content,
+      },
+      'summary': {
+        'parts': [],
+      },
+      'glossary': {
+      },
+      'gitbook': {
+      },
+      'template': {
+        'getJSContext': () {
+          return {};
+        }
+      },
+      'getPageByPath': (String path) {
+        return book.pages[path];
+      },
+      'plugins': {
+        'resources': {
+          'js': [],
+          'css': [
+          ]
+        }
+      },
+    };
+    final conf = Map.of(config.values);
+    conf.addAll(<String, dynamic>{
+      'styles': <String, String>{
+        // "website": "styles/website.css",
+      },
+      'links': {
+      },
+      'pluginsConfig': {
+        'theme-default': {
+          'showLevel': 2,
+        }
+      },
+      'language': book.lang,
+    });
+    result['config'] = conf;
+    return result;
   }
 }
+
+
+const _i18n = <String, String>{
+  "LANGS_CHOOSE": "选择一种语言",
+  "GLOSSARY": "术语表",
+  "GLOSSARY_INDEX": "索引",
+  "GLOSSARY_OPEN": "术语表",
+  "GITBOOK_LINK": "本书使用 GitBook 发布",
+  "SUMMARY": "目录",
+  "SUMMARY_INTRODUCTION": "介绍",
+  "SUMMARY_TOGGLE": "目录",
+  "SEARCH_TOGGLE": "搜索",
+  "SEARCH_PLACEHOLDER": "输入并搜索",
+  "FONTSETTINGS_TOGGLE": "字体设置",
+  "SHARE_TOGGLE": "分享",
+  "SHARE_ON": "分享到 {{platform}}",
+  "FONTSETTINGS_WHITE": "白色",
+  "FONTSETTINGS_SEPIA": "棕褐色",
+  "FONTSETTINGS_NIGHT": "夜间",
+  "FONTSETTINGS_SANS": "无衬线体",
+  "FONTSETTINGS_SERIF": "衬线体"
+};

@@ -1,3 +1,4 @@
+import 'dart:convert' show json;
 import 'dart:io' show Directory, File, Platform;
 
 import 'package:dartbook/context.dart';
@@ -76,16 +77,22 @@ class Output {
     final pkgRoot = p.normalize(p.join(p.dirname(Platform.script.path), '..'));
     final prefix = opt.format;
     final dir = '$pkgRoot/theme/_layouts';
+    const filename = 'index.html';
 
     final env = Environment(
       filters: {
-        'resolveAsset': (f) => '/$f',
-        'resolveFile': (f) => '/$f',
-        'contentURL': (url) => url,
+        'resolveAsset': (f) {
+          final filepath = p.join('gitbook', f);
+          return filepath;
+        },
+        'resolveFile': (f) => f,
+        'contentURL': (path) => p.dirname(path),
         'fileExists': (f) => true,
         't': (id) => i18n[id],
+        // auto escape
         'safe': (f) => f,
-        'dump': (f) => f,
+        // JSON.stringify
+        'dump': (f) => json.encode(f),
       },
       loader: TemplateLoader(
         {
@@ -96,7 +103,6 @@ class Output {
         ),
       ),
     );
-    const filename = 'index.html';
     final template = env.getTemplate('languages.html');
     final data = _makeLanguageManagerData();
     final result = template.render(data);
@@ -111,6 +117,7 @@ class Output {
     final config = context.config;
     final result = <String, dynamic>{
       'page': {
+        'dir': "ltr",
       },
       'gitbook': {
       },
@@ -120,6 +127,7 @@ class Output {
         }
       },
       'getPageByPath': (path) {
+        // TODO: book[path]
         return true;
       },
       'plugins': {

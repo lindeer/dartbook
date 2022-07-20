@@ -2,10 +2,10 @@
 class BookPage {
   final String filename;
   final Map<String, String>? attributes;
-  final String? content;
+  String? content;
   final String dir;
 
-  const BookPage({
+  BookPage({
     required this.filename,
     this.attributes,
     this.content,
