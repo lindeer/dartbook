@@ -1,5 +1,4 @@
 import 'package:dartbook/context.dart';
-import 'package:dartbook/generator.dart';
 import 'package:dartbook/logger.dart';
 import 'package:dartbook/output.dart';
 import 'package:dartbook/parser.dart';
@@ -8,7 +7,7 @@ import 'package:path/path.dart' as p;
 void main(List<String> args) {
   final options = {
     'format': 'website',
-    'log': 'info',
+    'log': 'debug',
   };
 
   int len = args.length;
@@ -27,9 +26,8 @@ void main(List<String> args) {
   );
 
   final fmt = options['format'] ?? 'website';
-  final output = Output(Option(
+  Output.generate(context, Option(
     format: fmt,
     root: p.join(rootDir, out),
   ));
-  output.generate(context);
 }
