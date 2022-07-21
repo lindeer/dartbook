@@ -1,5 +1,7 @@
-import 'dart:io' show File, Platform;
+import 'dart:convert' show json;
+import 'dart:io' show Directory, File, Platform;
 
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:jinja/jinja.dart' show Environment;
 import 'package:jinja/loaders.dart' show FileSystemLoader;
 import 'package:path/path.dart' as p;
@@ -38,6 +40,7 @@ class ThemeManager {
         ],
       ),
     );
+    final i18n = stringRes;
     final env = Environment(
       loader: loader,
       filters: <String, Function>{
@@ -50,26 +53,28 @@ class ThemeManager {
     );
     return TemplateEngine(env);
   }
+
+  Map<String, String> get stringRes {
+    final file = File('$_innerThemeDir/_i18n/$lang.html');
+    final f = file.existsSync() ? file : File(_similarI18n);
+    final res = json.decode(f.readAsStringSync()).cast<String, String>();
+    if (themeDir != null) {
+      final file = File('$themeDir/_i18n/$lang.html');
+      if (file.existsSync()) {
+        final override = json.decode(file.readAsStringSync()).cast<String, String>();
+        res.addAll(override);
+      }
+    }
+    return res;
+  }
+
+  String get _similarI18n {
+    final dir = Directory('$_innerThemeDir/_i18n');
+    final names = dir.listSync(recursive: false)
+        .map((e) => p.relative(e.path, from: dir.path));
+    final prefix = lang.length > 2 ? lang.substring(0, 2) : lang;
+    final filter = names.where((s) => s.substring(0, 2) == prefix);
+    final filename = filter.firstOrNull ?? 'en.json';
+    return p.join(dir.path, filename);
+  }
 }
-
-
-const i18n = <String, String>{
-  "LANGS_CHOOSE": "选择一种语言",
-  "GLOSSARY": "术语表",
-  "GLOSSARY_INDEX": "索引",
-  "GLOSSARY_OPEN": "术语表",
-  "GITBOOK_LINK": "本书使用 GitBook 发布",
-  "SUMMARY": "目录",
-  "SUMMARY_INTRODUCTION": "介绍",
-  "SUMMARY_TOGGLE": "目录",
-  "SEARCH_TOGGLE": "搜索",
-  "SEARCH_PLACEHOLDER": "输入并搜索",
-  "FONTSETTINGS_TOGGLE": "字体设置",
-  "SHARE_TOGGLE": "分享",
-  "SHARE_ON": "分享到 {{platform}}",
-  "FONTSETTINGS_WHITE": "白色",
-  "FONTSETTINGS_SEPIA": "棕褐色",
-  "FONTSETTINGS_NIGHT": "夜间",
-  "FONTSETTINGS_SANS": "无衬线体",
-  "FONTSETTINGS_SERIF": "衬线体"
-};
