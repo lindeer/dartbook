@@ -27,7 +27,7 @@ void main(List<String> args) {
   );
 
   final fmt = options['format'] ?? 'website';
-  final output = Output(Options(
+  final output = Output(Option(
     format: fmt,
     root: p.join(rootDir, out),
   ));

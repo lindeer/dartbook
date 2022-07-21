@@ -7,14 +7,14 @@ import 'generator.dart';
 import 'theme_manager.dart';
 
 class Output {
-  final Options opt;
+  final Option opt;
 
   const Output(this.opt);
 
   void generate(BookContext context) {
     final out = opt.root;
     final logger = context.logger;
-    logger.d('clean up folder: "$out"');
+    logger.d('generate whole book in "$out"');
     final at = DateTime.now().millisecondsSinceEpoch;
     final folder = Directory(out);
     if (!folder.existsSync()) {

@@ -9,7 +9,7 @@ import 'package:path/path.dart' as p;
 import 'context.dart';
 import 'template/template_engine.dart';
 
-class Options {
+class Option {
   final String format;
   /// Root folder for the output
   final String root;
@@ -18,15 +18,15 @@ class Options {
   /// Use directory index url instead of "index.html"
   final bool directoryIndex;
 
-  const Options({
+  const Option({
     required this.format,
     required this.root,
     this.prefix,
     this.directoryIndex = true,
   });
 
-  Options copyWith({String? format, String? root, String? prefix, bool? index}) {
-    return Options(
+  Option copyWith({String? format, String? root, String? prefix, bool? index}) {
+    return Option(
       format: format ?? this.format,
       root: root ?? this.root,
       prefix: prefix ?? this.prefix,
@@ -36,7 +36,7 @@ class Options {
 }
 
 class Generator {
-  final Options opt;
+  final Option opt;
   final BookContext context;
   final TemplateEngine engine;
 
@@ -82,12 +82,12 @@ class Generator {
     if (!out.parent.existsSync()) {
       out.createSync(recursive: true);
     }
-    final data = _makeBookRenderData(book, page);
+    final data = _makePageRenderData(book, page);
     final result = engine.renderPage(data);
     out.writeAsStringSync(result);
   }
 
-  Map<String, dynamic> _makeBookRenderData(Book book, BookPage page) {
+  Map<String, dynamic> _makePageRenderData(Book book, BookPage page) {
     final config = context.config;
     final summary = book.summary.json;
 
