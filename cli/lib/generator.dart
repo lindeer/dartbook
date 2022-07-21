@@ -1,15 +1,13 @@
 
-import 'dart:convert';
-import 'dart:io' show File, Platform;
+import 'dart:io' show File;
 
-import 'package:dartbook/template/template_loader.dart';
 import 'package:dartbook_models/book.dart';
+import 'package:dartbook_models/language.dart';
 import 'package:dartbook_models/page.dart';
-import 'package:jinja/jinja.dart';
-import 'package:jinja/loaders.dart';
 import 'package:path/path.dart' as p;
 
 import 'context.dart';
+import 'template/template_engine.dart';
 
 class Options {
   final String format;
@@ -26,67 +24,23 @@ class Options {
     this.prefix,
     this.directoryIndex = true,
   });
-}
 
-typedef _GeneratorCreator = Generator Function(Options opt);
-
-abstract class Generator {
-  final String name;
-  final Options opt;
-
-  const Generator.__(this.name, this.opt);
-
-  // TODO: prepare(BookContext context, Book book)
-  void prepare(BookContext context, String bookKey);
-
-  void generateAssets(Iterable<String> assets) {
-  }
-
-  void generatePages(Book book) {
-  }
-
-  void init(BookContext context, String bookKey);
-
-  void finish(BookContext context, String bookKey);
-}
-
-class GeneratorFactory {
-  final BookContext context;
-  final Options opt;
-  final Map<String, _GeneratorCreator> _factories;
-
-  GeneratorFactory(this.context, this.opt)
-      : _factories = <String, _GeneratorCreator> {
-    'website' : (Options opt) => WebGenerator(context, opt),
-  };
-
-  Generator create({String? format, String? root, String? prefix, bool? index}) {
-    final newOpt = Options(
-      format: format ?? opt.format,
-      root: root ?? opt.root,
-      prefix: prefix ?? opt.prefix,
-      directoryIndex: index ?? opt.directoryIndex,
+  Options copyWith({String? format, String? root, String? prefix, bool? index}) {
+    return Options(
+      format: format ?? this.format,
+      root: root ?? this.root,
+      prefix: prefix ?? this.prefix,
+      directoryIndex: index ?? directoryIndex,
     );
-    return _factories[newOpt.format]!.call(newOpt);
   }
 }
 
-class WebGenerator extends Generator {
+class Generator {
+  final Options opt;
   final BookContext context;
+  final TemplateEngine engine;
 
-  WebGenerator(this.context, Options opt) : super.__('website', opt);
-
-  @override
-  void prepare(BookContext context, String bookKey) {
-  }
-
-  @override
-  void init(BookContext context, String bookKey) {
-  }
-
-  @override
-  void finish(BookContext context, String bookKey) {
-  }
+  Generator(this.opt, this.context, this.engine);
 
   static _toOutputName(Book book, String filename) {
     final readme = book.readme;
@@ -97,7 +51,6 @@ class WebGenerator extends Generator {
     return name;
   }
 
-  @override
   void generatePages(Book book) {
     final logger = context.logger;
     final pages = book.pages;
@@ -129,35 +82,8 @@ class WebGenerator extends Generator {
     if (!out.parent.existsSync()) {
       out.createSync(recursive: true);
     }
-    final pkgRoot = p.normalize(p.join(p.dirname(Platform.script.path), '..'));
-    final layoutDir = '$pkgRoot/theme/_layouts';
-    final prefix = opt.format;
-    final env = Environment(
-      filters: {
-        'resolveAsset': (f) {
-          final filepath = p.join('gitbook', f);
-          return filepath;
-        },
-        'resolveFile': (f) => f,
-        'contentURL': (path) => p.dirname(path),
-        'fileExists': (f) => true,
-        't': (id) => _i18n[id],
-        // auto escape
-        'safe': (f) => f,
-        // JSON.stringify
-        'dump': (f) => json.encode(f),
-      },
-      loader: TemplateLoader(
-        {
-          'layout.html': File('$layoutDir/layout.html').readAsStringSync(),
-        },
-        FileSystemLoader(
-          path: '$layoutDir/$prefix',
-        ),
-      ),
-    );
     final data = _makeBookRenderData(book, page);
-    final result = env.getTemplate('page.html').render(data);
+    final result = engine.renderPage(data);
     out.writeAsStringSync(result);
   }
 
@@ -210,26 +136,48 @@ class WebGenerator extends Generator {
     result['config'] = conf;
     return result;
   }
+
+  void lingualIndex(LanguageManager langMgr) {
+    final content = engine.renderLingualIndex(_makeLingualIndexData(langMgr));
+    File(p.join(opt.root, 'index.html')).writeAsStringSync(content);
+  }
+
+  Map<String, dynamic> _makeLingualIndexData(LanguageManager langMgr) {
+    final config = context.config;
+    final result = <String, dynamic>{
+      'page': {
+        'dir': "ltr",
+      },
+      'gitbook': {
+      },
+      'template': {
+        'getJSContext': () {
+          return {};
+        }
+      },
+      'plugins': {
+        'resources': {
+          'js': [],
+          'css': [
+          ]
+        }
+      },
+      'config': {
+        ...config.values,
+        'styles': <String, String>{
+          // "website": "styles/website.css",
+        },
+        'links': {
+        },
+        'pluginsConfig': {
+          'theme-default': {
+            'showLevel': 2,
+          }
+        },
+        'language': 'en'
+      },
+      ...langMgr.json,
+    };
+    return result;
+  }
 }
-
-
-const _i18n = <String, String>{
-  "LANGS_CHOOSE": "选择一种语言",
-  "GLOSSARY": "术语表",
-  "GLOSSARY_INDEX": "索引",
-  "GLOSSARY_OPEN": "术语表",
-  "GITBOOK_LINK": "本书使用 GitBook 发布",
-  "SUMMARY": "目录",
-  "SUMMARY_INTRODUCTION": "介绍",
-  "SUMMARY_TOGGLE": "目录",
-  "SEARCH_TOGGLE": "搜索",
-  "SEARCH_PLACEHOLDER": "输入并搜索",
-  "FONTSETTINGS_TOGGLE": "字体设置",
-  "SHARE_TOGGLE": "分享",
-  "SHARE_ON": "分享到 {{platform}}",
-  "FONTSETTINGS_WHITE": "白色",
-  "FONTSETTINGS_SEPIA": "棕褐色",
-  "FONTSETTINGS_NIGHT": "夜间",
-  "FONTSETTINGS_SANS": "无衬线体",
-  "FONTSETTINGS_SERIF": "衬线体"
-};

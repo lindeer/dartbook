@@ -26,12 +26,10 @@ void main(List<String> args) {
     parser: parser,
   );
 
-  final fmt = options['format'];
-  final generator = GeneratorFactory(context, Options(
-    format: fmt!,
+  final fmt = options['format'] ?? 'website';
+  final output = Output(Options(
+    format: fmt,
     root: p.join(rootDir, out),
   ));
-
-  final output = Output(generator);
-  output.generate();
+  output.generate(context);
 }
