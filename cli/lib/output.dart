@@ -75,10 +75,12 @@ class Output {
       output.generatePages(gen, book);
     }
 
+    final output = Output._(context, opt);
     if (langMgr != null) {
       final content = gen.lingualPage(langMgr);
       File(p.join(opt.root, 'index.html')).writeAsStringSync(content);
     }
+    output.generateAssets();
 
     final d = Duration(milliseconds: DateTime.now().millisecondsSinceEpoch - at);
     final mills = d.inMilliseconds.remainder(Duration.millisecondsPerSecond);
@@ -121,5 +123,16 @@ class Output {
       out.createSync(recursive: true);
     }
     out.writeAsStringSync(result);
+  }
+
+  void generateAssets() {
+    final root = context.root;
+    final out = opt.root;
+    final files = context.listAssets(relative: true);
+    for (final file in files) {
+      final from = p.join(root, file);
+      final to = p.join(out, file);
+      File(from).copySync(to);
+    }
   }
 }

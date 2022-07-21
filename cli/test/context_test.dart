@@ -40,6 +40,12 @@ void main() {
       '$root1/en/assets/css/normal.css',
     });
 
+    expect(multilingual.listAssets(relative: true).toSet(), {
+      'unused.txt',
+      'en/images/a.png',
+      'en/assets/css/normal.css',
+    });
+
     expect(normal.listAssets().toSet(), {
       '$root2/images/a.png',
       '$root2/assets/css/normal.css',

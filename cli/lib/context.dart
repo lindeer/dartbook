@@ -54,13 +54,14 @@ class BookContext {
         .assemble(root);
   }
 
-  Iterable<String> listAssets() {
-    return [
+  Iterable<String> listAssets({bool relative = false}) {
+    final assets = [
       if (isMultilingual)
         ..._filterFilesIn(root, (f) => !ignore.isIgnored(f)),
       for (final book in books.values)
         ..._filterFilesIn(book.bookPath, book.isAsset),
     ];
+    return relative ? assets.map((e) => p.relative(e, from: root)) : assets;
   }
 
   static Iterable<String> _filterFilesIn(String dir, bool Function(String path) filter) {
