@@ -2,7 +2,7 @@ import 'dart:convert' show json;
 import 'dart:io' show Directory, File, Platform;
 
 import 'package:collection/collection.dart' show IterableExtension;
-import 'package:jinja/jinja.dart' show Environment;
+import 'package:jinja/jinja.dart' show Environment, Loader;
 import 'package:jinja/loaders.dart' show FileSystemLoader;
 import 'package:path/path.dart' as p;
 import 'template/template_engine.dart';
@@ -14,6 +14,8 @@ class ThemeManager {
   final String? themeDir;
   final _innerThemeDir = p.normalize(p.join(
       p.dirname(Platform.script.path), '../theme'));
+  Map<String, dynamic>? _cacheStringRes;
+  Loader? _cacheLoader;
 
   ThemeManager({
     required this.lang,
@@ -25,22 +27,8 @@ class ThemeManager {
     String? path,
     Map<String, Function>? filters,
   }) {
-    final parent = File('$_innerThemeDir/_layouts/layout.html').readAsStringSync();
-    final loader = TemplateLoader(
-      {
-        'layout.html': parent,
-      },
-      FileSystemLoader(
-        paths: [
-          if (path != null)
-            path,
-          if (themeDir != null)
-            '$themeDir/_layouts/$layoutType',
-          '$_innerThemeDir/_layouts/$layoutType',
-        ],
-      ),
-    );
-    final i18n = stringRes;
+    final loader = (_cacheLoader ??= _makeLoader(path));
+    final i18n = (_cacheStringRes ??= _makeStringRes());
     final env = Environment(
       loader: loader,
       filters: <String, Function>{
@@ -54,7 +42,25 @@ class ThemeManager {
     return TemplateEngine(env);
   }
 
-  Map<String, String> get stringRes {
+  Loader _makeLoader(String? path) {
+    final parent = File('$_innerThemeDir/_layouts/layout.html').readAsStringSync();
+    return TemplateLoader(
+      {
+        'layout.html': parent,
+      },
+      FileSystemLoader(
+        paths: [
+          if (path != null)
+            path,
+          if (themeDir != null)
+            '$themeDir/_layouts/$layoutType',
+          '$_innerThemeDir/_layouts/$layoutType',
+        ],
+      ),
+    );
+  }
+
+  Map<String, String> _makeStringRes() {
     final file = File('$_innerThemeDir/_i18n/$lang.html');
     final f = file.existsSync() ? file : File(_similarI18n);
     final res = json.decode(f.readAsStringSync()).cast<String, String>();
