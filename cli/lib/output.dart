@@ -51,18 +51,10 @@ class Output {
     }
 
     final theme = ThemeManager(lang: 'zh', layoutType: opt.format);
-    final engine = theme.buildEngine(
-      filters: <String, Function>{
-        'resolveAsset': (f) {
-          final filepath = p.join('/gitbook', f);
-          return filepath;
-        },
-        'resolveFile': (f) => f,
-        'contentURL': (path) => p.dirname(path),
-        'fileExists': (f) => true,
-      },
+    final gen = Generator(
+      theme: theme,
+      directoryIndex: opt.directoryIndex,
     );
-    final gen = Generator(context, engine);
     final langMgr = context.langManager;
     final keys = langMgr?.items.keys ?? [''];
     for (final lang in keys) {
@@ -77,7 +69,7 @@ class Output {
 
     final output = Output._(context, opt);
     if (langMgr != null) {
-      final content = gen.lingualPage(langMgr);
+      final content = gen.lingualPage(context);
       File(p.join(opt.root, 'index.html')).writeAsStringSync(content);
     }
     output.generateAssets();
@@ -85,31 +77,6 @@ class Output {
     final d = Duration(milliseconds: DateTime.now().millisecondsSinceEpoch - at);
     final mills = d.inMilliseconds.remainder(Duration.millisecondsPerSecond);
     logger.i('generation finished with success in ${d.inSeconds}.${mills}s.');
-  }
-
-  static const _skipName = {'', '.', '..'};
-
-  static String _toOutputName(Book book, String filename) {
-    filename = p.normalize(filename);
-    final readme = book.readme;
-    final base = p.basename(filename);
-    final name = base == 'README' || readme.filename == filename
-        ? p.join(p.dirname(filename), 'index.html')
-        : _skipName.contains(filename)
-        ? filename
-        : p.setExtension(filename, '.html');
-    return p.normalize(name);
-  }
-
-  String _toUrl(Book book, String filename) {
-    if (filename.startsWith('/')) {
-      filename = filename.substring(1);
-    }
-    String file = _toOutputName(book, filename);
-    if (opt.directoryIndex && p.basename(file) == 'index.html') {
-      file = p.dirname(file);
-    }
-    return p.normalize(file);
   }
 
   void generatePages(Generator generator, Book book) {
@@ -123,11 +90,7 @@ class Output {
           logger.w("Page '${"${book.root}/$filename"}' not exists!");
           continue;
         }
-        String _resolveFile(String f) {
-          f = _toUrl(book, f);
-          return p.relative(f, from: p.dirname(filename));
-        }
-        final outputName = _toOutputName(book, filename);
+        final outputName = book.outputName(filename);
         _generatePage(outputName, generator.generatePage(book, page));
       } on Exception catch (e) {
         logger.d("generate page '${page.filename}' failed by ${e.toString()}, ignored.");

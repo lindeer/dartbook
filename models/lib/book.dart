@@ -1,7 +1,7 @@
 
 import 'package:dartbook_models/article.dart';
 import 'package:dartbook_models/page.dart';
-import 'package:path/path.dart' as path;
+import 'package:path/path.dart' as p;
 
 import 'config.dart';
 import 'glossary.dart';
@@ -50,7 +50,7 @@ class Book {
   bool isIgnoredFile(String filename) {
     final l = lang;
     if (l != null) {
-      filename = path.join(l, filename);
+      filename = p.join(l, filename);
     }
     return ignore.isIgnored(filename);
   }
@@ -58,7 +58,7 @@ class Book {
   bool isContentFileIgnored(String filename) {
     final root = config['root'];
     if (root != null) {
-      filename = path.join(root, filename);
+      filename = p.join(root, filename);
     }
     return isIgnoredFile(filename);
   }
@@ -103,6 +103,19 @@ class Book {
       if (prev != null)
         'previous': prev.json,
     };
+  }
+
+  static const _skipName = {'', '.', '..'};
+
+  String outputName(String filename) {
+    filename = p.normalize(filename);
+    final base = p.basename(filename);
+    final name = base == 'README' || readme.filename == filename
+        ? p.join(p.dirname(filename), 'index.html')
+        : _skipName.contains(filename)
+        ? filename
+        : p.setExtension(filename, '.html');
+    return p.normalize(name);
   }
 
   /*
