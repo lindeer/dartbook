@@ -92,4 +92,43 @@ class BookSummary {
       }
     }
   }
+
+  SummaryArticle? findArticle(bool Function(SummaryArticle a) test) {
+    SummaryArticle? result;
+    for (final part in parts) {
+      final root = SummaryArticle(
+        level: '',
+        title: '',
+        articles: part.articles,
+      );
+      result = root.filter(test);
+      if (result != null) {
+        break;
+      }
+    }
+    return result;
+  }
+
+  SummaryArticle? nextArticle(SummaryArticle article) {
+    final level = article.level;
+    bool wasPrev = false;
+    return findArticle((a) {
+      if (wasPrev) return true;
+      wasPrev = (a.level == level);
+      return false;
+    });
+  }
+
+  SummaryArticle? prevArticle(SummaryArticle article) {
+    final level = article.level;
+    SummaryArticle? prev;
+    findArticle((a) {
+      if (a.level == level) {
+        return true;
+      }
+      prev = a;
+      return false;
+    });
+    return prev;
+  }
 }

@@ -1,4 +1,5 @@
 
+import 'package:dartbook_models/article.dart';
 import 'package:dartbook_models/page.dart';
 import 'package:path/path.dart' as path;
 
@@ -69,6 +70,39 @@ class Book {
         && filename != config.filename
         && !pages.keys.contains(filename)
         && !isIgnoredFile(filename);
+  }
+
+  Map<String, dynamic> pageJson(BookPage page) {
+    final file = page.filename;
+    final article = summary.byPath(file);
+    final attributes = page.attributes;
+    return {
+      'page': {
+        'content': page.content,
+        'dir': page.dir,
+        if (attributes != null)
+          ...attributes,
+        if (article != null)
+          ...navJson(article),
+      },
+      'file': {
+        'path': file,
+      },
+    };
+  }
+
+  Map<String, dynamic> navJson(SummaryArticle article) {
+    final next = summary.nextArticle(article);
+    final prev = summary.prevArticle(article);
+    return {
+      'title': article.title,
+      'level': article.level,
+      'depth': article.depth,
+      if (next != null)
+        'next': next.json,
+      if (prev != null)
+        'previous': prev.json,
+    };
   }
 
   /*

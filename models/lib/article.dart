@@ -48,6 +48,13 @@ class SummaryArticle {
     return PathUtils.flatten(pathname);
   }
 
+  String? get anchor {
+    final pos = ref?.indexOf('#');
+    return pos == null || pos < 0 ? null : ref?.substring(pos);
+  }
+
+  String? get url => isExternal ? ref : null;
+
   SummaryArticle? byLevel(String level) {
     final levels = level.split('.');
     SummaryArticle? result = this;
@@ -71,14 +78,26 @@ class SummaryArticle {
     return null;
   }
 
+  /// encodeSummaryArticle.js
   static Map<String, dynamic> _toJson(SummaryArticle article) {
     final r = article.ref;
+    final path = article.path;
+    final anchor = article.anchor;
+    final depth = article.depth;
+    final url = article.url;
     final items = article.articles;
     return {
       'level': article.level,
       'title': article.title,
+      'depth': depth,
       if (r != null)
-        'path': r,
+        'ref': r,
+      if (path != null)
+        'path': path,
+      if (anchor != null)
+        'anchor': anchor,
+      if (url != null)
+        'url': url,
       if (items != null)
         'articles': items.map(_toJson),
     };

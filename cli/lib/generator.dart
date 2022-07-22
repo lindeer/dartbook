@@ -22,14 +22,9 @@ class Generator {
     final summary = book.summary.json;
 
     final result = <String, dynamic>{
-      'page': {
-        'dir': page.dir,
-        'content': page.content,
-      },
+      ...book.pageJson(page),
       ...summary,
       'glossary': {
-      },
-      'file': {
       },
       'gitbook': {
       },

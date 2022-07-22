@@ -54,7 +54,7 @@ class Output {
     final engine = theme.buildEngine(
       filters: <String, Function>{
         'resolveAsset': (f) {
-          final filepath = p.join('gitbook', f);
+          final filepath = p.join('/gitbook', f);
           return filepath;
         },
         'resolveFile': (f) => f,
