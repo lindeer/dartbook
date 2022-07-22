@@ -87,13 +87,29 @@ class Output {
     logger.i('generation finished with success in ${d.inSeconds}.${mills}s.');
   }
 
+  static const _skipName = {'', '.', '..'};
+
   static String _toOutputName(Book book, String filename) {
+    filename = p.normalize(filename);
     final readme = book.readme;
     final base = p.basename(filename);
     final name = base == 'README' || readme.filename == filename
-        ? p.normalize(p.join(p.dirname(filename), 'index.html'))
+        ? p.join(p.dirname(filename), 'index.html')
+        : _skipName.contains(filename)
+        ? filename
         : p.setExtension(filename, '.html');
-    return name;
+    return p.normalize(name);
+  }
+
+  String _toUrl(Book book, String filename) {
+    if (filename.startsWith('/')) {
+      filename = filename.substring(1);
+    }
+    String file = _toOutputName(book, filename);
+    if (opt.directoryIndex && p.basename(file) == 'index.html') {
+      file = p.dirname(file);
+    }
+    return p.normalize(file);
   }
 
   void generatePages(Generator generator, Book book) {
@@ -103,6 +119,14 @@ class Output {
       try {
         final filename = page.filename;
         page.content = _attachPageContent(p.join(book.root, filename));
+        if (page.content == null) {
+          logger.w("Page '${"${book.root}/$filename"}' not exists!");
+          continue;
+        }
+        String _resolveFile(String f) {
+          f = _toUrl(book, f);
+          return p.relative(f, from: p.dirname(filename));
+        }
         final outputName = _toOutputName(book, filename);
         _generatePage(outputName, generator.generatePage(book, page));
       } on Exception catch (e) {
@@ -113,7 +137,11 @@ class Output {
 
   String? _attachPageContent(String filePath) {
     final parser = context.parser;
-    final htmlPage = parser.page(File(filePath).readAsStringSync());
+    final file = File(filePath);
+    if (!file.existsSync()) {
+      return null;
+    }
+    final htmlPage = parser.page(file.readAsStringSync());
     return htmlPage.content;
   }
 
