@@ -1,24 +1,16 @@
 
 import 'package:dartbook/context.dart';
-import 'package:dartbook/logger.dart';
-import 'package:dartbook/parser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  final logger = Logger('info');
   final root1 = 'test/_data_multilingual';
-  final parser = MarkdownParser(logger);
   final multilingual = BookContext.assemble(
     root: root1,
-    logger: logger,
-    parser: parser,
   );
 
   final root2 = 'test/_data_normal';
   final normal = BookContext.assemble(
     root: root2,
-    logger: logger,
-    parser: parser,
   );
 
   test('context structure file', () {

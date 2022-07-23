@@ -2,6 +2,7 @@ import 'dart:collection' show Queue;
 import 'dart:convert' show json;
 import 'dart:io' show Directory, File, FileSystemEntity, IOException;
 
+import 'package:dartbook/parser.dart';
 import 'package:dartbook_models/book.dart';
 import 'package:dartbook_models/config.dart';
 import 'package:dartbook_models/const/config.dart';
@@ -47,11 +48,12 @@ class BookContext {
 
   static BookContext assemble({
     required String root,
-    required Logger logger,
-    required Parser parser,
+    Map<String, String>? options,
   }) {
+    final logger = Logger(options?['log']);
+    final parser = MarkdownParser(logger);
     return _Assembler(logger: logger, parser: parser)
-        .assemble(root);
+        .assemble(root, options);
   }
 
   Iterable<String> listAssets({bool relative = false}) {
@@ -106,13 +108,13 @@ const _defaultIgnores = [
 
 class _ResultHolder {
   final String bookPath;
-  final String logLevel;
+  final Map<String, String> params;
   bool isLangBook = false;
   final BookIgnore ignore;
   BookConfig? config;
   LanguageManager? langs;
 
-  _ResultHolder(this.bookPath, this.logLevel): ignore = BookIgnore();
+  _ResultHolder(this.bookPath, this.params): ignore = BookIgnore();
 
   String path(String filename) => p.join(bookPath, filename);
 }
@@ -123,8 +125,8 @@ class _Assembler {
 
   _Assembler({required this.logger, required this.parser});
 
-  BookContext assemble(String root) {
-    final holder = _ResultHolder(root,'info');
+  BookContext assemble(String root, [Map<String, String>? params]) {
+    final holder = _ResultHolder(root, params ?? {});
     _parseIgnore(holder);
     _parseConfig(holder);
     final langs = holder.langs =
@@ -204,7 +206,7 @@ class _Assembler {
     final langs = parent.langs!;
     final children = langs.items.values.map((lang) {
       final id = lang.id;
-      final child = _ResultHolder(parent.path(id), 'info');
+      final child = _ResultHolder(parent.path(id), parent.params);
       child.ignore
         ..update(parent.ignore)
         ..add('$id/**');
