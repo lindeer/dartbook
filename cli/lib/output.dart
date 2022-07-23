@@ -6,6 +6,7 @@ import 'package:path/path.dart' as p;
 
 import 'generator.dart';
 import 'theme_manager.dart';
+import 'io.dart' show writeToFile;
 
 class Option {
   final String format;
@@ -50,7 +51,11 @@ class Output {
       folder.createSync(recursive: true);
     }
 
-    final theme = ThemeManager(lang: 'zh', layoutType: opt.format);
+    final theme = ThemeManager(
+      lang: 'zh',
+      layoutType: opt.format,
+      dir: p.join(context.root, 'theme'),
+    );
     final gen = Generator(
       theme: theme,
       directoryIndex: opt.directoryIndex,
@@ -73,6 +78,7 @@ class Output {
       File(p.join(opt.root, 'index.html')).writeAsStringSync(content);
     }
     output.generateAssets();
+    theme.copyAssets(p.join(opt.root, 'gitbook'));
 
     final d = Duration(milliseconds: DateTime.now().millisecondsSinceEpoch - at);
     final mills = d.inMilliseconds.remainder(Duration.millisecondsPerSecond);
@@ -91,7 +97,7 @@ class Output {
           continue;
         }
         final outputName = book.outputName(filename);
-        _generatePage(outputName, generator.generatePage(book, page));
+        writeToFile(p.join(opt.root, outputName), generator.generatePage(book, page));
       } on Exception catch (e) {
         logger.d("generate page '${page.filename}' failed by ${e.toString()}, ignored.");
       }
@@ -106,14 +112,6 @@ class Output {
     }
     final htmlPage = parser.page(file.readAsStringSync());
     return htmlPage.content;
-  }
-
-  void _generatePage(String outputName, String result) {
-    final out = File(p.join(opt.root, outputName));
-    if (!out.parent.existsSync()) {
-      out.createSync(recursive: true);
-    }
-    out.writeAsStringSync(result);
   }
 
   void generateAssets() {

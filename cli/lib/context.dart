@@ -101,6 +101,9 @@ const _defaultIgnores = [
   // Skip book outputs
   '_book',
 
+  // Skip book theme
+  'theme',
+
   // Ignore files in the templates folder
   '_layouts'
 ];

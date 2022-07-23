@@ -1,5 +1,5 @@
 import 'dart:convert' show json;
-import 'dart:io' show Directory, File, Platform;
+import 'dart:io' show Directory, File, FileSystemEntity, Link, Platform;
 
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:jinja/jinja.dart' show Environment, Loader;
@@ -8,6 +8,20 @@ import 'package:path/path.dart' as p;
 import 'template/template_engine.dart';
 import 'template/template_loader.dart';
 
+import 'io.dart' as io;
+
+bool _isDirectory(String dir) {
+  if (FileSystemEntity.isDirectorySync(dir)) {
+    return true;
+  }
+  if (FileSystemEntity.isLinkSync(dir)) {
+    final link = Link(dir).resolveSymbolicLinksSync();
+    return FileSystemEntity.isDirectorySync(link);
+  }
+  return false;
+}
+
+/// load theme resources from _assets, _i18n, _layouts
 class ThemeManager {
   final String lang;
   final String layoutType;
@@ -20,8 +34,9 @@ class ThemeManager {
   ThemeManager({
     required this.lang,
     required this.layoutType,
-    this.themeDir,
-  });
+    /// default theme dir is 'theme' in book directory, symbol link is also supported
+    String? dir,
+  }): themeDir = dir != null && _isDirectory(dir) ? dir : null;
 
   TemplateEngine buildEngine({
     String? path,
@@ -82,5 +97,14 @@ class ThemeManager {
     final filter = names.where((s) => s.substring(0, 2) == prefix);
     final filename = filter.firstOrNull ?? 'en.json';
     return p.join(dir.path, filename);
+  }
+
+  void copyAssets(String to) {
+    io.copyPathSync(p.join(_innerThemeDir, '_assets', layoutType), to);
+    final d = themeDir;
+    final from = d != null ? p.join(d, '_assets', layoutType) : null;
+    if (from != null) {
+      io.copyPathSync(from, to);
+    }
   }
 }
