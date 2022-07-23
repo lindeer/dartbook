@@ -53,7 +53,6 @@ class Output {
     }
 
     final theme = ThemeManager(
-      lang: 'zh',
       layoutType: opt.format,
       dir: p.join(context.root, 'theme'),
     );

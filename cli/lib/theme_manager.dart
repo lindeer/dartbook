@@ -23,27 +23,26 @@ bool _isDirectory(String dir) {
 
 /// load theme resources from _assets, _i18n, _layouts
 class ThemeManager {
-  final String lang;
   final String layoutType;
   final String? themeDir;
   final _innerThemeDir = p.normalize(p.join(
       p.dirname(Platform.script.path), '..', 'theme'));
-  Map<String, dynamic>? _cacheStringRes;
+  final _cacheStringRes = <String, Map<String, dynamic>>{};
   Loader? _cacheLoader;
 
   ThemeManager({
-    required this.lang,
     required this.layoutType,
     /// default theme dir is 'theme' in book directory, symbol link is also supported
     String? dir,
   }): themeDir = dir != null && _isDirectory(dir) ? dir : null;
 
   TemplateEngine buildEngine({
+    required String lang,
     String? path,
     Map<String, Function>? filters,
   }) {
     final loader = (_cacheLoader ??= _makeLoader(path));
-    final i18n = (_cacheStringRes ??= _makeStringRes());
+    final i18n = (_cacheStringRes[lang] ??= _makeStringRes(lang));
     final env = Environment(
       loader: loader,
       filters: <String, Function>{
@@ -76,9 +75,10 @@ class ThemeManager {
     );
   }
 
-  Map<String, String> _makeStringRes() {
+  Map<String, String> _makeStringRes(String lang) {
+    lang = lang.length > 1 ? lang : 'en';
     final file = File(p.join(_innerThemeDir, '_i18n', '$lang.html'));
-    final f = file.existsSync() ? file : File(_similarI18n);
+    final f = file.existsSync() ? file : File(_similarI18n(lang));
     final res = json.decode(f.readAsStringSync()).cast<String, String>();
     final d = themeDir;
     if (d != null) {
@@ -91,11 +91,11 @@ class ThemeManager {
     return res;
   }
 
-  String get _similarI18n {
+  String _similarI18n(String lang)  {
     final dir = Directory(p.join(_innerThemeDir, '_i18n'));
     final names = dir.listSync(recursive: false)
         .map((e) => p.relative(e.path, from: dir.path));
-    final prefix = lang.length > 2 ? lang.substring(0, 2) : lang;
+    final prefix = lang.length > 1 ? lang.substring(0, 2) : lang;
     final filter = names.where((s) => s.substring(0, 2) == prefix);
     final filename = filter.firstOrNull ?? 'en.json';
     return p.join(dir.path, filename);

@@ -42,6 +42,7 @@ class Generator {
       return p.relative(f, from: p.dirname(filename));
     }
     final engine = theme.buildEngine(
+      lang: book.langPath,
       filters: <String, Function>{
         ..._builtinFilters,
         'resolveFile': _resolveFile,
@@ -98,6 +99,7 @@ class Generator {
 
   String lingualPage(BookContext context) {
     final engine = theme.buildEngine(
+      lang: '',
       filters: _builtinFilters,
     );
     return engine.renderLingualIndex(_makeLingualIndexData(context));
