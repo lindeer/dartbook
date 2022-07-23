@@ -9,6 +9,7 @@ import 'theme_manager.dart';
 import 'io.dart' show writeToFile;
 
 class Option {
+  /// format of generation, e.g. website, pdf
   final String format;
   /// Root folder for the output
   final String root;
@@ -61,12 +62,9 @@ class Output {
       directoryIndex: opt.directoryIndex,
     );
     final langMgr = context.langManager;
-    final keys = langMgr?.items.keys ?? [''];
-    for (final lang in keys) {
-      final item = langMgr?.items[lang];
-      final book = context[lang]!;
-      final option = item == null ? opt : opt.copyWith(
-        root: p.join(opt.root, item.path),
+    for (final book in context.books.values) {
+      final option = opt.copyWith(
+        root: p.join(out, book.langPath),
       );
       final output = Output._(context, option);
       output.generatePages(gen, book);
@@ -75,10 +73,10 @@ class Output {
     final output = Output._(context, opt);
     if (langMgr != null) {
       final content = gen.lingualPage(context);
-      File(p.join(opt.root, 'index.html')).writeAsStringSync(content);
+      File(p.join(out, 'index.html')).writeAsStringSync(content);
     }
     output.generateAssets();
-    theme.copyAssets(p.join(opt.root, 'gitbook'));
+    theme.copyAssets(p.join(out, 'gitbook'));
 
     final d = Duration(milliseconds: DateTime.now().millisecondsSinceEpoch - at);
     final mills = d.inMilliseconds.remainder(Duration.millisecondsPerSecond);
