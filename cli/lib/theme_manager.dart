@@ -27,7 +27,7 @@ class ThemeManager {
   final String layoutType;
   final String? themeDir;
   final _innerThemeDir = p.normalize(p.join(
-      p.dirname(Platform.script.path), '../theme'));
+      p.dirname(Platform.script.path), '..', 'theme'));
   Map<String, dynamic>? _cacheStringRes;
   Loader? _cacheLoader;
 
@@ -58,7 +58,8 @@ class ThemeManager {
   }
 
   Loader _makeLoader(String? path) {
-    final parent = File('$_innerThemeDir/_layouts/layout.html').readAsStringSync();
+    final parent = File(p.join(_innerThemeDir, '_layouts', 'layout.html')).readAsStringSync();
+    final d = themeDir;
     return TemplateLoader(
       {
         'layout.html': parent,
@@ -67,20 +68,21 @@ class ThemeManager {
         paths: [
           if (path != null)
             path,
-          if (themeDir != null)
-            '$themeDir/_layouts/$layoutType',
-          '$_innerThemeDir/_layouts/$layoutType',
+          if (d != null)
+            p.join(d, '_layouts', layoutType),
+          p.join(_innerThemeDir, '_layouts', layoutType),
         ],
       ),
     );
   }
 
   Map<String, String> _makeStringRes() {
-    final file = File('$_innerThemeDir/_i18n/$lang.html');
+    final file = File(p.join(_innerThemeDir, '_i18n', '$lang.html'));
     final f = file.existsSync() ? file : File(_similarI18n);
     final res = json.decode(f.readAsStringSync()).cast<String, String>();
-    if (themeDir != null) {
-      final file = File('$themeDir/_i18n/$lang.html');
+    final d = themeDir;
+    if (d != null) {
+      final file = File(p.join(d, '_i18n', '$lang.html'));
       if (file.existsSync()) {
         final override = json.decode(file.readAsStringSync()).cast<String, String>();
         res.addAll(override);
@@ -90,7 +92,7 @@ class ThemeManager {
   }
 
   String get _similarI18n {
-    final dir = Directory('$_innerThemeDir/_i18n');
+    final dir = Directory(p.join(_innerThemeDir, '_i18n'));
     final names = dir.listSync(recursive: false)
         .map((e) => p.relative(e.path, from: dir.path));
     final prefix = lang.length > 2 ? lang.substring(0, 2) : lang;
