@@ -10,7 +10,10 @@ import 'readme.dart';
 import 'summary.dart';
 
 class Book {
+  /// root directory of book
   final String bookPath;
+  /// path of lingual book
+  final String langPath;
   final BookIgnore ignore;
 
   /// Structure files
@@ -18,6 +21,7 @@ class Book {
   final BookReadme readme;
   final BookSummary summary;
   final BookGlossary glossary;
+  /// language from config, e.g. book.json
   final String? lang;
 
   /// pages in a book
@@ -27,6 +31,7 @@ class Book {
 
   Book({
     required this.bookPath,
+    required this.langPath,
     required this.ignore,
     required this.config,
     required this.readme,
@@ -35,21 +40,22 @@ class Book {
     this.lang,
   });
 
-  String get root {
-    return bookPath;
-  }
+  /// project root directory of whole book
+  String get root => langPath.isEmpty
+      ? bookPath
+      : p.normalize(p.join(bookPath, p.relative('.', from: langPath)));
 
-  String get contentRoot {
-    final root = config['root'];
-    return root;
-  }
+  String filePath(String path) => p.join(bookPath, path);
 
-  /// Return true if book is associated to a language
-  bool get isLanguageBook => lang != null;
+  /// Return true if book is one of multilingual books
+  bool get lingual => langPath.isNotEmpty;
+
+  /// language intent to show in html
+  String get language => lang ?? langPath;
 
   bool isIgnoredFile(String filename) {
-    final l = lang;
-    if (l != null) {
+    final l = langPath;
+    if (l.isNotEmpty) {
       filename = p.join(l, filename);
     }
     return ignore.isIgnored(filename);
@@ -117,30 +123,4 @@ class Book {
         : p.setExtension(filename, '.html');
     return p.normalize(name);
   }
-
-  /*
-  /// Infers the default extension for files
-  String get defaultExt {
-    final exts = [
-      readme.filename,
-      summary.filename,
-      glossary.filename,
-    ].map((f) {
-      final file = File(f);
-      return file.existsSync() ? parser.ext.first : null;
-    }).whereType<String>();
-    return [...exts, '.md'].first;
-  }
-
-  String _defaultPath(String name, bool absolute) {
-    final filename = '$name$defaultExt';
-    return absolute ? path.join(contentRoot, filename) : filename;
-  }
-
-  String readmeDefaultPath(bool absolute) => _defaultPath('README', absolute);
-
-  String summaryDefaultPath(bool absolute) => _defaultPath('SUMMARY', absolute);
-
-  String glossaryDefaultPath(bool absolute) => _defaultPath('GLOSSARY', absolute);
-  */
 }

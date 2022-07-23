@@ -91,9 +91,9 @@ class Output {
     for (final page in pages.values) {
       try {
         final filename = page.filename;
-        page.content = _attachPageContent(p.join(book.root, filename));
+        page.content = _attachPageContent(p.join(book.bookPath, filename));
         if (page.content == null) {
-          logger.w("Page '${"${book.root}/$filename"}' not exists!");
+          logger.w("Page '${book.filePath(filename)}' not exists!");
           continue;
         }
         final outputName = book.outputName(filename);

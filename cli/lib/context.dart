@@ -111,13 +111,17 @@ const _defaultIgnores = [
 
 class _ResultHolder {
   final String bookPath;
+  final String langPath;
   final Map<String, String> params;
-  bool isLangBook = false;
   final BookIgnore ignore;
   BookConfig? config;
   LanguageManager? langs;
 
-  _ResultHolder(this.bookPath, this.params): ignore = BookIgnore();
+  _ResultHolder(
+      this.bookPath,
+      this.langPath,
+      this.params
+      ): ignore = BookIgnore();
 
   String path(String filename) => p.join(bookPath, filename);
 }
@@ -129,14 +133,13 @@ class _Assembler {
   _Assembler({required this.logger, required this.parser});
 
   BookContext assemble(String root, [Map<String, String>? params]) {
-    final holder = _ResultHolder(root, params ?? {});
+    final holder = _ResultHolder(root, '', params ?? {});
     _parseIgnore(holder);
     _parseConfig(holder);
     final langs = holder.langs =
         _safeParseStructure(holder, 'langs', _makeLanguageManager);
     Map<String, Book> books;
     if ((langs?.items.length ?? 0) > 0) {
-      holder.isLangBook = true;
       books = _parseMultilingual(holder);
     } else {
       final result = _parseSkeleton(holder);
@@ -155,9 +158,6 @@ class _Assembler {
 
   BookIgnore _parseIgnore(_ResultHolder holder) {
     final ignore = holder.ignore;
-    if (holder.isLangBook) {
-      return ignore;
-    }
     ignore.addAll(_defaultIgnores);
     for (final f in ignoreFiles) {
       final file = File(holder.path(f));
@@ -209,7 +209,7 @@ class _Assembler {
     final langs = parent.langs!;
     final children = langs.items.values.map((lang) {
       final id = lang.id;
-      final child = _ResultHolder(parent.path(id), parent.params);
+      final child = _ResultHolder(parent.path(id), id, parent.params);
       child.ignore
         ..update(parent.ignore)
         ..add('$id/**');
@@ -232,6 +232,7 @@ class _Assembler {
 
     final book = Book(
       bookPath: holder.bookPath,
+      langPath: holder.langPath,
       ignore: holder.ignore,
       config: holder.config!,
       readme: readme,
