@@ -78,13 +78,14 @@ class Book {
         && !isIgnoredFile(filename);
   }
 
-  Map<String, dynamic> pageJson(BookPage page) {
+  Map<String, dynamic> pageJson(BookPage page, {bool withContent = true}) {
     final file = page.filename;
     final article = summary.byPath(file);
     final attributes = page.attributes;
     return {
       'page': {
-        'content': page.content,
+        if (withContent)
+          'content': page.content,
         'dir': page.dir,
         if (attributes != null)
           ...attributes,

@@ -99,7 +99,7 @@ class SummaryArticle {
       if (url != null)
         'url': url,
       if (items != null)
-        'articles': items.map(_toJson),
+        'articles': items.map(_toJson).toList(growable: false),
     };
   }
 

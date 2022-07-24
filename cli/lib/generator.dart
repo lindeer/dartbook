@@ -1,6 +1,9 @@
 
+import 'dart:convert' show json;
+
 import 'package:dartbook/theme_manager.dart';
 import 'package:dartbook_models/book.dart';
+import 'package:dartbook_models/config.dart';
 import 'package:dartbook_models/page.dart';
 import 'package:path/path.dart' as p;
 
@@ -53,47 +56,34 @@ class Generator {
   }
 
   Map<String, dynamic> _makePageRenderData(Book book, BookPage page) {
-    final config = book.config;
     final summary = book.summary.json;
 
+    final configData = _makeConfigData(book.config, book.langPath);
     final result = <String, dynamic>{
       ...book.pageJson(page),
       ...summary,
+      ...configData,
       'glossary': {
       },
       'gitbook': {
       },
       'template': {
-        'getJSContext': () {
-          return {};
-        }
+        'getJSContext': () => json.encode({
+          ...book.pageJson(page, withContent: false),
+          ...configData,
+          'gitbook': {
+          },
+          'basePath': book.langPath.isEmpty ? '.' : '..',
+          'book': {
+            'language': book.language,
+          },
+        }),
       },
       'getPageByPath': (String path) {
         return book.pages[path];
       },
-      'plugins': {
-        'resources': {
-          'js': [],
-          'css': [
-          ]
-        }
-      },
+      ..._makePluginData(),
     };
-    final conf = Map.of(config.values);
-    conf.addAll(<String, dynamic>{
-      'styles': <String, String>{
-        // "website": "styles/website.css",
-      },
-      'links': {
-      },
-      'pluginsConfig': {
-        'theme-default': {
-          'showLevel': 2,
-        }
-      },
-      'language': book.lang,
-    });
-    result['config'] = conf;
     return result;
   }
 
@@ -110,22 +100,19 @@ class Generator {
     final config = context.config;
     final result = <String, dynamic>{
       'page': {
-        'dir': "ltr",
+        'dir': '',
       },
       'gitbook': {
       },
-      'template': {
-        'getJSContext': () {
-          return {};
-        }
-      },
-      'plugins': {
-        'resources': {
-          'js': [],
-          'css': [
-          ]
-        }
-      },
+      ..._makePluginData(),
+      ..._makeConfigData(config, ''),
+      ...langMgr.json,
+    };
+    return result;
+  }
+
+  Map<String, dynamic> _makeConfigData(BookConfig config, String lang) {
+    return {
       'config': {
         ...config.values,
         'styles': <String, String>{
@@ -138,10 +125,20 @@ class Generator {
             'showLevel': 2,
           }
         },
-        'language': 'en'
+        'language': lang,
       },
-      ...langMgr.json,
     };
-    return result;
+  }
+
+  Map<String, dynamic> _makePluginData() {
+    return {
+      'plugins': {
+        'resources': {
+          'js': [],
+          'css': [
+          ]
+        }
+      },
+    };
   }
 }
