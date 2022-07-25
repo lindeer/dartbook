@@ -7,9 +7,7 @@ const opNotExists = 2;
 
 void writeToFile(String file, String result) {
   final out = File(file);
-  if (!out.parent.existsSync()) {
-    out.createSync(recursive: true);
-  }
+  createFolder(p.dirname(file));
   out.writeAsStringSync(result);
 }
 
@@ -43,4 +41,14 @@ int copyPathSync(String from, String to) {
     }
   }
   return opOK;
+}
+
+bool createFolder(String dir) {
+  final folder = Directory(dir);
+  bool yes = false;
+  if (!folder.existsSync()) {
+    folder.createSync(recursive: true);
+    yes = true;
+  }
+  return yes;
 }

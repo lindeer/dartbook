@@ -6,7 +6,7 @@ import 'package:path/path.dart' as p;
 
 import 'generator.dart';
 import 'theme_manager.dart';
-import 'io.dart' show writeToFile;
+import 'io.dart' show writeToFile, createFolder;
 
 class Option {
   /// format of generation, e.g. website, pdf
@@ -47,10 +47,7 @@ class Output {
     final logger = context.logger;
     logger.d('generate whole book in "$out"');
     final at = DateTime.now().millisecondsSinceEpoch;
-    final folder = Directory(out);
-    if (!folder.existsSync()) {
-      folder.createSync(recursive: true);
-    }
+    createFolder(out);
 
     final theme = ThemeManager(
       layoutType: opt.format,
@@ -93,8 +90,13 @@ class Output {
           logger.w("Page '${book.filePath(filename)}' not exists!");
           continue;
         }
+        final at = DateTime.now().millisecondsSinceEpoch;
         final outputName = book.outputName(filename);
         writeToFile(p.join(opt.root, outputName), generator.generatePage(book, page));
+
+        final d = Duration(milliseconds: DateTime.now().millisecondsSinceEpoch - at);
+        final mills = d.inMilliseconds.remainder(Duration.millisecondsPerSecond);
+        logger.d("generate page '${p.join(book.langPath, page.filename)}' cost ${d.inSeconds}.${mills}s.");
       } on Exception catch (e) {
         logger.d("generate page '${page.filename}' failed by ${e.toString()}, ignored.");
       }
@@ -118,6 +120,7 @@ class Output {
     for (final file in files) {
       final from = p.join(root, file);
       final to = p.join(out, file);
+      createFolder(p.dirname(to));
       File(from).copySync(to);
     }
   }
