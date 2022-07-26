@@ -17,6 +17,7 @@ dependencies:
     path: ../models
   json_schema2: ^2.0.2+6
   jinja: 0.4.0-dev.31
+  html: ^0.15.0
 
 dev_dependencies:
   lints: ^2.0.0
