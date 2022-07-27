@@ -28,42 +28,54 @@ RegExp _makeRegExp(String entry) {
 
 final _escape = HtmlEscape();
 
-/// for each entry, modify the whole dom tree, and then next entry
-void annotateText(Iterable<GlossaryItem> entries, String file, Node doc) {
-  for (final entry in entries) {
-    List<Node>? replacing;
-    doc.visit((node) {
-      if (node is Element && _isIgnored(node)) {
-        return false;
-      }
-      if (node.nodeType != Node.TEXT_NODE) {
+class GlossaryModifier {
+  final Iterable<GlossaryItem> entries;
+  final _regexCache = <String, RegExp>{};
+
+  GlossaryModifier(this.entries);
+
+  /// for each entry, modify the whole dom tree, and then next entry
+  void annotate(String file, Node doc) {
+    for (final entry in entries) {
+      final name = entry.name;
+      final regex = (_regexCache[name] ??= _makeRegExp(name));
+      List<Node>? replacing;
+      doc.visit((node) {
+        if (node is Element && _isIgnored(node)) {
+          return false;
+        }
+        if (node.nodeType != Node.TEXT_NODE) {
+          return true;
+        }
+        final data = (node as Text).data;
+        if (data.trim().isEmpty) {
+          return true;
+        }
+
+        final id = entry.id;
+        final desc = entry.desc;
+        final title = desc != null ? _escape.convert(desc) : '';
+        final e = _replaceNode(node, regex, (m) {
+          return '<a href="/$file#$id" class="glossary-term" title="$title">${m.group(0)}</a>';
+        });
+        if (e != null) {
+          final parent = node.parent;
+          parent?.insertBefore(e, node);
+          final list = (replacing ??= <Node>[]);
+          list.add(node);
+        }
         return true;
-      }
-
-      final id = entry.id;
-      final desc = entry.desc;
-      final title = desc != null ? _escape.convert(desc) : '';
-      final e = _replaceNode(node, entry, (m) {
-        return '<a href="/$file#$id" class="glossary-term" title="$title">${m.group(0)}</a>';
       });
-      if (e != null) {
-        final parent = node.parent;
-        parent?.insertBefore(e, node);
-        final list = (replacing ??= <Node>[]);
-        list.add(node);
-      }
-      return true;
-    });
 
-    /// remove replacing nodes after traversal
-    replacing?.forEach((e) {
-      e.remove();
-    });
+      /// remove replacing nodes after traversal
+      replacing?.forEach((e) {
+        e.remove();
+      });
+    }
   }
 }
 
-Node? _replaceNode(Node node, GlossaryItem entry, String Function(Match match) matcher) {
-  final regex = _makeRegExp(entry.name);
+Node? _replaceNode(Node node, RegExp regex, String Function(Match match) matcher) {
   final old = (node as Text).data;
   final html = old.replaceAllMapped(regex, matcher);
   if (old == html) {

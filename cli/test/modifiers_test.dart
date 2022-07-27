@@ -1,6 +1,6 @@
 import 'package:dartbook_models/glossary.dart';
 import 'package:test/test.dart';
-import 'package:dartbook/modifiers.dart' as m;
+import 'package:dartbook/modifiers.dart' show GlossaryModifier;
 import 'package:html/parser.dart' show parse;
 import 'package:dartbook_models/utils.dart' as utils;
 
@@ -14,7 +14,7 @@ void main() {
   test('annotate pure text', () {
     const text = "Conrad IV is a brother of Henry (VII)";
     final doc = parse(text);
-    m.annotateText(entries, 'GLOSSARY.md', doc);
+    GlossaryModifier(entries).annotate('GLOSSARY.md', doc);
     final links = doc.querySelectorAll('a');
     expect(links.length, 2);
 
@@ -36,7 +36,7 @@ void main() {
     ];
     const text = "康拉德四世(Conrad IV)和Brancaleone von Andalò";
     final doc = parse(text);
-    m.annotateText(items, 'GLOSSARY.md', doc);
+    GlossaryModifier(items).annotate('GLOSSARY.md', doc);
     final links = doc.querySelectorAll('a');
     expect(links.length, 2);
 
@@ -52,19 +52,19 @@ void main() {
 
   test('annotate ignore tag', () {
     final doc = parse('<script>Conrad IV is a brother of Henry (VII)</script>');
-    m.annotateText(entries, 'GLOSSARY.md', doc);
+    GlossaryModifier(entries).annotate('GLOSSARY.md', doc);
     expect(doc.querySelectorAll('a').length, 0);
   });
 
   test('annotate ignore class', () {
     final doc = parse('<p class="no-glossary">Conrad IV is a brother of Henry (VII)</p>');
-    m.annotateText(entries, 'GLOSSARY.md', doc);
+    GlossaryModifier(entries).annotate('GLOSSARY.md', doc);
     expect(doc.querySelectorAll('a').length, 0);
   });
 
   test('annotate ignore class', () {
     final doc = parse('People said <code>Conrad IV</code> is a brother of Henry (VII)');
-    m.annotateText(entries, 'GLOSSARY.md', doc);
+    GlossaryModifier(entries).annotate('GLOSSARY.md', doc);
     expect(doc.querySelectorAll('a').length, 1);
   });
 }

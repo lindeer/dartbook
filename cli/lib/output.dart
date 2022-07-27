@@ -1,12 +1,14 @@
-import 'dart:io' show Directory, File;
+import 'dart:io' show File;
 
 import 'package:dartbook/context.dart';
 import 'package:dartbook_models/book.dart';
+import 'package:html/parser.dart' as html;
 import 'package:path/path.dart' as p;
 
 import 'generator.dart';
-import 'theme_manager.dart';
 import 'io.dart' show writeToFile, createFolder;
+import 'modifiers.dart';
+import 'theme_manager.dart';
 
 class Option {
   /// format of generation, e.g. website, pdf
@@ -82,6 +84,9 @@ class Output {
   void generatePages(Generator generator, Book book) {
     final logger = context.logger;
     final pages = book.pages;
+    final glossary = book.glossary;
+    final gm = GlossaryModifier(glossary.items.values);
+
     for (final page in pages.values) {
       try {
         final filename = page.filename;
@@ -92,7 +97,10 @@ class Output {
         }
         final at = DateTime.now().millisecondsSinceEpoch;
         final outputName = book.outputName(filename);
-        writeToFile(p.join(opt.root, outputName), generator.generatePage(book, page));
+        final raw = generator.generatePage(book, page);
+        final doc = html.parse(raw);
+        gm.annotate(book.outputName(page.filename), doc);
+        writeToFile(p.join(opt.root, outputName), doc.outerHtml);
 
         final d = Duration(milliseconds: DateTime.now().millisecondsSinceEpoch - at);
         final mills = d.inMilliseconds.remainder(Duration.millisecondsPerSecond);
