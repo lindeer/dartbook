@@ -14,7 +14,7 @@ class Glossary {
     return doc.getElementsByTagName('h2').map((h2) {
       final next = h2.nextElementSibling;
       final p = next?.localName == 'p' ? next : next?.getElementsByTagName('p').firstOrNull;
-      return Glossary(name: h2.text.trim(), desc: p?.outerHtml);
+      return Glossary(name: h2.text.trim(), desc: p?.innerHtml);
     });
   }
 }

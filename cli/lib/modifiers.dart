@@ -52,11 +52,9 @@ class GlossaryModifier {
           return true;
         }
 
-        final id = entry.id;
         final desc = entry.desc;
-        final title = desc != null ? _escape.convert(desc) : '';
         final e = _replaceNode(node, regex, (m) {
-          return '<a href="/$file#$id" class="glossary-term" title="$title">${m.group(0)}</a>';
+          return '<span class="glossary-item">$name<span class="glossary-detail">$desc</span></span>';
         });
         if (e != null) {
           final parent = node.parent;
