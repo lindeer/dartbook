@@ -2,7 +2,6 @@ import 'package:dartbook_models/glossary.dart';
 import 'package:test/test.dart';
 import 'package:dartbook/modifiers.dart' show GlossaryModifier;
 import 'package:html/parser.dart' show parse;
-import 'package:dartbook_models/utils.dart' as utils;
 
 void main() {
   final entries = [
@@ -14,19 +13,20 @@ void main() {
   test('annotate pure text', () {
     const text = "Conrad IV is a brother of Henry (VII)";
     final doc = parse(text);
-    GlossaryModifier(entries).annotate('GLOSSARY.md', doc);
-    final links = doc.querySelectorAll('a');
+    GlossaryModifier(entries).annotate(doc);
+    final links = doc.querySelectorAll('.glossary-item');
     expect(links.length, 2);
 
     final conrad = links.first;
-    expect(conrad.attributes['href'], '/GLOSSARY.md#conrad-iv');
-    expect(conrad.text, 'Conrad IV');
-    expect(conrad.className.contains('glossary-term'), true);
+    expect(conrad.id, 'glossary-item-conrad-iv');
+    expect(conrad.firstChild?.text, 'Conrad IV');
 
     final henry = links.last;
-    expect(henry.attributes['href'], '/GLOSSARY.md#henry-(vii)');
-    expect(henry.text, 'Henry (VII)');
-    expect(henry.className.contains('glossary-term'), true);
+    expect(henry.id, 'glossary-item-henry-(vii)');
+    expect(henry.firstChild?.text, 'Henry (VII)');
+
+    expect(conrad.children.first.id, 'glossary-detail-conrad-iv');
+    expect(henry.children.first.id, 'glossary-detail-henry-(vii)');
   });
 
   test('annotate none word character', () {
@@ -36,35 +36,49 @@ void main() {
     ];
     const text = "康拉德四世(Conrad IV)和Brancaleone von Andalò";
     final doc = parse(text);
-    GlossaryModifier(items).annotate('GLOSSARY.md', doc);
-    final links = doc.querySelectorAll('a');
+    GlossaryModifier(items).annotate(doc);
+    final links = doc.querySelectorAll('.glossary-item');
     expect(links.length, 2);
 
 
-    final first = links.first;
-    expect(first.attributes['href'], '/GLOSSARY.md#${utils.slug('康拉德四世')}');
+    final first = links.first.firstChild!;
     expect(first.text, '康拉德四世');
 
-    final last = links.last;
-    expect(last.attributes['href'], '/GLOSSARY.md#brancaleone-von-andal${utils.slug('ò')}');
+    final last = links.last.firstChild!;
     expect(last.text, 'Brancaleone von Andalò');
   });
 
   test('annotate ignore tag', () {
     final doc = parse('<script>Conrad IV is a brother of Henry (VII)</script>');
-    GlossaryModifier(entries).annotate('GLOSSARY.md', doc);
-    expect(doc.querySelectorAll('a').length, 0);
+    GlossaryModifier(entries).annotate(doc);
+    expect(doc.querySelectorAll('.glossary-item').length, 0);
   });
 
   test('annotate ignore class', () {
     final doc = parse('<p class="no-glossary">Conrad IV is a brother of Henry (VII)</p>');
-    GlossaryModifier(entries).annotate('GLOSSARY.md', doc);
-    expect(doc.querySelectorAll('a').length, 0);
+    GlossaryModifier(entries).annotate(doc);
+    expect(doc.querySelectorAll('.glossary-item').length, 0);
   });
 
   test('annotate ignore class', () {
     final doc = parse('People said <code>Conrad IV</code> is a brother of Henry (VII)');
-    GlossaryModifier(entries).annotate('GLOSSARY.md', doc);
-    expect(doc.querySelectorAll('a').length, 1);
+    GlossaryModifier(entries).annotate(doc);
+    expect(doc.querySelectorAll('#glossary-item-conrad-iv').length, 0);
+  });
+
+  test('annotate ignore class II', () {
+    final doc = parse('People said <span class="glossary-item">Conrad IV</span> is a brother of Henry (VII)');
+    GlossaryModifier(entries).annotate(doc);
+    expect(doc.querySelectorAll('.glossary-item').length, 2);
+  });
+
+  test('annotate ignore class III', () {
+    final items = [
+      entries.first,
+      GlossaryItem('IV',),
+    ];
+    final doc = parse('People said <span class="glossary-item">Conrad IV</span> was Henry IV');
+    GlossaryModifier(items).annotate(doc);
+    expect(doc.querySelectorAll('.glossary-item').length, 2);
   });
 }

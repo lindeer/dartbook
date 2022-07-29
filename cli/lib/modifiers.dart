@@ -1,14 +1,17 @@
-import 'dart:convert' show HtmlEscape;
 import 'package:html/dom.dart';
 
 import 'package:dartbook_models/glossary.dart';
 
-const _ignoredClass = 'no-glossary';
+const _ignoredClass = {'no-glossary', 'glossary-item'};
 const _ignoredTag = ['code', 'pre', 'a', 'script', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+
+bool _classIgnored(String className) => className.contains(' ')
+    ? _ignoredClass.intersection(className.split(' ').toSet()).isNotEmpty
+    : _ignoredClass.contains(className);
 
 bool _isIgnored(Element node) {
   final name = node.localName;
-  return (name != null && _ignoredTag.contains(name)) || (node.className == _ignoredClass);
+  return (name != null && _ignoredTag.contains(name)) || _classIgnored(node.className);
 }
 
 final _quoteRegExp = RegExp(r'([\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:])');
@@ -26,8 +29,6 @@ RegExp _makeRegExp(String entry) {
   return RegExp(reg);
 }
 
-final _escape = HtmlEscape();
-
 class GlossaryModifier {
   final Iterable<GlossaryItem> entries;
   final _regexCache = <String, RegExp>{};
@@ -35,7 +36,7 @@ class GlossaryModifier {
   GlossaryModifier(this.entries);
 
   /// for each entry, modify the whole dom tree, and then next entry
-  void annotate(String file, Node doc) {
+  void annotate(Node doc) {
     for (final entry in entries) {
       final name = entry.name;
       final regex = (_regexCache[name] ??= _makeRegExp(name));
@@ -54,7 +55,8 @@ class GlossaryModifier {
 
         final desc = entry.desc;
         final e = _replaceNode(node, regex, (m) {
-          return '<span class="glossary-item">$name<span class="glossary-detail">$desc</span></span>';
+          return '<span class="glossary-item" id="glossary-item-${entry.id}">$name'
+              '<span class="glossary-detail" id="glossary-detail-${entry.id}">$desc</span></span>';
         });
         if (e != null) {
           final parent = node.parent;

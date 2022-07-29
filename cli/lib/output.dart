@@ -99,7 +99,7 @@ class Output {
         final outputName = book.outputName(filename);
         final raw = generator.generatePage(book, page);
         final doc = html.parse(raw);
-        gm.annotate(book.outputName(page.filename), doc);
+        gm.annotate(doc);
         writeToFile(p.join(opt.root, outputName), doc.outerHtml);
 
         final d = Duration(milliseconds: DateTime.now().millisecondsSinceEpoch - at);
