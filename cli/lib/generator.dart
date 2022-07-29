@@ -1,5 +1,6 @@
 
 import 'dart:convert' show json;
+import 'dart:io' show File;
 
 import 'package:dartbook/theme_manager.dart';
 import 'package:dartbook_models/book.dart';
@@ -31,7 +32,9 @@ class Generator {
     if (filename.startsWith('/')) {
       filename = filename.substring(1);
     }
-    String file = book.outputName(filename);
+    String file = File(book.filePath(filename)).existsSync()
+        ? book.outputName(filename)
+        : filename;
     if (directoryIndex && p.basename(file) == 'index.html') {
       file = p.dirname(file);
     }
