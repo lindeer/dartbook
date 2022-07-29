@@ -54,9 +54,11 @@ class GlossaryModifier {
         }
 
         final desc = entry.desc;
+
         final e = _replaceNode(node, regex, (m) {
-          return '<span class="glossary-item" id="glossary-item-${entry.id}">$name'
-              '<span class="glossary-detail" id="glossary-detail-${entry.id}">$desc</span></span>';
+          final detail = desc == null ? ''
+              : '<span class="glossary-detail">$desc</span>';
+          return '<span class="glossary-item">$name$detail</span>';
         });
         if (e != null) {
           final parent = node.parent;
