@@ -92,6 +92,33 @@ void main() {
     expect(a4?.title, null);
   });
 
+  test('summary navigate', () {
+    final summary = BookSummary.create('', Summary([
+      Part(
+        title: 'Part I',
+        articles: [
+          Article(title: 'My First Article', ref: 'README.md',),
+          Article(title: 'My Second Article', ref: 'article.md',),
+          Article(title: 'Article without ref'),
+          Article(title: 'Article with absolute ref', ref: 'https://google.fr'),
+        ],
+      ),
+      Part(
+        title: 'Part II',
+        articles: [
+          Article(title: 'Part II Article', ref: 'README.md',),
+        ],
+      ),
+    ]));
+
+    final article = summary.byLevel('1.4');
+    expect(article?.title, 'Article with absolute ref');
+    final next = summary.nextArticle(article!);
+    expect(next?.title, 'Part II Article');
+    final prev = summary.prevArticle(next!);
+    expect(prev?.title, article.title);
+  });
+
   test('config change', () {
     final config = BookConfig('', {
       "hello": {

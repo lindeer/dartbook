@@ -66,7 +66,7 @@ class BookSummary {
       result = root.filter((e) {
         final articlePath = e.path;
         return articlePath != null && PathUtils.areIdentical(articlePath, path);
-      });
+      }, skipRoot: true);
       if (result != null) {
         break;
       }
@@ -101,7 +101,7 @@ class BookSummary {
         title: '',
         articles: part.articles,
       );
-      result = root.filter(test);
+      result = root.filter(test, skipRoot: true);
       if (result != null) {
         break;
       }

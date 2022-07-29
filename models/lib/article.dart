@@ -65,8 +65,11 @@ class SummaryArticle {
     return result;
   }
 
-  SummaryArticle? filter(bool Function(SummaryArticle e) test) {
-    if (test(this)) return this;
+  /// directly retrieve children if skipRoot is true
+  SummaryArticle? filter(bool Function(SummaryArticle e) test, {bool skipRoot = false}) {
+    if (!skipRoot && test(this)) {
+      return this;
+    }
     // final result = articles?.reduce((result, e) => (result.filter(test) ?? e));
     // return result != null && test(result) ? result : null;
     for (final a in (articles ?? const <SummaryArticle>[])) {
