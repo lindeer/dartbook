@@ -1,3 +1,4 @@
+import 'dart:async' show Timer;
 import 'dart:io' show File;
 
 import 'package:dartbook/context.dart';
@@ -5,6 +6,7 @@ import 'package:dartbook_models/book.dart';
 import 'package:dartbook_models/page.dart';
 import 'package:html/parser.dart' as html;
 import 'package:path/path.dart' as p;
+import 'package:watcher/watcher.dart' show WatchEvent;
 
 import 'generator.dart';
 import 'io.dart' show writeToFile, createFolder;
@@ -42,10 +44,11 @@ class Option {
 class Output {
   final BookContext context;
   final Generator generator;
+  final _pageGenerator = <String, void Function(BookPage page)>{};
 
-  const Output._(this.context, this.generator);
+  Output._(this.context, this.generator);
 
-  static void generate(BookContext context, Option opt) {
+  static Output generate(BookContext context, Option opt) {
     final out = opt.root;
     final logger = context.logger;
     logger.d('generate whole book in "$out"');
@@ -76,6 +79,7 @@ class Output {
     final d = Duration(milliseconds: DateTime.now().millisecondsSinceEpoch - at);
     final mills = d.inMilliseconds.remainder(Duration.millisecondsPerSecond);
     logger.i('generation finished with success in ${d.inSeconds}.${mills}s.');
+    return output;
   }
 
   void generatePages(Book book, String out) {
@@ -112,6 +116,8 @@ class Output {
         logger.d("generate page '${page.filename}' failed by ${e.toString()}, ignored.");
       }
     }
+
+    _pageGenerator[book.langPath] = _outputPage;
   }
 
   String? _attachPageContent(String filePath) {
@@ -132,6 +138,32 @@ class Output {
       final to = p.join(out, file);
       createFolder(p.dirname(to));
       File(from).copySync(to);
+    }
+  }
+
+  Timer? _regenerateAction;
+
+  void onFileChanged(WatchEvent e) {
+    final path = e.path;
+    final logger = context.logger;
+    for (final book in context.books.values) {
+      if (!p.isWithin(book.bookPath, path)) {
+        continue;
+      }
+
+      final filename = p.relative(path, from: book.bookPath);
+      final page = book.pages[filename];
+      final gen = _pageGenerator[book.langPath];
+      if (page == null || gen == null) {
+        logger.w("invalid '$filename', some thing wrong with app");
+        continue;
+      }
+      _regenerateAction?.cancel();
+      _regenerateAction = Timer(Duration(milliseconds: 800), () {
+        gen.call(page);
+        logger.i("regenerate page '$filename' done.");
+        _regenerateAction = null;
+      });
     }
   }
 }

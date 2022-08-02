@@ -3,6 +3,7 @@ import 'package:dartbook/output.dart';
 import 'package:path/path.dart' as p;
 import 'package:shelf_static/shelf_static.dart' show createStaticHandler;
 import 'package:shelf/shelf_io.dart' as io;
+import 'package:watcher/watcher.dart' show DirectoryWatcher;
 
 void main(List<String> args) {
   final options = {
@@ -23,10 +24,18 @@ void main(List<String> args) {
 
   final fmt = options['format'] ?? 'website';
   final outDir = p.join(rootDir, out);
-  Output.generate(context, Option(
+  final output = Output.generate(context, Option(
     format: fmt,
     root: outDir,
   ));
+
+  print('Watch files at $rootDir ...');
+  DirectoryWatcher(p.absolute(rootDir)).events.listen((e) {
+    if (p.isWithin(outDir, e.path)) {
+      return;
+    }
+    output.onFileChanged(e);
+  });
 
   print('\nStarting server ...');
   final port = int.tryParse(options['port'] ?? '') ?? 4000;
