@@ -2,6 +2,7 @@ import 'dart:io' show File;
 
 import 'package:dartbook/context.dart';
 import 'package:dartbook_models/book.dart';
+import 'package:dartbook_models/page.dart';
 import 'package:html/parser.dart' as html;
 import 'package:path/path.dart' as p;
 
@@ -40,9 +41,9 @@ class Option {
 /// IO operations of generation
 class Output {
   final BookContext context;
-  final Option opt;
+  final Generator generator;
 
-  const Output._(this.context, this.opt);
+  const Output._(this.context, this.generator);
 
   static void generate(BookContext context, Option opt) {
     final out = opt.root;
@@ -59,21 +60,17 @@ class Output {
       theme: theme,
       directoryIndex: opt.directoryIndex,
     );
+    final output = Output._(context, gen);
     final langMgr = context.langManager;
     for (final book in context.books.values) {
-      final option = opt.copyWith(
-        root: p.join(out, book.langPath),
-      );
-      final output = Output._(context, option);
-      output.generatePages(gen, book);
+      output.generatePages(book, p.join(out, book.langPath));
     }
 
-    final output = Output._(context, opt);
     if (langMgr != null) {
       final content = gen.lingualPage(context);
       File(p.join(out, 'index.html')).writeAsStringSync(content);
     }
-    output.generateAssets();
+    output.generateAssets(out);
     theme.copyAssets(p.join(out, 'gitbook'));
 
     final d = Duration(milliseconds: DateTime.now().millisecondsSinceEpoch - at);
@@ -81,26 +78,32 @@ class Output {
     logger.i('generation finished with success in ${d.inSeconds}.${mills}s.');
   }
 
-  void generatePages(Generator generator, Book book) {
+  void generatePages(Book book, String out) {
     final logger = context.logger;
     final pages = book.pages;
     final glossary = book.glossary;
     final gm = GlossaryModifier(glossary.items.values);
 
+    void _outputPage(BookPage page) {
+      final filename = page.filename;
+      page.content = _attachPageContent(p.join(book.bookPath, filename));
+      if (page.content == null) {
+        logger.w("Page '${book.filePath(filename)}' not exists!");
+        return;
+      }
+
+      final raw = generator.generatePage(book, page);
+      final doc = html.parse(raw);
+      gm.annotate(doc);
+      final outputName = book.outputName(page.filename);
+      writeToFile(p.join(out, outputName), doc.outerHtml);
+      page.content = null;
+    }
+
     for (final page in pages.values) {
       try {
-        final filename = page.filename;
-        page.content = _attachPageContent(p.join(book.bookPath, filename));
-        if (page.content == null) {
-          logger.w("Page '${book.filePath(filename)}' not exists!");
-          continue;
-        }
         final at = DateTime.now().millisecondsSinceEpoch;
-        final outputName = book.outputName(filename);
-        final raw = generator.generatePage(book, page);
-        final doc = html.parse(raw);
-        gm.annotate(doc);
-        writeToFile(p.join(opt.root, outputName), doc.outerHtml);
+        _outputPage(page);
 
         final d = Duration(milliseconds: DateTime.now().millisecondsSinceEpoch - at);
         final mills = d.inMilliseconds.remainder(Duration.millisecondsPerSecond);
@@ -121,9 +124,8 @@ class Output {
     return htmlPage.content;
   }
 
-  void generateAssets() {
+  void generateAssets(String out) {
     final root = context.root;
-    final out = opt.root;
     final files = context.listAssets(relative: true);
     for (final file in files) {
       final from = p.join(root, file);
