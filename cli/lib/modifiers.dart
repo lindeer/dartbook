@@ -1,3 +1,4 @@
+import 'package:dartbook_models/utils.dart' show slug;
 import 'package:html/dom.dart';
 
 import 'package:dartbook_models/glossary.dart';
@@ -100,5 +101,21 @@ extension _NodeExt on Node {
     for (final child in children) {
       child.visit(visitor);
     }
+  }
+}
+
+void addHeadingId(Node doc) {
+ final nodes = doc is Element ? [doc] : doc.children;
+ for (final e in nodes) {
+   final elements = e.querySelectorAll('h1,h2,h3,h4,h5,h6');
+   for (final e in elements) {
+     _addId(e);
+   }
+ }
+}
+
+void _addId(Element e) {
+  if (e.id == '') {
+    e.id = slug(e.text);
   }
 }

@@ -98,6 +98,7 @@ class Output {
 
       final raw = generator.generatePage(book, page);
       final doc = html.parse(raw);
+      addHeadingId(doc);
       gm.annotate(doc);
       final outputName = book.outputName(page.filename);
       writeToFile(p.join(out, outputName), doc.outerHtml);
