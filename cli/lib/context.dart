@@ -50,7 +50,7 @@ class BookContext {
     required String root,
     Map<String, String>? options,
   }) {
-    final logger = Logger(options?['log']);
+    final logger = Logger(options?['verbose'] == "true");
     final parser = MarkdownParser(logger);
     return _Assembler(logger: logger, parser: parser)
         .assemble(root, options);

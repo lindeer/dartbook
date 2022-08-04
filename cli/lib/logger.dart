@@ -1,37 +1,25 @@
-
-enum Level {
-  disable,
-  debug,
-  info,
-  warn,
-  error,
-}
-
-const _colors = {
-  Level.debug: '\x1B[34m',
-  Level.info: '\x1B[36m',
-  Level.warn: '\x1B[33m',
-  Level.error: '\x1B[31m',
-};
+import 'dart:io' show stdout;
 
 class Logger {
   final bool verbose;
 
-  Logger(String? level): verbose = level == 'debug';
+  Logger(this.verbose);
 
   void i(String msg) {
-    print(msg);
+    stdout.writeln(msg);
   }
 
   void d(String msg) {
     if (verbose) {
-      print(msg);
+      stdout.writeln('\x1B[36m$msg\x1B[0m');
     }
   }
 
   void e(String msg) {
+    stdout.writeln('\x1B[31m$msg\x1B[0m');
   }
 
   void w(String msg) {
+    stdout.writeln('\x1B[33m$msg\x1B[0m');
   }
 }
