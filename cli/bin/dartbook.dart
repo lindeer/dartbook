@@ -9,6 +9,8 @@ import 'package:shelf_static/shelf_static.dart' show createStaticHandler;
 import 'package:shelf/shelf_io.dart' as io;
 import 'package:watcher/watcher.dart' show DirectoryWatcher;
 
+import 'diff.dart';
+
 void main(List<String> args) {
   final runner = CommandRunner<int>('dartbook', "A dart implementation of gitbook");
   final parser = runner.argParser;
@@ -16,6 +18,7 @@ void main(List<String> args) {
 
   runner.addCommand(_BuildCommand());
   runner.addCommand(_ServeCommand());
+  runner.addCommand(DiffCommand());
   runner.run(args).catchError((error) {
     if (error is! UsageException) throw error;
     print(error);
