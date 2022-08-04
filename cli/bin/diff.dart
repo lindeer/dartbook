@@ -1,28 +1,10 @@
-
-import 'dart:async' show FutureOr;
 import 'dart:io' show Process, IOSink, exit, stdout;
 
-import 'package:args/command_runner.dart' show Command;
 import 'package:dartbook/logger.dart';
 import 'package:diff_match_patch/diff_match_patch.dart';
 
-class DiffCommand extends Command<int> {
-
-  @override
-  final String name = 'diff';
-
-  @override
-  final String description = 'Same usage with git diff but based on character';
-
-  @override
-  FutureOr<int> run() {
-    final result = argResults;
-    _diffMain(result?.rest ?? []);
-    return 0;
-  }
-}
-
-void _diffMain(List<String> args) {
+/// we would have to add all git diff options if implementing Command class
+void diffMain(List<String> args) {
   final logger = Logger(true);
   String text;
   try {

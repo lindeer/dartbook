@@ -12,13 +12,17 @@ import 'package:watcher/watcher.dart' show DirectoryWatcher;
 import 'diff.dart';
 
 void main(List<String> args) {
+  int pos = args.indexOf('diff');
+  if (pos >= 0) {
+    diffMain(args.sublist(pos + 1));
+    return;
+  }
   final runner = CommandRunner<int>('dartbook', "A dart implementation of gitbook");
   final parser = runner.argParser;
   parser.addFlag('verbose', abbr: 'v', help: 'Show additional diagnostic info');
 
   runner.addCommand(_BuildCommand());
   runner.addCommand(_ServeCommand());
-  runner.addCommand(DiffCommand());
   runner.run(args).catchError((error) {
     if (error is! UsageException) throw error;
     print(error);
