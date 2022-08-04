@@ -7,7 +7,7 @@ import 'package:dartbook_html/summary.dart';
 import 'package:dartbook_models/book.dart';
 import 'package:dartbook_models/page.dart';
 import 'package:dartbook_models/parser.dart';
-import 'package:markdown/markdown.dart' show markdownToHtml;
+import 'package:dart_markdown/dart_markdown.dart' show markdownToHtml;
 
 import 'logger.dart';
 
@@ -35,7 +35,7 @@ class MarkdownParser implements Parser {
   Summary summary(String content) => Summary.from(markdownToHtml(content));
 
   @override
-  Page page(String md) => Page(markdownToHtml(md));
+  Page page(String md) => Page(markdownToHtml(md, enableFootnote: true));
 
   @override
   void pages(Book book) {
