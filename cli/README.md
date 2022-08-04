@@ -30,6 +30,8 @@ Git diff is based on line, that means whole line would be labeled even if one ch
 
 Just change command `git diff [<options>]` to `dartbook diff [<options>]`, it would output precisely the revised character.
 
+![](docs/diff-demo.png)
+
 ### TODO
 
 Dartbook is still in progress, 'cause some dependent libaries are incomplete.
