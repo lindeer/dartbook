@@ -3,6 +3,10 @@ import 'dart:io' show Process, IOSink, exit, stdout;
 import 'package:dartbook/logger.dart';
 import 'package:diff_match_patch/diff_match_patch.dart';
 
+void main(List<String> args) {
+  diffMain(args);
+}
+
 /// we would have to add all git diff options if implementing Command class
 void diffMain(List<String> args) {
   final logger = Logger(true);
