@@ -16,7 +16,10 @@ dependencies:
   dartbook_models:
     path: ../models
   json_schema2: ^2.0.2+6
-  jinja: 0.4.0-dev.31
+  jinja:
+    git:
+      url: https://lindeer:cljs118!@gitee.com/lindeer/jinja.dart.git
+      ref: main
   html: ^0.15.0
   shelf_static: ^1.1.1
   shelf: ^1.3.2
