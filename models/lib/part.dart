@@ -37,8 +37,7 @@ class SummaryPart {
     return {
       'title': title,
       'level': level,
-      if (items != null)
-        'articles': items.map((e) => e.json),
+      'articles': items?.map((e) => e.json) ?? const <Map<String, dynamic>>[],
     };
   }
 }
