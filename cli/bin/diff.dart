@@ -28,6 +28,14 @@ void diffMain(List<String> args) {
 void _parseDiffText(IOSink sink, String text) {
   final origin = StringBuffer();
   final changed = StringBuffer();
+
+  void _apply() {
+    if (origin.isNotEmpty || changed.isNotEmpty) {
+      _patchDiff(sink, origin.toString(), changed.toString());
+      origin.clear();
+      changed.clear();
+    }
+  }
   for (final line in text.split('\n')) {
     if (line.startsWith('---') || line.startsWith('+++')) {
       sink.writeln(line);
@@ -39,14 +47,11 @@ void _parseDiffText(IOSink sink, String text) {
       origin.writeln(line);
       changed.writeln(line);
     } else {
-      if (origin.isNotEmpty || changed.isNotEmpty) {
-        _patchDiff(sink, origin.toString(), changed.toString());
-        origin.clear();
-        changed.clear();
-      }
+      _apply();
       sink.writeln(line);
     }
   }
+  _apply();
 }
 
 void _patchDiff(IOSink sink, String deleted, String inserted) {
