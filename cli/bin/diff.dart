@@ -22,7 +22,11 @@ void diffMain(List<String> args) {
     logger.e("Error: $e");
     exit(-1);
   }
-  _parseDiffText(stdout, text);
+  if (text.isNotEmpty) {
+    _parseDiffText(stdout, text);
+  } else {
+    logger.i("'git diff ${args.join(' ')}' return empty!");
+  }
 }
 
 void _parseDiffText(IOSink sink, String text) {
