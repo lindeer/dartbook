@@ -113,8 +113,8 @@ class BookSummary {
     final level = article.level;
     bool wasPrev = false;
     return findArticle((a) {
-      if (wasPrev) return true;
-      wasPrev = (a.level == level);
+      if (wasPrev && a.ref != null) return true;
+      wasPrev = wasPrev || (a.level == level);
       return false;
     });
   }
@@ -126,7 +126,9 @@ class BookSummary {
       if (a.level == level) {
         return true;
       }
-      prev = a;
+      if (a.ref != null) {
+        prev = a;
+      }
       return false;
     });
     return prev;

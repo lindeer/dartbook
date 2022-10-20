@@ -20,6 +20,8 @@ Try to keep everything same with gitbook, so it is compatible to run existing bo
 
 3. No mulilingual book any more in code, every book is managed by `BookContext`. `langPath` of `Book` is `''` if book is located in project root.
 
+4. Book navigation would ignore invalid link article.
+
 ### Extension
 
 Using dartbook, it is easy to custom your book website, just create 'theme' in book project's root directory, in 'theme', create '_layouts' for your book's pages' layout, '_i18n' for different i18n string resources and '_assets' for appearance. It keep same with gitbook's style.

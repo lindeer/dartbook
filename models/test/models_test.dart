@@ -117,6 +117,15 @@ void main() {
     expect(next?.title, 'Part II Article');
     final prev = summary.prevArticle(next!);
     expect(prev?.title, article.title);
+
+    final prevOne = summary.prevArticle(article);
+    expect(prevOne?.title, 'My Second Article');
+    final nextOne = summary.nextArticle(prevOne!);
+    expect(nextOne?.title, article.title);
+    final noRef = summary.byLevel('1.3');
+    expect(noRef?.title, 'Article without ref');
+    final prevNoRef = summary.prevArticle(noRef!);
+    expect(prevNoRef?.title, prevOne.title);
   });
 
   test('config change', () {
