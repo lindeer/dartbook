@@ -264,8 +264,12 @@ class _Assembler {
       throw Exception("Not found '$type' type in config");
     }
     final path = holder.path(filename);
+    final file = File(path);
+    if (!file.existsSync()) {
+      throw Exception("Not fount '$filename'");
+    }
     try {
-      final content = File(path).readAsStringSync();
+      final content = file.readAsStringSync();
       return func(filename, content);
     } on IOException catch (e) {
       logger.e("Parse '$path' error by $e}");
