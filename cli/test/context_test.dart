@@ -51,4 +51,30 @@ void main() {
     expect(book.config['title'], 'A Great journey to Sicily');
     expect(normal.config['title'], 'A Great journey to Sicily');
   });
+
+  test('context summary', () {
+    final book = normal.books.values.first;
+    final parts = book.summary.parts;
+    expect(parts.length, 3);
+    final first = parts.first;
+    expect(first.title, '');
+    expect(first.articles?.length, 1);
+
+    final second = parts[1];
+    expect(second.title, 'Part2');
+    expect(second.articles?.length, 1);
+    final chapter1 = second.articles?.first;
+
+    final third = parts.last;
+    expect(third.title, 'Part3');
+    expect(third.articles?.length, 1);
+    final chapter2 = book.summary.byLevel('3.1');
+    expect(chapter2 != null, true);
+    expect(chapter2?.title, 'Chapter2');
+    expect(chapter2?.ref, null);
+
+    final section2_1 = chapter2?.articles?.first;
+    final prev = book.summary.prevArticle(section2_1!);
+    expect(chapter1?.title, prev?.title);
+  });
 }

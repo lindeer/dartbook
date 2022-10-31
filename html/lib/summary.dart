@@ -3,7 +3,6 @@ library dartbook.html;
 import 'package:html/dom.dart';
 
 const _listSelector = 'ol, ul';
-const _linkSelector = '> a, p > a';
 const _partSelector = 'h2, h3, h4';
 
 class Article {
@@ -23,12 +22,25 @@ class Article {
     return parent.querySelector(_listSelector);
   }
 
+  /// could not apply `> a, p > a` selector
+  static Iterable<Element> _finalAnchors(Element parent) {
+    final anchors = <Element>[];
+    for (final e in parent.children) {
+      if (e.localName == 'a') {
+        anchors.add(e);
+      } else if (e.localName == 'p') {
+        anchors.addAll(e.children.where((c) => c.localName == 'a'));
+      }
+    }
+    return anchors;
+  }
+
   static Iterable<Article> _parseList(Element ul) {
     return ul.children.where((e) => e.localName == 'li').map((li) {
       final p = li.querySelector('p');
       var title = (p?.text ?? li.firstChild?.text)?.trim();
       String? ref;
-      final links = li.querySelectorAll(_linkSelector);
+      final links = _finalAnchors(li);
       if (links.isNotEmpty) {
         final a = links.first;
         title = a.text;
@@ -63,7 +75,6 @@ class Summary {
   /// Parse an HTML content into a tree of parts
   static Summary from(String html) {
     final root = Element.html('<div>$html</div>');
-    root.querySelector('$_listSelector, $_partSelector');
     final parts = _splitParts(root) ?? [];
     return Summary(parts);
   }

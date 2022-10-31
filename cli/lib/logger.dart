@@ -11,15 +11,15 @@ class Logger {
 
   void d(String msg) {
     if (verbose) {
-      stdout.writeln('\x1B[36m$msg\x1B[0m');
+      print('\x1B[36m$msg\x1B[0m');
     }
   }
 
   void e(String msg) {
-    stdout.writeln('\x1B[31m$msg\x1B[0m');
+    print('\x1B[31m$msg\x1B[0m');
   }
 
   void w(String msg) {
-    stdout.writeln('\x1B[33m$msg\x1B[0m');
+    print('\x1B[33m$msg\x1B[0m');
   }
 }

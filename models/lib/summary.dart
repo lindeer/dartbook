@@ -46,10 +46,11 @@ class BookSummary {
     final index = level.indexOf('.');
     final firstLevel = level.substring(0, index);
     final pos = int.parse(firstLevel) - 1;
+    final part = parts[pos];
     final root = SummaryArticle(
       level: firstLevel,
-      title: '',
-      articles: parts[pos].articles,
+      title: part.title,
+      articles: part.articles,
     );
 
     return root.byLevel(level.substring(index + 1));
