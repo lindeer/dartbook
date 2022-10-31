@@ -18,15 +18,10 @@ void main() {
     expect(links.length, 2);
 
     final conrad = links.first;
-    expect(conrad.id, 'glossary-item-conrad-iv');
     expect(conrad.firstChild?.text, 'Conrad IV');
 
     final henry = links.last;
-    expect(henry.id, 'glossary-item-henry-(vii)');
     expect(henry.firstChild?.text, 'Henry (VII)');
-
-    expect(conrad.children.first.id, 'glossary-detail-conrad-iv');
-    expect(henry.children.first.id, 'glossary-detail-henry-(vii)');
   });
 
   test('annotate none word character', () {
