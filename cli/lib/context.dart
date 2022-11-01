@@ -226,7 +226,9 @@ class _Assembler {
 
   Book _parseSkeleton(_ResultHolder holder) {
     final readme = _parseStructure(holder, 'readme', _makeReadme);
-    final summary = _parseStructure(holder, 'summary', _makeSummary);
+    final summary = _parseStructure(holder, 'summary', (String filename, String content) {
+      return BookSummary.create(filename, parser.summary(content), readme);
+    });
     final glossary = _safeParseStructure(holder, 'glossary', _makeGlossary)
         ?? BookGlossary('', {});
 
@@ -248,9 +250,6 @@ class _Assembler {
 
   BookReadme _makeReadme(String filename, String content) =>
       BookReadme.create(filename, parser.readme(content));
-
-  BookSummary _makeSummary(String filename, String content) =>
-      BookSummary.create(filename, parser.summary(content));
 
   BookGlossary _makeGlossary(String filename, String content) =>
       BookGlossary.fromItems(filename, parser.glossary(content));

@@ -4,6 +4,7 @@ import 'package:dartbook_html/summary.dart';
 
 import 'article.dart';
 import 'part.dart';
+import 'readme.dart';
 import 'utils.dart' show PathUtils;
 
 class BookSummary {
@@ -12,9 +13,18 @@ class BookSummary {
 
   const BookSummary(this.filename, this.parts);
 
-  factory BookSummary.create(String file, Summary summary) {
+  factory BookSummary.create(String file, Summary summary, BookReadme readme) {
     final parts = summary.parts;
     final items = parts.mapIndexed((i, e) {
+      /// if tile page is not readme file
+      if (i == 0 && readme.filename != e.articles?.first.ref) {
+        final list = e.articles;
+        e = Part(title: e.title, articles: [
+          Article(title: readme.title, ref: readme.filename),
+          if (list != null)
+            ...list,
+        ]);
+      }
       return SummaryPart.create(e, '${i + 1}');
     });
     return BookSummary(file, items.toList(growable: false));
