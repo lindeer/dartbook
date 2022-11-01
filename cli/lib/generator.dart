@@ -25,7 +25,6 @@ class Generator {
       return filepath;
     },
     'contentURL': (path) => p.dirname(path),
-    'fileExists': (f) => true,
   };
 
   String _toUrl(Book book, String filename) {
@@ -43,15 +42,15 @@ class Generator {
 
   String generatePage(Book book, BookPage page) {
     final filename = page.filename;
-    String _resolveFile(String f) {
-      f = _toUrl(book, f);
-      return p.relative(f, from: p.dirname(filename));
-    }
     final engine = theme.buildEngine(
       lang: book.langPath,
       filters: <String, Function>{
         ..._builtinFilters,
-        'resolveFile': _resolveFile,
+        'resolveFile': (String f) {
+          f = _toUrl(book, f);
+          return p.relative(f, from: p.dirname(filename));
+        },
+        'fileExists': (String f) => File(book.filePath(f)).existsSync(),
       },
     );
     final data = _makePageRenderData(book, page);
