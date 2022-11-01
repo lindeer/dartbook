@@ -118,9 +118,7 @@ class Generator {
     return {
       'config': {
         ...config.values,
-        'styles': <String, String>{
-          // "website": "styles/website.css",
-        },
+        'styles': config['styles'] ?? <String, String>{},
         'links': {
         },
         'pluginsConfig': {

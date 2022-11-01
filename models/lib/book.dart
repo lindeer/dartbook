@@ -113,15 +113,21 @@ class Book {
   }
 
   static const _skipName = {'', '.', '..'};
+  static const _extNames = {
+    '.md': '.html',
+  };
 
   String outputName(String filename) {
     filename = p.normalize(filename);
     final base = p.basename(filename);
+    final newExt = _extNames[p.extension(filename)];
     final name = base == 'README' || readme.filename == filename
         ? p.join(p.dirname(filename), 'index.html')
         : _skipName.contains(filename)
         ? filename
-        : p.setExtension(filename, '.html');
+        : newExt != null
+        ? p.setExtension(filename, newExt)
+        : filename;
     return p.normalize(name);
   }
 }
