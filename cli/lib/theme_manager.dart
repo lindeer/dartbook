@@ -24,39 +24,49 @@ bool _isDirectory(String dir) {
 /// load theme resources from _assets, _i18n, _layouts
 class ThemeManager {
   final String layoutType;
+  final String _innerThemeDir;
+  final TemplateEngine engine;
+  final Map<String, Function> builtinFilters;
   final String? themeDir;
-  final _innerThemeDir = p.normalize(p.join(
-      p.dirname(Platform.script.path), '..', 'theme'));
-  final _cacheStringRes = <String, Map<String, dynamic>>{};
-  Loader? _cacheLoader;
 
-  ThemeManager({
-    required this.layoutType,
-    /// default theme dir is 'theme' in book directory, symbol link is also supported
-    String? dir,
-  }): themeDir = dir != null && _isDirectory(dir) ? dir : null;
-
-  TemplateEngine buildEngine({
+  static ThemeManager build({
+    required String layoutType,
     required String lang,
     String? path,
-    Map<String, Function>? filters,
+    String? dir,
   }) {
-    final loader = (_cacheLoader ??= _makeLoader(path));
-    final i18n = (_cacheStringRes[lang] ??= _makeStringRes(lang));
+    final inner = p.normalize(p.join(p.dirname(Platform.script.path), '..', 'theme'));
+    final themeDir = dir != null && _isDirectory(dir) ? dir : null;
+    final loader = _makeLoader(inner, layoutType, themeDir, path);
+    final i18n = _makeStringRes(inner, themeDir, lang);
     final env = Environment(
       loader: loader,
       filters: <String, Function>{
         'safe': (f) => f,
         'dump': (f) => f,
         't': (id) => i18n[id],
-        if (filters != null)
-          ...filters,
       },
     );
-    return TemplateEngine(env);
+    final builtinFilters = Map.of(env.filters);
+    env.filters.clear();
+    return ThemeManager._(
+      layoutType,
+      inner,
+      TemplateEngine(env),
+      builtinFilters,
+      themeDir,
+    );
   }
 
-  Loader _makeLoader(String? path) {
+  const ThemeManager._(
+      this.layoutType,
+      this._innerThemeDir,
+      this.engine,
+      this.builtinFilters,
+      this.themeDir,
+  );
+
+  static Loader _makeLoader(String _innerThemeDir, String layoutType, String? themeDir, String? path,) {
     final parent = File(p.join(_innerThemeDir, '_layouts', 'layout.html')).readAsStringSync();
     final d = themeDir;
     return TemplateLoader(
@@ -75,10 +85,10 @@ class ThemeManager {
     );
   }
 
-  Map<String, String> _makeStringRes(String lang) {
+  static Map<String, String> _makeStringRes(String _innerThemeDir, String? themeDir, String lang) {
     lang = lang.length > 1 ? lang : 'en';
     final file = File(p.join(_innerThemeDir, '_i18n', '$lang.html'));
-    final f = file.existsSync() ? file : File(_similarI18n(lang));
+    final f = file.existsSync() ? file : File(_similarI18n(_innerThemeDir, lang));
     final res = json.decode(f.readAsStringSync()).cast<String, String>();
     final d = themeDir;
     if (d != null) {
@@ -91,7 +101,7 @@ class ThemeManager {
     return res;
   }
 
-  String _similarI18n(String lang)  {
+  static String _similarI18n(String _innerThemeDir, String lang)  {
     final dir = Directory(p.join(_innerThemeDir, '_i18n'));
     final names = dir.listSync(recursive: false)
         .map((e) => p.relative(e.path, from: dir.path));

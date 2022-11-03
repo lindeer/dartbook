@@ -2,6 +2,7 @@
 import 'dart:convert' show json;
 import 'dart:io' show File;
 
+import 'package:dartbook/template/template_engine.dart' show RenderContext;
 import 'package:dartbook/theme_manager.dart';
 import 'package:dartbook_models/book.dart';
 import 'package:dartbook_models/config.dart';
@@ -11,11 +12,9 @@ import 'package:path/path.dart' as p;
 import 'context.dart';
 
 class Generator {
-  final ThemeManager theme;
   final bool directoryIndex;
 
   Generator({
-    required this.theme,
     required this.directoryIndex,
   });
 
@@ -40,11 +39,12 @@ class Generator {
     return p.normalize(file);
   }
 
-  String generatePage(Book book, BookPage page) {
+  String generatePage(ThemeManager theme, Book book, BookPage page) {
     final filename = page.filename;
-    final engine = theme.buildEngine(
-      lang: book.langPath,
-      filters: <String, Function>{
+    final engine = theme.engine;
+    final data = RenderContext(
+      filters: {
+        ...theme.builtinFilters,
         ..._builtinFilters,
         'resolveFile': (String f) {
           f = _toUrl(book, f);
@@ -52,8 +52,8 @@ class Generator {
         },
         'fileExists': (String f) => File(book.filePath(f)).existsSync(),
       },
+      data: _makePageRenderData(book, page),
     );
-    final data = _makePageRenderData(book, page);
     return engine.renderPage(data);
   }
 
@@ -89,12 +89,15 @@ class Generator {
     return result;
   }
 
-  String lingualPage(BookContext context) {
-    final engine = theme.buildEngine(
-      lang: '',
-      filters: _builtinFilters,
+  String lingualPage(ThemeManager theme, BookContext context) {
+    final render = RenderContext(
+      filters: {
+        ...theme.builtinFilters,
+        ..._builtinFilters,
+      },
+      data: _makeLingualIndexData(context),
     );
-    return engine.renderLingualIndex(_makeLingualIndexData(context));
+    return theme.engine.renderLingualIndex(render);
   }
 
   Map<String, dynamic> _makeLingualIndexData(BookContext context) {

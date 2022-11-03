@@ -1,12 +1,22 @@
 
 import 'package:jinja/jinja.dart' show Environment;
 
+class RenderContext {
+  final Map<String, Function> filters;
+  final Map<String, dynamic> data;
+
+  const RenderContext({
+    required this.filters,
+    required this.data,
+  });
+}
+
 abstract class TemplateEngine {
   factory TemplateEngine(Environment env) = _JinjaTemplate;
 
-  String renderPage(Map<String, dynamic> data);
+  String renderPage(RenderContext context);
 
-  String renderLingualIndex(Map<String, dynamic> data);
+  String renderLingualIndex(RenderContext context);
 }
 
 class _JinjaTemplate implements TemplateEngine {
@@ -15,12 +25,16 @@ class _JinjaTemplate implements TemplateEngine {
   _JinjaTemplate(this.env);
 
   @override
-  String renderPage(Map<String, dynamic> data) {
+  String renderPage(RenderContext context) {
+    env.filters..clear()..addAll(context.filters);
+    final data = context.data;
     return env.getTemplate('page.html').render(data);
   }
 
   @override
-  String renderLingualIndex(Map<String, dynamic> data) {
+  String renderLingualIndex(RenderContext context) {
+    env.filters..clear()..addAll(context.filters);
+    final data = context.data;
     return env.getTemplate('languages.html').render(data);
   }
 }

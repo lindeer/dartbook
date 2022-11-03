@@ -43,10 +43,11 @@ class Option {
 /// IO operations of generation
 class Output {
   final BookContext context;
+  final ThemeManager theme;
   final Generator generator;
   final _pageGenerator = <String, void Function(BookPage page)>{};
 
-  Output._(this.context, this.generator);
+  Output._(this.context, this.theme, this.generator);
 
   static Output generate(BookContext context, Option opt) {
     final out = opt.root;
@@ -55,22 +56,33 @@ class Output {
     final at = DateTime.now().millisecondsSinceEpoch;
     createFolder(out);
 
-    final theme = ThemeManager(
-      layoutType: opt.format,
-      dir: p.join(context.root, 'theme'),
-    );
-    final gen = Generator(
-      theme: theme,
-      directoryIndex: opt.directoryIndex,
-    );
-    final output = Output._(context, gen);
-    final langMgr = context.langManager;
     for (final book in context.books.values) {
+      final output = Output._(
+        context,
+        ThemeManager.build(
+          layoutType: opt.format,
+          lang: book.langPath,
+          dir: p.join(context.root, 'theme'),
+        ),
+        Generator(
+          directoryIndex: opt.directoryIndex,
+        ),
+      );
       output.generatePages(book, p.join(out, book.langPath));
     }
 
+    final theme = ThemeManager.build(
+      layoutType: opt.format,
+      lang: 'en',
+      dir: p.join(context.root, 'theme'),
+    );
+    final gen = Generator(
+      directoryIndex: opt.directoryIndex,
+    );
+    final output = Output._(context, theme, gen);
+    final langMgr = context.langManager;
     if (langMgr != null) {
-      final content = gen.lingualPage(context);
+      final content = gen.lingualPage(theme, context);
       File(p.join(out, 'index.html')).writeAsStringSync(content);
     }
     output.generateAssets(out);
@@ -96,7 +108,7 @@ class Output {
         return;
       }
 
-      final raw = generator.generatePage(book, page);
+      final raw = generator.generatePage(theme, book, page);
       final doc = html.parse(raw);
       addHeadingId(doc);
       gm.annotate(doc);
