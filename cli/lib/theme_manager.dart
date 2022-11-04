@@ -1,3 +1,5 @@
+library theme;
+
 import 'dart:convert' show json;
 import 'dart:io' show Directory, File, FileSystemEntity, Link, Platform;
 
@@ -9,6 +11,8 @@ import 'template/template_engine.dart';
 import 'template/template_loader.dart';
 
 import 'io.dart' as io;
+
+part 'src/jinja_template.dart';
 
 bool _isDirectory(String dir) {
   if (FileSystemEntity.isDirectorySync(dir)) {
@@ -52,7 +56,7 @@ class ThemeManager {
     return ThemeManager._(
       layoutType,
       inner,
-      TemplateEngine(env),
+      _JinjaTemplate(env),
       builtinFilters,
       themeDir,
     );
@@ -66,9 +70,9 @@ class ThemeManager {
       this.themeDir,
   );
 
-  static Loader _makeLoader(String _innerThemeDir, String layoutType, String? themeDir, String? path,) {
-    final parent = File(p.join(_innerThemeDir, '_layouts', 'layout.html')).readAsStringSync();
-    final d = themeDir;
+  static Loader _makeLoader(String themeDir, String layoutType, String? userDir, String? path,) {
+    final parent = File(p.join(themeDir, '_layouts', 'layout.html')).readAsStringSync();
+    final d = userDir;
     return TemplateLoader(
       {
         'layout.html': parent,
@@ -79,18 +83,18 @@ class ThemeManager {
             path,
           if (d != null)
             p.join(d, '_layouts', layoutType),
-          p.join(_innerThemeDir, '_layouts', layoutType),
+          p.join(themeDir, '_layouts', layoutType),
         ],
       ),
     );
   }
 
-  static Map<String, String> _makeStringRes(String _innerThemeDir, String? themeDir, String lang) {
+  static Map<String, String> _makeStringRes(String themeDir, String? userDir, String lang) {
     lang = lang.length > 1 ? lang : 'en';
-    final file = File(p.join(_innerThemeDir, '_i18n', '$lang.html'));
-    final f = file.existsSync() ? file : File(_similarI18n(_innerThemeDir, lang));
+    final file = File(p.join(themeDir, '_i18n', '$lang.html'));
+    final f = file.existsSync() ? file : File(_similarI18n(themeDir, lang));
     final res = json.decode(f.readAsStringSync()).cast<String, String>();
-    final d = themeDir;
+    final d = userDir;
     if (d != null) {
       final file = File(p.join(d, '_i18n', '$lang.html'));
       if (file.existsSync()) {
@@ -101,8 +105,8 @@ class ThemeManager {
     return res;
   }
 
-  static String _similarI18n(String _innerThemeDir, String lang)  {
-    final dir = Directory(p.join(_innerThemeDir, '_i18n'));
+  static String _similarI18n(String themeDir, String lang)  {
+    final dir = Directory(p.join(themeDir, '_i18n'));
     final names = dir.listSync(recursive: false)
         .map((e) => p.relative(e.path, from: dir.path));
     final prefix = lang.length > 1 ? lang.substring(0, 2) : lang;
