@@ -40,6 +40,18 @@ class Book {
     this.lang,
   });
 
+  factory Book.empty(String lang) {
+    return Book(
+      bookPath: '',
+      langPath: lang,
+      ignore: BookIgnore(),
+      config: BookConfig('', {}),
+      readme: BookReadme(filename: '', title: ''),
+      summary: BookSummary('', []),
+      glossary: BookGlossary('', {}),
+    );
+  }
+
   /// project root directory of whole book
   String get root => langPath.isEmpty
       ? bookPath

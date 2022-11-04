@@ -7,18 +7,29 @@ import 'package:dartbook/theme_manager.dart';
 import 'package:dartbook_models/book.dart';
 import 'package:dartbook_models/config.dart';
 import 'package:dartbook_models/page.dart';
+import 'package:html/parser.dart' as html;
 import 'package:path/path.dart' as p;
 
 import 'context.dart';
+import 'modifiers.dart';
 
 class Generator {
+  final Book book;
+  final GlossaryModifier modifier;
   final bool directoryIndex;
 
-  Generator({
-    required this.directoryIndex,
-  });
+  factory Generator({
+    required Book book,
+    required bool directoryIndex,
+  }) {
+    final glossary = book.glossary;
+    final gm = GlossaryModifier(glossary.items.values);
+    return Generator._(book, gm, directoryIndex);
+  }
 
-  final _builtinFilters = <String, Function>{
+  const Generator._(this.book, this.modifier, this.directoryIndex);
+
+  static final _builtinFilters = <String, Function>{
     'resolveAsset': (f) {
       final filepath = p.join('/gitbook', f);
       return filepath;
@@ -26,7 +37,7 @@ class Generator {
     'contentURL': (path) => p.dirname(path),
   };
 
-  String _toUrl(Book book, String filename) {
+  String _toUrl(String filename) {
     if (filename.startsWith('/')) {
       filename = filename.substring(1);
     }
@@ -39,7 +50,7 @@ class Generator {
     return p.normalize(file);
   }
 
-  String generatePage(ThemeManager theme, Book book, BookPage page) {
+  String generatePage(ThemeManager theme, BookPage page) {
     final filename = page.filename;
     final engine = theme.engine;
     final data = RenderContext(
@@ -47,17 +58,21 @@ class Generator {
         ...theme.builtinFilters,
         ..._builtinFilters,
         'resolveFile': (String f) {
-          f = _toUrl(book, f);
+          f = _toUrl(f);
           return p.relative(f, from: p.dirname(filename));
         },
         'fileExists': (String f) => File(book.filePath(f)).existsSync(),
       },
-      data: _makePageRenderData(book, page),
+      data: _makePageRenderData(page),
     );
-    return engine.renderPage(data);
+    final raw = engine.renderPage(data);
+    final doc = html.parse(raw);
+    addHeadingId(doc);
+    modifier.annotate(doc);
+    return doc.outerHtml;
   }
 
-  Map<String, dynamic> _makePageRenderData(Book book, BookPage page) {
+  Map<String, dynamic> _makePageRenderData(BookPage page) {
     final summary = book.summary.json;
 
     final configData = _makeConfigData(book.config, book.langPath);

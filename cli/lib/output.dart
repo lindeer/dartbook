@@ -4,13 +4,11 @@ import 'dart:io' show File;
 import 'package:dartbook/context.dart';
 import 'package:dartbook_models/book.dart';
 import 'package:dartbook_models/page.dart';
-import 'package:html/parser.dart' as html;
 import 'package:path/path.dart' as p;
 import 'package:watcher/watcher.dart' show WatchEvent;
 
 import 'generator.dart';
 import 'io.dart' show writeToFile, createFolder;
-import 'modifiers.dart';
 import 'theme_manager.dart';
 
 class Option {
@@ -57,18 +55,23 @@ class Output {
     createFolder(out);
 
     for (final book in context.books.values) {
+      final at = DateTime.now().millisecondsSinceEpoch;
+      final lang = book.langPath;
+      logger.i("start to generate book ${lang.isEmpty ? '' : "'$lang'"} ...");
       final output = Output._(
         context,
         ThemeManager.build(
           layoutType: opt.format,
-          lang: book.langPath,
+          lang: lang,
           dir: p.join(context.root, 'theme'),
         ),
         Generator(
+          book: book,
           directoryIndex: opt.directoryIndex,
         ),
       );
-      output.generatePages(book, p.join(out, book.langPath));
+      output.generatePages(p.join(out, lang));
+      logger.i("book generation cost ${DateTime.now().millisecondsSinceEpoch - at}ms");
     }
 
     final theme = ThemeManager.build(
@@ -77,6 +80,7 @@ class Output {
       dir: p.join(context.root, 'theme'),
     );
     final gen = Generator(
+      book: Book.empty('en'),
       directoryIndex: opt.directoryIndex,
     );
     final output = Output._(context, theme, gen);
@@ -94,11 +98,10 @@ class Output {
     return output;
   }
 
-  void generatePages(Book book, String out) {
+  void generatePages(String out) {
     final logger = context.logger;
+    final book = generator.book;
     final pages = book.pages;
-    final glossary = book.glossary;
-    final gm = GlossaryModifier(glossary.items.values);
 
     void _outputPage(BookPage page) {
       final filename = page.filename;
@@ -108,12 +111,9 @@ class Output {
         return;
       }
 
-      final raw = generator.generatePage(theme, book, page);
-      final doc = html.parse(raw);
-      addHeadingId(doc);
-      gm.annotate(doc);
+      final htmlText = generator.generatePage(theme, page);
       final outputName = book.outputName(page.filename);
-      writeToFile(p.join(out, outputName), doc.outerHtml);
+      writeToFile(p.join(out, outputName), htmlText);
       page.content = null;
     }
 
