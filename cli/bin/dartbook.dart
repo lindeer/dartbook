@@ -12,6 +12,8 @@ import 'package:watcher/watcher.dart' show DirectoryWatcher;
 import 'diff.dart';
 
 void main(List<String> args) {
+  // If using 'args' packages, `Command` would have to define many options which
+  // already exist in git diff, so handle it separately.
   int pos = args.indexOf('diff');
   if (pos >= 0) {
     diffMain(args.sublist(pos + 1));
@@ -23,6 +25,7 @@ void main(List<String> args) {
 
   runner.addCommand(_BuildCommand());
   runner.addCommand(_ServeCommand());
+  runner.addCommand(_DiffCommand());
   runner.run(args).catchError((error) {
     if (error is! UsageException) throw error;
     print(error);
@@ -139,4 +142,14 @@ adding 'fs.inotify.max_user_watches=1048576' to '/etc/sysctl.conf'"""
     });
     return output;
   }
+}
+
+// Just for showing usage info
+class _DiffCommand extends Command<int> {
+  @override
+  final description = 'Show diff match patch but same options with git diff';
+
+  @override
+  String get name => 'diff';
+
 }
