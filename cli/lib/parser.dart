@@ -7,12 +7,13 @@ import 'package:dartbook_html/summary.dart';
 import 'package:dartbook_models/book.dart';
 import 'package:dartbook_models/page.dart';
 import 'package:dartbook_models/parser.dart';
-import 'package:dart_markdown/dart_markdown.dart' show markdownToHtml;
+import 'package:markdown/markdown.dart' show Document, ExtensionSet, renderToHtml;
 
 import 'logger.dart';
 
 class MarkdownParser implements Parser {
   final Logger logger;
+  final document = Document(extensionSet: ExtensionSet.gitHubFlavored);
 
   MarkdownParser(this.logger);
 
@@ -23,19 +24,25 @@ class MarkdownParser implements Parser {
   Iterable<String> get ext => ['.md'];
 
   @override
-  Iterable<Glossary> glossary(String content) => Glossary.from(markdownToHtml(content));
+  Iterable<Glossary> glossary(String content) => Glossary.from(_toHtml(content));
 
   @override
-  Langs langs(String content) => Langs.from(markdownToHtml(content));
+  Langs langs(String content) => Langs.from(_toHtml(content));
 
   @override
-  Readme readme(String content) => Readme.from(markdownToHtml(content));
+  Readme readme(String content) => Readme.from(_toHtml(content));
 
   @override
-  Summary summary(String content) => Summary.from(markdownToHtml(content));
+  Summary summary(String content) => Summary.from(_toHtml(content));
 
   @override
-  Page page(String md) => Page(markdownToHtml(md, enableFootnote: true));
+  Page page(String md) => Page(_toHtml(md));
+
+  String _toHtml(String md) {
+    final lines = md.replaceAll('\r\n', '\n').split('\n');
+    final nodes = document.parseLines(lines);
+    return '${renderToHtml(nodes)}\n';
+  }
 
   @override
   void pages(Book book) {
