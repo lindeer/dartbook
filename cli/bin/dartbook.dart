@@ -75,6 +75,7 @@ abstract class _MainCommand extends Command<int> {
   }
 
   Output _makeOutput(String rootDir, String outDir, Map<String, String> option) {
+    final at = DateTime.now().millisecondsSinceEpoch;
     final context = BookContext.assemble(
       root: rootDir,
       options: option,
@@ -84,6 +85,9 @@ abstract class _MainCommand extends Command<int> {
       format: fmt,
       root: outDir,
     ));
+    final d = Duration(milliseconds: DateTime.now().millisecondsSinceEpoch - at);
+    final mills = d.inMilliseconds.remainder(Duration.millisecondsPerSecond);
+    print("build output cost ${d.inSeconds}.${mills}s.");
     return output;
   }
 }

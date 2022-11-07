@@ -51,7 +51,6 @@ class Output {
     final out = opt.root;
     final logger = context.logger;
     logger.d('generate whole book in "$out"');
-    final at = DateTime.now().millisecondsSinceEpoch;
     createFolder(out);
 
     for (final book in context.books.values) {
@@ -91,10 +90,6 @@ class Output {
     }
     output.generateAssets(out);
     theme.copyAssets(p.join(out, 'gitbook'));
-
-    final d = Duration(milliseconds: DateTime.now().millisecondsSinceEpoch - at);
-    final mills = d.inMilliseconds.remainder(Duration.millisecondsPerSecond);
-    logger.i('generation finished with success in ${d.inSeconds}.${mills}s.');
     return output;
   }
 
