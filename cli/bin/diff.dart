@@ -52,7 +52,6 @@ void _parseDiffText(IOSink sink, String text) {
       changed.writeln(line);
     } else {
       _apply();
-      sink.writeln(line);
     }
   }
   _apply();
