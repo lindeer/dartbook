@@ -1,5 +1,10 @@
 
+import 'dart:io';
+
 import 'package:dartbook/context.dart';
+import 'package:dartbook/logger.dart';
+import 'package:dartbook/parser.dart';
+import 'package:html/parser.dart' as html;
 import 'package:test/test.dart';
 
 void main() {
@@ -76,5 +81,13 @@ void main() {
     final section2_1 = chapter2?.articles?.first;
     final prev = book.summary.prevArticle(section2_1!);
     expect(chapter1?.title, prev?.title);
+  });
+
+  test('global parser for footnote', () {
+    final parser = MarkdownParser(Logger(false));
+    final d1 = html.parse(parser.page(File('$root1/en/README.md').readAsStringSync()).content);
+    final d2 = html.parse(parser.page(File('$root1/zh/README.md').readAsStringSync()).content);
+    final e = d2.querySelector('sup > a');
+    expect(e?.text, "1");
   });
 }

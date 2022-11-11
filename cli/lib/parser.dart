@@ -40,6 +40,11 @@ class MarkdownParser implements Parser {
 
   String _toHtml(String md) {
     final lines = md.replaceAll('\r\n', '\n').split('\n');
+    // best safe way is to create a local document,
+    // but reuse `document` to avoid creation mem objects.
+    document.footnoteReferences.clear();
+    document.footnoteLabels.clear();
+    document.linkReferences.clear();
     final nodes = document.parseLines(lines);
     return '${renderToHtml(nodes)}\n';
   }
