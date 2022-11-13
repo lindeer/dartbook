@@ -140,7 +140,7 @@ class Generator {
         },
         'pluginsConfig': {
           'theme-default': {
-            'showLevel': 2,
+            'showLevel': true,
           }
         },
         'language': lang,
