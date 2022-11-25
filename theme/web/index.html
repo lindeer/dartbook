@@ -7,13 +7,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="scaffolded-by" content="https://github.com/dart-lang/sdk">
     <title>theme</title>
+    <style>
+        #output {
+            border-radius: 10px;
+        }
+        #container {
+            width: 400px;
+            margin: auto;
+            border-radius: 10px;
+            border: 2px solid #b4c540;
+        }
+        .tooltip-box {
+            display: block;
+            background: #ffffff;
+            line-height: 1.6em;
+            border: 1px solid #66CCFF;
+            color: #333333;
+            padding: 20px;
+            font-size: 12px;
+            border-radius: 5px;
+            overflow: auto;
+        }
+        .tooltip-shadow {
+            max-width: 400px !important;
+            width: max-content !important;
+            background-color: white;
+            color: #333;
+            text-align: left;
+            border-radius: 8px;
+            margin: 10px 0;
+            padding: 10px;
+            box-shadow: 0.3em 0.3em 1em rgba(0, 0, 0, 0.3);
+        }
+    </style>
     <link rel="stylesheet" href="styles.css">
-    <script defer src="main.dart.js"></script>
 </head>
 
 <body>
 
-  <div id="output"></div>
+<div id="container">
+    <p class="tooltip" id="output"></p>
+</div>
 
+<script defer src="main.dart.js"></script>
 </body>
 </html>
