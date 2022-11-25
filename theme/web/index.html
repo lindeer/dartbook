@@ -37,6 +37,9 @@
             border-radius: 8px;
             padding: 10px;
             box-shadow: 0.3em 0.3em 1em rgba(0, 0, 0, 0.3);
+
+            position: absolute;
+            display: none;
         }
         a {
             border: 1px solid #f00;
@@ -49,6 +52,10 @@
 
 <div id="container">
     <p class="tooltip" id="output"></p>
+</div>
+
+<div class="tooltip-shadow" id="tooltip-box-anchor">
+    <h2>JavaScript的5种基本数据类型：</h2><p>Undefined</p><p>Null</p><p>Boolean</p><p>Number</p><p>String</p>
 </div>
 
 <script defer src="main.dart.js"></script>

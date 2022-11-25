@@ -1,19 +1,13 @@
 import 'dart:html';
 import 'dart:math';
 
-void showTooltip(Element anchor, String id, String html, {int? width, int? height}) {
-  final box = document.getElementById(id) ?? document.createElement('div')
-    ..id = id
-    ..className = 'tooltip-shadow'
-    ..innerHtml = html;
+void showTooltip(Element anchor, {int? width, int? height}) {
+  final id = 'tooltip-box-${anchor.id}';
+  final box = document.getElementById(id)!;
   box.style.display = 'block';
-  if (box.parent == null) {
+  if (box.parent != anchor) {
+    box.remove();
     anchor.append(box);
-    box.style
-      ..width = width == null ? 'auto' : '${width}px'
-      ..height = height == null ? 'auto' : '${height}px'
-      ..position = 'absolute'
-      ..display = 'block';
 
     final left = anchor.offsetLeft;
     final top = anchor.offsetTop;
@@ -42,7 +36,7 @@ void main() {
   final anchor = querySelector('#anchor');
   if (anchor != null) {
     anchor.onMouseEnter.listen((e) {
-      showTooltip(anchor, "tooltip", "<h2>JavaScript的5种基本数据类型：</h2><p>Undefined</p><p>Null</p><p>Boolean</p><p>Number</p><p>String</p>");
+      showTooltip(anchor);
     });
   }
 }
