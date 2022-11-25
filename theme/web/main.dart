@@ -1,14 +1,13 @@
 import 'dart:html';
+import 'dart:math';
 
 void showTooltip(Element anchor, String id, String html, {int? width, int? height}) {
-  final e = document.getElementById(id);
-  if (e != null) {
-    e.style.display = 'block';
-  } else {
-    final box = document.createElement('div')
-      ..id = id
-      ..className = 'tooltip-shadow'
-      ..innerHtml = html;
+  final box = document.getElementById(id) ?? document.createElement('div')
+    ..id = id
+    ..className = 'tooltip-shadow'
+    ..innerHtml = html;
+  box.style.display = 'block';
+  if (box.parent == null) {
     anchor.append(box);
     box.style
       ..width = width == null ? 'auto' : '${width}px'
@@ -21,16 +20,11 @@ void showTooltip(Element anchor, String id, String html, {int? width, int? heigh
     final parent = document.getElementById('container');
 
     final right = parent != null ? (parent.offsetLeft + parent.offsetWidth) : document.body!.clientWidth;
-    int x = left + (anchor.clientWidth >> 2) - (box.offsetWidth >> 2);
+    final x = max(0, min(left + (anchor.clientWidth >> 2) - (box.offsetWidth >> 2), right - box.offsetWidth));
     print("parent=(${parent?.offsetLeft}, ${parent?.offsetWidth}), "
         "anchor=(${anchor.offsetLeft}, ${anchor.offsetWidth}), "
         "box=(${box.offsetLeft}, ${box.offsetWidth}), "
         "right=$right, x=$x");
-    if (x < 0) {
-      x = 0;
-    } else if (x + box.offsetWidth > right) {
-      x = right - box.offsetWidth;
-    }
     final y = top + anchor.offsetHeight;
     box.style..left = '${x}px'
       ..top = '${y}px';
