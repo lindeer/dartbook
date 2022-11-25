@@ -18,8 +18,19 @@ void showTooltip(Element anchor, String id, String html, {int? width, int? heigh
 
     final left = anchor.offsetLeft;
     final top = anchor.offsetTop;
-    final maxWidth = anchor.parent?.clientWidth ?? document.body!.clientWidth;
-    final x = left + (anchor.offsetHeight >> 2) - (box.offsetWidth >> 2);
+    final parent = document.getElementById('container');
+
+    final right = parent != null ? (parent.offsetLeft + parent.offsetWidth) : document.body!.clientWidth;
+    int x = left + (anchor.clientWidth >> 2) - (box.offsetWidth >> 2);
+    print("parent=(${parent?.offsetLeft}, ${parent?.offsetWidth}), "
+        "anchor=(${anchor.offsetLeft}, ${anchor.offsetWidth}), "
+        "box=(${box.offsetLeft}, ${box.offsetWidth}), "
+        "right=$right, x=$x");
+    if (x < 0) {
+      x = 0;
+    } else if (x + box.offsetWidth > right) {
+      x = right - box.offsetWidth;
+    }
     final y = top + anchor.offsetHeight;
     box.style..left = '${x}px'
       ..top = '${y}px';
