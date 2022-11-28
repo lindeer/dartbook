@@ -13,7 +13,6 @@
 }
 
 .glossary-item {
-  position: relative;
   display: inline-block;
   cursor: pointer;
   color: dodgerblue;
@@ -27,17 +26,9 @@
   color: #333;
   text-align: left;
   border-radius: 8px;
-  margin: 10px 0;
   padding: 10px;
   box-shadow: 0.3em 0.3em 1em rgba(0, 0, 0, 0.3);
 
   position: absolute;
   z-index: 1;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%);
-}
-
-.glossary-item:hover .glossary-detail {
-  visibility: visible;
 }

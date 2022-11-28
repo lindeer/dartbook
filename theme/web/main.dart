@@ -2,19 +2,15 @@ import 'dart:html';
 import 'dart:math';
 
 void showTooltip(Element anchor, {int? width, int? height}) {
-  final id = 'tooltip-box-${anchor.id}';
-  final box = document.getElementById(id)!;
-  box.style.display = 'block';
-  if (box.parent != anchor) {
-    box.remove();
-    anchor.append(box);
-
+  final box = anchor.children.first;
+  if (box.style.visibility != 'visible') {
+    box.style.visibility = 'visible';
     final left = anchor.offsetLeft;
     final top = anchor.offsetTop;
-    final parent = document.getElementById('container');
+    final parent = document.querySelector('.page-inner');
 
     final right = parent != null ? (parent.offsetLeft + parent.offsetWidth) : document.body!.clientWidth;
-    final x = max(0, min(left + (anchor.clientWidth >> 2) - (box.offsetWidth >> 2), right - box.offsetWidth));
+    final x = max(0, min(left + anchor.clientWidth / 2 - box.offsetWidth / 2, right - box.offsetWidth)).toInt();
     print("parent=(${parent?.offsetLeft}, ${parent?.offsetWidth}), "
         "anchor=(${anchor.offsetLeft}, ${anchor.offsetWidth}), "
         "box=(${box.offsetLeft}, ${box.offsetWidth}), "
@@ -24,17 +20,15 @@ void showTooltip(Element anchor, {int? width, int? height}) {
       ..top = '${y}px';
     anchor.onMouseLeave.listen((ev) {
       Future.delayed(Duration(milliseconds: 20), () {
-        box.style.display = "none";
+        box.style.visibility = 'hidden';
       });
     });
   }
 }
 
 void main() {
-  final output = querySelector('#output')!;
-  output.innerHtml = 'Your Dart app is <a id="anchor">running</a>.';
-  final anchor = querySelector('#anchor');
-  if (anchor != null) {
+  final items = querySelectorAll('.glossary-item');
+  for (final anchor in items) {
     anchor.onMouseEnter.listen((e) {
       showTooltip(anchor);
     });
