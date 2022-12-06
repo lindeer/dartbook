@@ -9098,9 +9098,21 @@ input[type=range]::-ms-thumb {
 }
 
 .demo-content {
-  border-radius: 2px;
-  padding: 80px 56px;
-  margin-bottom: 80px;
+  padding: 40px 0px;
+}
+
+@media only screen and (min-width: 601px) {
+  .demo-content {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+}
+
+@media only screen and (min-width: 993px) {
+  .demo-content {
+    padding-left: 56px;
+    padding-right: 56px;
+  }
 }
 
 .demo-content h3 {
