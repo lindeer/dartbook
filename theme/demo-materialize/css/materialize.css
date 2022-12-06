@@ -9089,10 +9089,16 @@ input[type=range]::-ms-thumb {
   height: 40vh;
   background-color: #ee6e73;
   flex-shrink: 0;
+
+  position:fixed;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+  z-index: -1;
 }
 
 .demo-main {
-  margin-top: -35vh;
+  margin-top: 5vh;
   flex-shrink: 0;
   font-size: 1.4em;
 }
