@@ -2731,7 +2731,6 @@ video.responsive-video {
   border-radius: 2px;
   text-align: center;
   vertical-align: top;
-  height: 30px;
 }
 
 .pagination li a {
@@ -9123,4 +9122,8 @@ input[type=range]::-ms-thumb {
 
 .demo-content h3 {
   margin-top: 48px;
+}
+
+.pagination li i.large {
+  font-size: 5rem;
 }
