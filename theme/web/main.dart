@@ -7,7 +7,7 @@ void showTooltip(Element anchor, {int? width, int? height}) {
     box.style.visibility = 'visible';
     final left = anchor.offsetLeft;
     final top = anchor.offsetTop;
-    final parent = document.querySelector('.page-inner');
+    final parent = document.querySelector('.markdown-section');
 
     final right = parent != null ? (parent.offsetLeft + parent.offsetWidth) : document.body!.clientWidth;
     final x = max(0, min(left + anchor.clientWidth / 2 - box.offsetWidth / 2, right - box.offsetWidth)).toInt();

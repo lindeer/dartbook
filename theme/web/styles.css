@@ -1,1 +1,20 @@
-../demo-materialize/css/materialize.css
+
+.glossary-item {
+  cursor: pointer;
+  color: dodgerblue;
+}
+
+.glossary-item .glossary-detail {
+  visibility: hidden;
+  max-width: 400px !important;
+  width: max-content !important;
+  background-color: white;
+  color: #333;
+  text-align: left;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0.3em 0.3em 1em rgba(0, 0, 0, 0.3);
+
+  position: absolute;
+  z-index: 1;
+}
