@@ -8,7 +8,9 @@
     <meta name="description" content="">
     <meta name="generator" content="GitBook ">
     <meta name="author" content="[德]卡尔·汉佩，译 林鹿">
-    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.sourcegcdn.com/icon?family=Material+Icons" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="styles.css" media="screen,projection" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="HandheldFriendly" content="true">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -20,9 +22,27 @@
   </head>
   <body>
     <div class="book">
-      <div class="book-summary">
-        <nav role="navigation">
-          <ul class="summary">
+      <div class="navbar-fixed">
+        <nav>
+          <a href="#" data-target="slide-out" class="sidenav-trigger show-on-large">
+            <i class="material-icons">menu</i></a>
+          <div class="nav-wrapper">
+            <ul id="nav-mobile" class="left hide-on-small-only">
+              <li>
+                <a class="waves-effect waves-light">
+                  <i class="material-icons">arrow_back</i></a>
+              </li>
+              <li>
+                <a class="waves-effect waves-light">
+                  <i class="material-icons">arrow_forward</i></a>
+              </li>
+            </ul>
+            <span href="#" class="brand-logo center">序幕</span>
+          </div>
+        </nav>
+      </div>
+      <div id="slide-out" class="book-summary sidenav">
+          <ul class="summary collection with-header">
             <li class="chapter " data-level="1.1" data-path="..">
               <a href="..">
                 <b>1.1</b> 前言 </a>
@@ -667,7 +687,6 @@
               <a href="https://www.gitbook.com" target="blank" class="gitbook-link"> Published with GitBook </a>
             </li>
           </ul>
-        </nav>
       </div>
       <div class="book-body">
         <div class="body-inner">
@@ -782,7 +801,12 @@
         });
       </script>
     </div>
-    <script src="/gitbook/gitbook.js"></script>
-    <script src="main.dart.js"></script>
+    <script type="text/javascript" src="materialize.js"></script>
+    <script type="text/javascript">
+      document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('.sidenav');
+        var instances = M.Sidenav.init(elems, {});
+      });
+    </script>
   </body>
 </html>
