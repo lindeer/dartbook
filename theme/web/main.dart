@@ -1,29 +1,47 @@
 import 'dart:html';
 import 'dart:math';
 
-void showTooltip(Element anchor, {int? width, int? height}) {
-  final box = anchor.children.first;
-  if (box.style.visibility != 'visible') {
-    box.style.visibility = 'visible';
-    final left = anchor.offsetLeft;
-    final top = anchor.offsetTop;
-    final parent = document.querySelector('.markdown-section');
+void showTooltip(Element anchor) {
+  final screenRect = Rectangle(
+    window.screenLeft ?? 0,
+    window.screenTop ?? 0,
+    window.screen?.width ?? 0,
+    window.screen?.height ?? 0,
+  );
+  final tooltip = document.getElementById('detail-1')!;
+  final anchorAncestor = anchor.offsetParent?.getBoundingClientRect() ?? screenRect;
 
-    final right = parent != null ? (parent.offsetLeft + parent.offsetWidth) : document.body!.clientWidth;
-    final x = max(0, min(left + anchor.clientWidth / 2 - box.offsetWidth / 2, right - box.offsetWidth)).toInt();
-    print("parent=(${parent?.offsetLeft}, ${parent?.offsetWidth}), "
-        "anchor=(${anchor.offsetLeft}, ${anchor.offsetWidth}), "
-        "box=(${box.offsetLeft}, ${box.offsetWidth}), "
-        "right=$right, x=$x");
-    final y = top + anchor.offsetHeight;
-    box.style..left = '${x}px'
-      ..top = '${y}px';
-    anchor.onMouseLeave.listen((ev) {
-      Future.delayed(Duration(milliseconds: 20), () {
-        box.style.visibility = 'hidden';
-      });
+  final x = min(max(0, (anchor.offsetLeft + anchor.offsetWidth / 2 - tooltip.offsetWidth / 2).toInt()),
+      anchorAncestor.right - tooltip.offsetWidth);
+  final top = anchor.offsetTop + anchor.offsetHeight;
+  final y = top > anchorAncestor.bottom - tooltip.offsetHeight ? anchor.offsetTop - tooltip.offsetHeight : top;
+
+  final tooltipAncestor = tooltip.offsetParent?.getBoundingClientRect() ?? screenRect;
+  // tooltip's ancestor may not be same with anchor's
+  // so calculate the offset position for tooltip
+  final dx = anchorAncestor.left - tooltipAncestor.left;
+  final dy = anchorAncestor.top - tooltipAncestor.top;
+
+  tooltip.style
+    ..visibility = 'visible'
+    ..left = '${x + dx}px'
+    ..top = '${y + dy}px';
+
+  bool hover = false;
+  anchor.onMouseLeave.listen((ev) {
+    Future.delayed(const Duration(milliseconds: 16), () {
+      if (!hover) {
+        tooltip.style.visibility = "hidden";
+      }
     });
-  }
+  });
+  tooltip.onMouseEnter.listen((ev) {
+    hover = true;
+  });
+  tooltip.onMouseLeave.listen((ev) {
+    hover = false;
+    tooltip.style.visibility = "hidden";
+  });
 }
 
 void main() {
