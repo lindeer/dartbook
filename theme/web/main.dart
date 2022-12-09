@@ -8,13 +8,12 @@ void showTooltip(Element anchor) {
     window.screen?.width ?? 0,
     window.screen?.height ?? 0,
   );
-  final tooltip = document.getElementById('detail-1')!;
+  final tooltip = document.getElementById('detail-${anchor.id}')!;
   final anchorAncestor = anchor.offsetParent?.getBoundingClientRect() ?? screenRect;
 
   final x = min(max(0, (anchor.offsetLeft + anchor.offsetWidth / 2 - tooltip.offsetWidth / 2).toInt()),
-      anchorAncestor.right - tooltip.offsetWidth);
-  final top = anchor.offsetTop + anchor.offsetHeight;
-  final y = top > anchorAncestor.bottom - tooltip.offsetHeight ? anchor.offsetTop - tooltip.offsetHeight : top;
+      anchorAncestor.right - tooltip.offsetWidth - anchorAncestor.left);
+  final y = anchor.offsetTop + anchor.offsetHeight;
 
   final tooltipAncestor = tooltip.offsetParent?.getBoundingClientRect() ?? screenRect;
   // tooltip's ancestor may not be same with anchor's

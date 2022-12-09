@@ -8688,7 +8688,6 @@ input[type=text].text-primary {
 }
 
 .demo-main {
-  margin-top: 5vh;
   flex-shrink: 0;
   font-size: 1.4em;
 }

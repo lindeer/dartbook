@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+<style>
+.stack {
+  position: relative;
+}
+.stack-child {
+  position: absolute;
+  left: 0; 
+  right: 0;
+}
+.container {
+  width: 70%;
+  background-color: lightcoral;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 300px;
+}
+.ribbon {
+  background-color: lightblue;
+  width: 100%;
+  height: 150px;
+}
+.tooltip {
+  visibility: hidden;
+  max-width: 400px !important;
+  width: max-content !important;
+  background-color: white;
+  color: #333;
+  text-align: left;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0.3em 0.3em 1em rgba(0, 0, 0, 0.3);
+}
+.glossary-item {
+  cursor: pointer;
+  color: dodgerblue;
+}
+</style>
+</head>
+<body>
+
+<div id="frame-main" class="main stack">
+  <div class="ribbon stack-child"></div>
+  <main class="container stack-child">
+    <p>在13世纪50年代初，斯陶芬家族成员大量死亡，就好像生命力盛极而衰一下子耗尽了一样。继1250年( <span class="glossary-item">Friedrich II </span>)过世后，与自己同名的孙子腓特烈——不幸的亨利（七世）(
+    </p>
+  </main>
+  <div id="detail-1" class="tooltip stack-child">
+    <span class="glossary-detail">神圣罗马帝国的 <a href="https://zh.wikipedia.org/wiki/%E8%85%93%E7%89%B9%E7%83%88%E4%BA%8C%E4%B8%96_%28%E7%A5%9E%E5%9C%A3%E7%BD%97%E9%A9%AC%E5%B8%9D%E5%9B%BD%29">腓特烈二世</a>(1194-1250)，一生共有三位正式妻子，分别是阿拉贡的康斯坦丝，耶路撒冷女王伊莎贝拉二世，英格兰的伊莎贝拉。此外还有大量情妇，生育有多个私生子。 </span>
+  </div>
+</div>
+
+  <script type="text/javascript" src="main.dart.js"></script>
+</body>
+</html>

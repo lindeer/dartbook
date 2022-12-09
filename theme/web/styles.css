@@ -2,9 +2,10 @@
 .glossary-item {
   cursor: pointer;
   color: dodgerblue;
+  display: inline-block;
 }
 
-.glossary-item .glossary-detail {
+.glossary-detail {
   visibility: hidden;
   max-width: 400px !important;
   width: max-content !important;
@@ -17,4 +18,20 @@
 
   position: absolute;
   z-index: 1;
+}
+
+.stack {
+  position: relative;
+}
+.stack-child {
+  position: absolute;
+  top: 0;
+}
+
+.page-inner {
+  margin-top: 0px;
+  position: relative;
+}
+.page-wrapper {
+  padding-top: 10px;
 }
