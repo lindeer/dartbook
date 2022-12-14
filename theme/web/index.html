@@ -27,23 +27,23 @@
           <!-- 'sidenav-trigger' should be kept or else drawer would be invalid -->
           <a href="#" data-target="slide-out" class="sidenav-trigger show-on-large">
             <i class="material-icons">menu</i></a>
-          <div class="nav-wrapper">
-            <ul id="nav-mobile" class="left hide-on-small-only">
+          <div class="toolbar-group">
+            <ul class="toolbar-actions">
               <li>
-                <a class="waves-effect waves-light">
+                <a class="button-pressed">
                   <i class="material-icons">arrow_back</i></a>
               </li>
               <li>
-                <a class="waves-effect waves-light">
+                <a class="button-pressed">
                   <i class="material-icons">arrow_forward</i></a>
               </li>
             </ul>
-            <span href="#" class="brand-logo center">序幕</span>
+            <span href="#" class="page-title">序幕</span>
           </div>
         </nav>
       </div>
-      <div id="slide-out" class="book-summary sidenav">
-          <ul class="summary collection with-header">
+      <div id="slide-out" class="book-summary">
+          <ul class="summary">
             <li class="chapter " data-level="1.1" data-path="..">
               <a href="..">
                 <b>1.1</b> 前言 </a>
@@ -745,7 +745,7 @@
     <script type="text/javascript" src="materialize.js"></script>
     <script type="text/javascript">
       document.addEventListener('DOMContentLoaded', function() {
-        var elems = document.querySelectorAll('.sidenav');
+        var elems = document.querySelectorAll('.book-summary');
         var instances = M.Sidenav.init(elems, {});
       });
     </script>

@@ -25,3 +25,31 @@ $primary-color: #64b5f6;
 .book-toolbar {
   @extend .navbar-fixed;
 }
+
+.toolbar-actions {
+  @extend .right;
+  @extend .hide-on-small-only;
+}
+
+.toolbar-group {
+  @extend .nav-wrapper;
+}
+
+.button-pressed {
+  @extend .waves-effect;
+  @extend .waves-light;
+}
+
+.page-title {
+  @extend .brand-logo;
+  @extend .center;
+}
+
+.book-summary {
+  @extend .sidenav;
+}
+
+.summary {
+  @extend .collection;
+  @extend .with-header;
+}
