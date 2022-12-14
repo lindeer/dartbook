@@ -1,0 +1,23 @@
+$primary-color: #64b5f6;
+
+@import "materialize/materialize";
+
+.pagination {
+
+  li {
+    height: unset;
+  }
+}
+
+.demo-ribbon {
+  width: 100%;
+  height: 40vh;
+  background-color: $primary-color;
+  flex-shrink: 0;
+
+  position:fixed;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+  z-index: -1;
+}

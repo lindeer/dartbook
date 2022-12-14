@@ -1,4 +1,36 @@
 
+
+.demo-main {
+  flex-shrink: 0;
+  font-size: 1.4em;
+}
+
+.demo-content {
+  padding: 40px 0px;
+}
+
+@media only screen and (min-width: 601px) {
+  .demo-content {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+}
+
+@media only screen and (min-width: 993px) {
+  .demo-content {
+    padding-left: 56px;
+    padding-right: 56px;
+  }
+}
+
+.demo-content h3 {
+  margin-top: 48px;
+}
+
+.pagination li i.large {
+  font-size: 5rem;
+}
+
 .glossary-item {
   cursor: pointer;
   color: dodgerblue;
