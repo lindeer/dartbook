@@ -85,6 +85,10 @@ $primary-color: #64b5f6;
   }
 }
 
+.markdown-section > p {
+  text-indent: 2em;
+}
+
 .paging-group {
   @extend .hide-on-med-and-up;
   @extend .pagination;
@@ -104,6 +108,7 @@ $primary-color: #64b5f6;
   cursor: pointer;
   color: dodgerblue;
   display: inline-block;
+  text-indent: 0;
 }
 
 .glossary-detail {
