@@ -80,13 +80,18 @@ $primary-color: #64b5f6;
     padding-right: 56px;
   }
 
+  h1 {
+    text-align: center;
+    font-size: 4rem;
+  }
+
   h3 {
     margin-top: 48px;
   }
-}
 
-.markdown-section > p {
-  text-indent: 2em;
+  > p {
+    text-indent: 2em;
+  }
 }
 
 .paging-group {
