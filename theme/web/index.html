@@ -745,7 +745,9 @@
     <script type="text/javascript">
       document.addEventListener('DOMContentLoaded', function() {
         var elems = document.querySelectorAll('.book-summary');
-        var instances = M.Sidenav.init(elems, {});
+        var instances = M.Sidenav.init(elems, {
+          preventScrolling: false,
+        });
       });
     </script>
     <script type="text/javascript" src="main.dart.js"></script>
