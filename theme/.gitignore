@@ -4,3 +4,13 @@
 
 # Conventional directory for build output.
 build/
+
+# web/
+materialize.css
+materialize.css.map
+styles.css
+styles.css.map
+materialize/
+
+# generated resources
+resource/_assets/
