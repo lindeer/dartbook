@@ -1,0 +1,26 @@
+{% block book_header %}
+<div class="book-toolbar">
+    <nav>
+      <!-- 'sidenav-trigger' should be kept or else drawer would be invalid -->
+      <a href="#" data-target="slide-out" class="sidenav-trigger show-on-large">
+        <i class="material-icons">menu</i></a>
+      <div class="toolbar-group">
+        <ul class="toolbar-actions right">
+          {% if page.previous and page.previous.path %}
+          <li>
+            <a class="waves-effect waves-light" href="{{ page.previous.path|resolveFile }}{{ page.previous.anchor }}">
+              <i class="material-icons">arrow_back</i></a>
+          </li>
+          {% endif %}
+          {% if page.next and page.next.path %}
+          <li>
+            <a class="waves-effect waves-light" href="{{ page.next.path|resolveFile }}{{ page.next.anchor }}">
+              <i class="material-icons">arrow_forward</i></a>
+          </li>
+          {% endif %}
+        </ul>
+        <span href="#" class="page-title center">{{ page.title }}</span>
+      </div>
+    </nav>
+</div>
+{% endblock %}

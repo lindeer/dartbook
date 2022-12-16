@@ -4,6 +4,17 @@
 
 {% block description %}{{ page.description }}{% endblock %}
 
+{% block head %}
+    {{ super() }}
+    <link href="https://fonts.sourcegcdn.com/icon?family=Material+Icons" rel="stylesheet">
+    {% if page.next and page.next.path %}
+    <link rel="next" href="{{ page.next.path|resolveFile }}" />
+    {% endif %}
+    {% if page.previous and page.previous.path %}
+    <link rel="prev" href="{{ page.previous.path|resolveFile }}" />
+    {% endif %}
+{% endblock %}
+
 {% block javascript %}
     <script src="{{ 'materialize.js'|resolveAsset }}"></script>
     <script>
@@ -19,13 +30,12 @@
 
 {% block body %}
 <div class="book">
-    <div class="book-summary">
+    {% include "./header.html" %}
+    <div id="slide-out" class="book-summary">
         {% block book_sidebar %}
-            {% block search_input %}{% endblock %}
+            {% block sidebar_header %}{% endblock %}
             {% block book_summary %}
-                <nav role="navigation">
                 {% include "./summary.html" %}
-                </nav>
             {% endblock %}
         {% endblock %}
     </div>
@@ -33,8 +43,8 @@
     <div class="book-body">
         {% block book_body %}
             <div class="body-inner">
+                <div class="book-ribbon"></div>
                 {% block book_inner %}
-                    {% include "./header.html" %}
 
                     <div class="page-wrapper" tabindex="-1" role="main">
                         <div class="page-inner">
