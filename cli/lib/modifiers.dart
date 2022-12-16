@@ -1,5 +1,6 @@
+
 import 'package:dartbook_models/utils.dart' show slug;
-import 'package:html/dom.dart';
+import 'package:html/dom.dart' show Document, DocumentFragment, Element, Node, Text;
 
 import 'package:dartbook_models/glossary.dart';
 
@@ -37,7 +38,8 @@ class GlossaryModifier {
   GlossaryModifier(this.entries);
 
   /// for each entry, modify the whole dom tree, and then next entry
-  void annotate(Node doc) {
+  void annotate(Document doc) {
+    final matchedEntries = <String, GlossaryItem>{};
     for (final entry in entries) {
       final name = entry.name;
       final regex = (_regexCache[name] ??= _makeRegExp(name));
@@ -54,12 +56,9 @@ class GlossaryModifier {
           return true;
         }
 
-        final desc = entry.desc;
-
         final e = _replaceNode(node, regex, (m) {
-          final detail = desc == null ? ''
-              : '<span class="glossary-detail">$desc</span>';
-          return '<span class="glossary-item">$name$detail</span>';
+          matchedEntries[entry.name] = entry;
+          return '<span class="glossary-item" data-target="glossary-${entry.id}">$name</span>';
         });
         if (e != null) {
           final parent = node.parent;
@@ -74,6 +73,15 @@ class GlossaryModifier {
       replacing?.forEach((e) {
         e.remove();
       });
+    }
+    final container = doc.getElementById('body-container');
+    if (container != null) {
+      for (final entry in matchedEntries.values) {
+        final desc = entry.desc;
+        if (desc != null) {
+          container.append(Element.html('<div id="glossary-${entry.id}" class="glossary-detail">$desc</div>'));
+        }
+      }
     }
   }
 }
