@@ -8,7 +8,11 @@ void showTooltip(Element anchor) {
     window.screen?.width ?? 0,
     window.screen?.height ?? 0,
   );
-  final tooltip = document.getElementById('detail-${anchor.id}')!;
+  final id = anchor.dataset['target'];
+  final tooltip = id == null ? null : document.getElementById(id);
+  if (tooltip == null) {
+    return;
+  }
   final anchorAncestor = anchor.offsetParent?.getBoundingClientRect() ?? screenRect;
 
   final x = min(max(0, (anchor.offsetLeft + anchor.offsetWidth / 2 - tooltip.offsetWidth / 2).toInt()),
