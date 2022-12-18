@@ -131,3 +131,15 @@ $primary-color: #5c6bc0;
 .chapter {
   @extend .truncate;
 }
+
+a.lang-item {
+  @extend .z-depth-1;
+  @extend .hoverable;
+
+  display: flex;
+  line-height: 64px;
+  width: 100%;
+  padding-left: 20px;
+  margin: 16px 0px;
+  color: $primary-color;
+}
