@@ -26,6 +26,17 @@ Try to keep everything same with gitbook, so it is compatible to run existing bo
 
 Using dartbook, it is easy to custom your book website, just create 'theme' in book project's root directory, in 'theme', create '_layouts' for your book's pages' layout, '_i18n' for different i18n string resources and '_assets' for appearance. It keep same with gitbook's style.
 
+### Theme development
+
+Dartbook's theme based on [materialize](https://github.com/materializecss/materialize/) css framework. If you would like to custom your own theme style, just did as follow steps:
+
+  1. Download latest materialize source package, e.g. [materialize-src-v1.2.0.zip](https://github.com/materializecss/materialize/releases/download/1.2.0/materialize-src-v1.2.0.zip). Extract it and move its sass directory to `$dartbookRoot/theme/web`. We need materialize's components to build our own styles.
+  2. Install dart sass command line tool: `dart pub global activate webdev sass`, of course, make sure your envrionment variables include `~/.pub-cache/bin`: `export PATH=$PATH:~/.pub-cache/bin`.
+  3. `cd $dartbookRoot/theme && sass web/styles.scss web/styles.css`, and then run `webdev serve`
+  4. Open `http://127.0.0.1:8080` in your browser, and start to modify something.
+  5. `main.dart` would finally compile to `dartbook.js`, its main functionality is to show glossary tooltips and bind events for them. `materialize.js` is entirely copied as dartbook's assets. `build.sh` is a helper script for file copy and rename, run it when you finally finished theme developing.
+  6. when you started to develop a theme in real world, you may not need chang theme resource files in `cli/theme`, then just create a `theme` directory as `Extension` part above told, your book project would apply newly changed theme resources.
+
 ### Patch diff
 
 Git diff is based on line, that means whole line would be labeled even if one character is changed, it is extremely inconvenient to find what we haved revised when doing authoring work. Thanks to [google-diff-match-patch](https://github.com/google/diff-match-patch), we could clearly take on the text change.
