@@ -1,6 +1,5 @@
-library dartbook.markdown;
-
-import 'package:dartbook_markdown/md_parser.dart';
+import 'package:dartbook/logger.dart';
+import 'package:dartbook/parser.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -11,7 +10,7 @@ void main() {
 * [English](en/)
 * [French](fr/)
     """;
-    final lang = MdParser().langs(md);
+    final lang = MarkdownParser(Logger(false)).langs(md);
     expect(lang.articles.length, 2);
 
     final first = lang.articles.first;
@@ -34,7 +33,7 @@ other content
 ...
 
     """;
-    final readme = MdParser().readme(md);
+    final readme = MarkdownParser(Logger(false)).readme(md);
     expect(readme.title, 'This is the title',
         reason: 'should extract the right title');
     expect(readme.desc, 'This is the book description.',
@@ -71,7 +70,7 @@ print(f(9))
 
 Awesome project. Really amazing, I'm really at a loss for words ...
     """;
-    final glossaries = MdParser().glossary(md);
+    final glossaries = MarkdownParser(Logger(false)).glossary(md);
     expect(glossaries.length, 4,
         reason: 'should only get heading + paragraph pairs');
     expect(true, glossaries.any((g) => g.desc != null),
@@ -86,7 +85,7 @@ Awesome project. Really amazing, I'm really at a loss for words ...
 *    
 
     """;
-    final parts = MdParser().summary(md).parts;
+    final parts = MarkdownParser(Logger(false)).summary(md).parts;
     // expect(parts.length, 1);
     expect(parts.first.articles?.length, 1,
         reason: 'should allow ignore empty entries');
@@ -110,7 +109,7 @@ Awesome project. Really amazing, I'm really at a loss for words ...
 
 * Unfinished Chapter
     """;
-    final parts = MdParser().summary(md).parts;
+    final parts = MarkdownParser(Logger(false)).summary(md).parts;
     // expect(parts.length, 1);
     expect(parts.first.articles?.length, 5,
         reason: 'should allow lists separated by whitespace');
@@ -132,7 +131,7 @@ Awesome project. Really amazing, I'm really at a loss for words ...
 
     """;
 
-    final parts = MdParser().summary(md).parts;
+    final parts = MarkdownParser(Logger(false)).summary(md).parts;
     // expect(parts.length, 1);
     expect(parts.length, 3, reason: 'should split parts');
   });
@@ -157,7 +156,7 @@ Awesome project. Really amazing, I'm really at a loss for words ...
 * Chapter 4
 
     """;
-    final parts = MdParser().summary(md).parts;
+    final parts = MarkdownParser(Logger(false)).summary(md).parts;
     final primary = parts.first;
     expect(primary.articles?.length, 5, reason: 'should detect chapters');
     expect(primary.articles?.take(3).map((e) => e.articles?.length ?? 0),

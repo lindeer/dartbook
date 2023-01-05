@@ -1,9 +1,10 @@
-import 'package:dartbook_markdown/md_parser.dart';
+import 'package:dartbook/logger.dart';
+import 'package:dartbook/parser.dart';
 import 'package:test/test.dart';
 
 void main() {
   test('basic page parsing', () {
-    final parser = MdParser();
+    final parser = MarkdownParser(Logger(false));
     expect(parser.page('# Hello').content, '<h1>Hello</h1>\n');
     // expect(parser.page('# Hello {#test}').content, '<h1 id="test">Hello </h1>\n');
     expect(parser.page('[Cool stuff](https://it.wikipedia.org/wiki/Savelli_(famiglia))').content,
