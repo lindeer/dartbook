@@ -70,7 +70,7 @@ void main() {
 
     final first = entries.first;
     expect(first.name, 'Magic');
-    expect(first.desc, '<p>Sufficiently advanced technology, beyond the understanding of the observer producing a sense of wonder.</p>');
+    expect(first.desc, 'Sufficiently advanced technology, beyond the understanding of the observer producing a sense of wonder.');
   });
 
   test('empty desc', () {
