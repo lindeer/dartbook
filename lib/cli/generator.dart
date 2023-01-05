@@ -2,8 +2,6 @@
 import 'dart:convert' show json;
 import 'dart:io' show File;
 
-import 'package:dartbook/template/template_engine.dart' show RenderContext;
-import 'package:dartbook/theme_manager.dart';
 import 'package:dartbook_models/book.dart';
 import 'package:dartbook_models/config.dart';
 import 'package:dartbook_models/page.dart';
@@ -12,6 +10,8 @@ import 'package:path/path.dart' as p;
 
 import 'context.dart';
 import 'modifiers.dart';
+import 'template/template_engine.dart' show RenderContext;
+import 'theme_manager.dart';
 
 class Generator {
   final Book book;

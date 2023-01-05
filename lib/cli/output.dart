@@ -1,12 +1,12 @@
 import 'dart:async' show Timer;
 import 'dart:io' show File;
 
-import 'package:dartbook/context.dart';
 import 'package:dartbook_models/book.dart';
 import 'package:dartbook_models/page.dart';
 import 'package:path/path.dart' as p;
 import 'package:watcher/watcher.dart' show WatchEvent;
 
+import 'context.dart';
 import 'generator.dart';
 import 'io.dart' show writeToFile, createFolder;
 import 'theme_manager.dart';

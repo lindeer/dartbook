@@ -2,8 +2,8 @@ import 'dart:async' show FutureOr;
 import 'dart:io' show Platform, exit;
 
 import 'package:args/command_runner.dart';
-import 'package:dartbook/context.dart';
-import 'package:dartbook/output.dart';
+import 'package:dartbook/cli/context.dart';
+import 'package:dartbook/cli/output.dart';
 import 'package:path/path.dart' as p;
 import 'package:shelf_static/shelf_static.dart' show createStaticHandler;
 import 'package:shelf/shelf_io.dart' as io;

@@ -1,6 +1,6 @@
 import 'package:dartbook_models/glossary.dart';
 import 'package:test/test.dart';
-import 'package:dartbook/modifiers.dart' show GlossaryModifier;
+import 'package:dartbook/cli/modifiers.dart' show GlossaryModifier;
 import 'package:html/parser.dart' show parse;
 
 void main() {

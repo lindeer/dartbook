@@ -7,10 +7,10 @@ import 'package:collection/collection.dart' show IterableExtension;
 import 'package:jinja/jinja.dart' show Environment, Loader;
 import 'package:jinja/loaders.dart' show FileSystemLoader;
 import 'package:path/path.dart' as p;
-import 'template/template_engine.dart';
-import 'template/template_loader.dart';
 
 import 'io.dart' as io;
+import 'template/template_engine.dart';
+import 'template/template_loader.dart';
 
 part 'src/jinja_template.dart';
 
@@ -39,7 +39,7 @@ class ThemeManager {
     String? path,
     String? dir,
   }) {
-    final inner = p.normalize(p.join(p.dirname(Platform.script.path), '..', 'theme'));
+    final inner = p.normalize(p.join(p.dirname(Platform.script.path), '..', 'theme', 'public'));
     final themeDir = dir != null && _isDirectory(dir) ? dir : null;
     final loader = _makeLoader(inner, layoutType, themeDir, path);
     final i18n = _makeStringRes(inner, themeDir, lang);

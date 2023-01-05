@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ ! -d web/materialize ]; then
+  unzip ~/Downloads/materialize-src-v1.2.0.zip
+  mv materialize-src/sass web/materialize
+  rm -rf materialize-src
+fi
 cd web && sass --style=compressed styles.scss styles.css && cd -
 webdev build
 
@@ -13,5 +18,7 @@ cp build/main.dart.js $assetDir/dartbook.js
 cp build/materialize.js $assetDir/materialize.js
 cp build/styles.css $assetDir/style.css
 
-rm -rf ../cli/theme/_assets/website && cp -r $assetDir ../cli/theme/_assets
-cp resource/_layouts/website/*.html ../cli/theme/_layouts/website
+resourceDir='public'
+targetAssetDir="$resourceDir/_assets"
+rm -rf $targetAssetDir/website && cp -r $assetDir $targetAssetDir
+cp resource/_layouts/website/*.html $resourceDir/_layouts/website

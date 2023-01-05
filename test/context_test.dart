@@ -1,9 +1,9 @@
 
 import 'dart:io';
 
-import 'package:dartbook/context.dart';
-import 'package:dartbook/logger.dart';
-import 'package:dartbook/parser.dart';
+import 'package:dartbook/cli/context.dart';
+import 'package:dartbook/cli/logger.dart';
+import 'package:dartbook/cli/parser.dart';
 import 'package:html/parser.dart' as html;
 import 'package:test/test.dart';
 

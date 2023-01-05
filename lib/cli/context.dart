@@ -2,7 +2,6 @@ import 'dart:collection' show Queue;
 import 'dart:convert' show json;
 import 'dart:io' show Directory, File, FileSystemEntity, IOException;
 
-import 'package:dartbook/parser.dart';
 import 'package:dartbook_models/book.dart';
 import 'package:dartbook_models/config.dart';
 import 'package:dartbook_models/const/config.dart';
@@ -18,6 +17,7 @@ import 'package:json_schema2/json_schema2.dart';
 import 'package:path/path.dart' as p;
 
 import 'logger.dart';
+import 'parser.dart';
 
 class BookContext {
   final Logger logger;
