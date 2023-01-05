@@ -1,13 +1,13 @@
 
 import 'package:dartbook_html/glossary.dart';
 import 'package:dartbook_html/summary.dart' show Article, Part, Summary;
-import 'package:dartbook_models/article.dart';
-import 'package:dartbook_models/config.dart';
-import 'package:dartbook_models/const/configDefault.dart';
-import 'package:dartbook_models/glossary.dart';
-import 'package:dartbook_models/ignore.dart';
-import 'package:dartbook_models/part.dart';
-import 'package:dartbook_models/summary.dart';
+import 'package:dartbook/models/article.dart';
+import 'package:dartbook/models/config.dart';
+import 'package:dartbook/models/const/configDefault.dart';
+import 'package:dartbook/models/glossary.dart';
+import 'package:dartbook/models/ignore.dart';
+import 'package:dartbook/models/part.dart';
+import 'package:dartbook/models/summary.dart';
 import 'package:test/test.dart';
 
 void main() {

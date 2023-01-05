@@ -1,8 +1,7 @@
 
-import 'package:dartbook_models/utils.dart' show slug;
+import 'package:dartbook/models/glossary.dart';
+import 'package:dartbook/models/utils.dart' show slug;
 import 'package:html/dom.dart' show Document, DocumentFragment, Element, Node, Text;
-
-import 'package:dartbook_models/glossary.dart';
 
 const _ignoredClass = {'no-glossary', 'glossary-item'};
 const _ignoredTag = ['code', 'pre', 'a', 'script', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];

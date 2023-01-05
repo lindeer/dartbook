@@ -2,17 +2,17 @@ import 'dart:collection' show Queue;
 import 'dart:convert' show json;
 import 'dart:io' show Directory, File, FileSystemEntity, IOException;
 
-import 'package:dartbook_models/book.dart';
-import 'package:dartbook_models/config.dart';
-import 'package:dartbook_models/const/config.dart';
-import 'package:dartbook_models/const/configDefault.dart';
-import 'package:dartbook_models/const/ignore.dart';
-import 'package:dartbook_models/glossary.dart';
-import 'package:dartbook_models/ignore.dart';
-import 'package:dartbook_models/language.dart';
-import 'package:dartbook_models/parser.dart';
-import 'package:dartbook_models/readme.dart';
-import 'package:dartbook_models/summary.dart';
+import 'package:dartbook/models/book.dart';
+import 'package:dartbook/models/config.dart';
+import 'package:dartbook/models/const/config.dart';
+import 'package:dartbook/models/const/configDefault.dart';
+import 'package:dartbook/models/const/ignore.dart';
+import 'package:dartbook/models/glossary.dart';
+import 'package:dartbook/models/ignore.dart';
+import 'package:dartbook/models/language.dart';
+import 'package:dartbook/models/parser.dart';
+import 'package:dartbook/models/readme.dart';
+import 'package:dartbook/models/summary.dart';
 import 'package:json_schema2/json_schema2.dart';
 import 'package:path/path.dart' as p;
 

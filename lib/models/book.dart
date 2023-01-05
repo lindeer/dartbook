@@ -1,11 +1,11 @@
 
-import 'package:dartbook_models/article.dart';
-import 'package:dartbook_models/page.dart';
 import 'package:path/path.dart' as p;
 
+import 'article.dart';
 import 'config.dart';
 import 'glossary.dart';
 import 'ignore.dart';
+import 'page.dart';
 import 'readme.dart';
 import 'summary.dart';
 

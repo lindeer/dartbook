@@ -2,9 +2,9 @@
 import 'dart:convert' show json;
 import 'dart:io' show File;
 
-import 'package:dartbook_models/book.dart';
-import 'package:dartbook_models/config.dart';
-import 'package:dartbook_models/page.dart';
+import 'package:dartbook/models/book.dart';
+import 'package:dartbook/models/config.dart';
+import 'package:dartbook/models/page.dart';
 import 'package:html/parser.dart' as html;
 import 'package:path/path.dart' as p;
 

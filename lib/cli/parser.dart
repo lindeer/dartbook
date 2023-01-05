@@ -4,9 +4,9 @@ import 'package:dartbook_html/langs.dart';
 import 'package:dartbook_html/page.dart';
 import 'package:dartbook_html/readme.dart';
 import 'package:dartbook_html/summary.dart';
-import 'package:dartbook_models/book.dart';
-import 'package:dartbook_models/page.dart';
-import 'package:dartbook_models/parser.dart';
+import 'package:dartbook/models/book.dart';
+import 'package:dartbook/models/page.dart';
+import 'package:dartbook/models/parser.dart';
 import 'package:markdown/markdown.dart' show Document, ExtensionSet, renderToHtml;
 
 import 'logger.dart';

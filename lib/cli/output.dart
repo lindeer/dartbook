@@ -1,8 +1,8 @@
 import 'dart:async' show Timer;
 import 'dart:io' show File;
 
-import 'package:dartbook_models/book.dart';
-import 'package:dartbook_models/page.dart';
+import 'package:dartbook/models/book.dart';
+import 'package:dartbook/models/page.dart';
 import 'package:path/path.dart' as p;
 import 'package:watcher/watcher.dart' show WatchEvent;
 
