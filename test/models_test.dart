@@ -1,6 +1,6 @@
 
-import 'package:dartbook_html/glossary.dart';
-import 'package:dartbook_html/summary.dart' show Article, Part, Summary;
+import 'package:dartbook/html/glossary.dart';
+import 'package:dartbook/html/summary.dart' show Article, Part, Summary;
 import 'package:dartbook/models/article.dart';
 import 'package:dartbook/models/config.dart';
 import 'package:dartbook/models/const/configDefault.dart';

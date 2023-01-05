@@ -1,10 +1,10 @@
 library dartbook.html;
 
 import 'package:collection/collection.dart' show IterableExtension;
-import 'package:dartbook_html/glossary.dart';
-import 'package:dartbook_html/langs.dart';
-import 'package:dartbook_html/readme.dart';
-import 'package:dartbook_html/summary.dart';
+import 'package:dartbook/html/glossary.dart';
+import 'package:dartbook/html/langs.dart';
+import 'package:dartbook/html/readme.dart';
+import 'package:dartbook/html/summary.dart';
 import 'package:test/test.dart';
 
 void main() {

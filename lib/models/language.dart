@@ -1,4 +1,4 @@
-import 'package:dartbook_html/langs.dart';
+import 'package:dartbook/html/langs.dart';
 
 class BookLanguage {
   final String title;

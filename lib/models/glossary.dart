@@ -1,4 +1,4 @@
-import 'package:dartbook_html/glossary.dart';
+import 'package:dartbook/html/glossary.dart';
 
 import 'utils.dart' show slug;
 

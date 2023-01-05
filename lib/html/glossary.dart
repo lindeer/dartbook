@@ -1,7 +1,7 @@
 library dartbook.html;
 
-import 'package:html/parser.dart' show parse;
 import 'package:collection/collection.dart' show IterableExtension;
+import 'package:html/parser.dart' show parse;
 
 class Glossary {
   final String name;

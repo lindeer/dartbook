@@ -14,8 +14,6 @@ dependencies:
     git:
       url: https://lindeer:cljs118!@gitee.com/lindeer/markdown.git
       ref: t/footnote
-  dartbook_html:
-    path: html
   json_schema2: ^2.0.2+6
   jinja: 0.4.0-dev.51
   html: ^0.15.0

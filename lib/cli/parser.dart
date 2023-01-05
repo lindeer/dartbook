@@ -1,9 +1,9 @@
 
-import 'package:dartbook_html/glossary.dart';
-import 'package:dartbook_html/langs.dart';
-import 'package:dartbook_html/page.dart';
-import 'package:dartbook_html/readme.dart';
-import 'package:dartbook_html/summary.dart';
+import 'package:dartbook/html/glossary.dart';
+import 'package:dartbook/html/langs.dart';
+import 'package:dartbook/html/page.dart';
+import 'package:dartbook/html/readme.dart';
+import 'package:dartbook/html/summary.dart';
 import 'package:dartbook/models/book.dart';
 import 'package:dartbook/models/page.dart';
 import 'package:dartbook/models/parser.dart';
