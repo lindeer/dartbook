@@ -210,9 +210,7 @@ class _Assembler {
     final children = langs.items.values.map((lang) {
       final id = lang.id;
       final child = _ResultHolder(parent.path(id), id, parent.params);
-      child.ignore
-        ..update(parent.ignore)
-        ..add('$id/**');
+      child.ignore.update(parent.ignore);
       parent.ignore.add(lang.path);
       _parseConfig(child);
       final book = _parseSkeleton(child);

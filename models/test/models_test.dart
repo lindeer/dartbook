@@ -5,6 +5,7 @@ import 'package:dartbook_models/article.dart';
 import 'package:dartbook_models/config.dart';
 import 'package:dartbook_models/const/configDefault.dart';
 import 'package:dartbook_models/glossary.dart';
+import 'package:dartbook_models/ignore.dart';
 import 'package:dartbook_models/part.dart';
 import 'package:dartbook_models/summary.dart';
 import 'package:test/test.dart';
@@ -155,6 +156,29 @@ void main() {
     expect(def.keys, configDefault.keys);
     // MapEquality not work as expected!
     expect(_mapEqual(def, configDefault), true);
+  });
+
+  test('ignore file and directory', () {
+    final ignore = BookIgnore();
+    ignore.addAll([
+      'a.png',
+      '*.jpg',
+      'test/b.txt',
+      '.git',
+      'build**',
+      '_book/',
+    ]);
+    expect(ignore.isIgnored('a.png'), true);
+    expect(ignore.isIgnored('b.png'), false);
+    expect(ignore.isIgnored('c.jpg'), true);
+    expect(ignore.isIgnored('test/a.txt'), false);
+    expect(ignore.isIgnored('test/b.txt'), true);
+    expect(ignore.isIgnored('.git/'), true);
+    expect(ignore.isIgnored('.git/HEAD'), false);
+    expect(ignore.isIgnored('build'), true);
+    expect(ignore.isIgnored('build/R.java'), true);
+    expect(ignore.isIgnored('_book'), true);
+    expect(ignore.isIgnored('_book/index.html'), true);
   });
 }
 

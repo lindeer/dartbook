@@ -14,12 +14,23 @@ class BookIgnore {
     return false;
   }
 
+  Iterable<String> _refineRule(Iterable<String> rules) sync* {
+    for (final r in rules) {
+      if (r.endsWith('/')) {
+        yield r.substring(0, r.length - 1);
+        yield '$r*';
+      } else {
+        yield r;
+      }
+    }
+  }
+
   void add(String rule) {
-    _rules.add(Glob(rule));
+    addAll([rule]);
   }
 
   void addAll(Iterable<String> rules) {
-    _rules.addAll(rules.map((e) => Glob(e)));
+    _rules.addAll(_refineRule(rules).map((e) => Glob(e)));
   }
 
   void update(BookIgnore ignore) {
