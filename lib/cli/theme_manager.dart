@@ -1,7 +1,7 @@
 library theme;
 
 import 'dart:convert' show json;
-import 'dart:io' show Directory, File, FileSystemEntity, Link, Platform;
+import 'dart:io' show Directory, File, FileSystemEntity, Link;
 
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:jinja/jinja.dart' show Environment, Loader;
@@ -34,12 +34,13 @@ class ThemeManager {
   final String? themeDir;
 
   static ThemeManager build({
+    required String assetDir,
     required String layoutType,
     required String lang,
     String? path,
     String? dir,
   }) {
-    final inner = p.normalize(p.join(p.dirname(Platform.script.path), '..', 'theme', 'public'));
+    final inner = assetDir;
     final themeDir = dir != null && _isDirectory(dir) ? dir : null;
     final loader = _makeLoader(inner, layoutType, themeDir, path);
     final i18n = _makeStringRes(inner, themeDir, lang);

@@ -18,7 +18,7 @@ cp build/main.dart.js $assetDir/dartbook.js
 cp build/materialize.js $assetDir/materialize.js
 cp build/styles.css $assetDir/style.css
 
-resourceDir='public'
+resourceDir='../lib/theme-res'
 targetAssetDir="$resourceDir/_assets"
 rm -rf $targetAssetDir/website && cp -r $assetDir $targetAssetDir
 cp resource/_layouts/website/*.html $resourceDir/_layouts/website

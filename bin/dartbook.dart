@@ -1,5 +1,6 @@
 import 'dart:async' show FutureOr;
 import 'dart:io' show Platform, exit;
+import 'dart:isolate' show Isolate;
 
 import 'package:args/command_runner.dart';
 import 'package:dartbook/cli/context.dart';
@@ -33,6 +34,13 @@ void main(List<String> args) {
   });
 }
 
+
+Future<String> _resolveAssetRoot() async {
+  final uri = Uri.parse('package:dartbook/theme-res');
+  final pkgUri = await Isolate.resolvePackageUri(uri);
+  return pkgUri?.toFilePath() ?? '';
+}
+
 abstract class _MainCommand extends Command<int> {
 
   _MainCommand() {
@@ -44,7 +52,7 @@ abstract class _MainCommand extends Command<int> {
   String get invocation => '${runner!.executableName} $name [<options>] [root] [output]';
 
   @override
-  FutureOr<int> run() {
+  FutureOr<int> run() async {
     final result = argResults;
     final rest = result?.rest ?? [];
     String root = '.';
@@ -70,11 +78,13 @@ abstract class _MainCommand extends Command<int> {
         if ((v = result?[opt]?.toString()) != null)
           opt: v!,
     };
-    _makeOutput(root, out, option);
+
+    final assetRoot = await _resolveAssetRoot();
+    _makeOutput(root, out, assetRoot, option);
     return 0;
   }
 
-  Output _makeOutput(String rootDir, String outDir, Map<String, String> option) {
+  Output _makeOutput(String rootDir, String outDir, String assetRoot, Map<String, String> option) {
     final at = DateTime.now().millisecondsSinceEpoch;
     final context = BookContext.assemble(
       root: rootDir,
@@ -84,6 +94,7 @@ abstract class _MainCommand extends Command<int> {
     final output = Output.generate(context, Option(
       format: fmt,
       root: outDir,
+      pkgAsset: assetRoot,
     ));
     final d = Duration(milliseconds: DateTime.now().millisecondsSinceEpoch - at);
     final mills = d.inMilliseconds.remainder(Duration.millisecondsPerSecond);
@@ -115,8 +126,8 @@ class _ServeCommand extends _MainCommand {
   }
 
   @override
-  Output _makeOutput(String rootDir, String outDir, Map<String, String> option) {
-    final output = super._makeOutput(rootDir, outDir, option);
+  Output _makeOutput(String rootDir, String outDir, String assetRoot, Map<String, String> option) {
+    final output = super._makeOutput(rootDir, outDir, assetRoot, option);
     final logger = output.context.logger;
     if (option['watch'] == "true") {
       print('Watch files at $rootDir ...');

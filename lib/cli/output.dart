@@ -16,6 +16,8 @@ class Option {
   final String format;
   /// Root folder for the output
   final String root;
+  /// Root folder of package assets
+  final String pkgAsset;
   /// Prefix for generation
   final String? prefix;
   /// Use directory index url instead of "index.html"
@@ -24,6 +26,7 @@ class Option {
   const Option({
     required this.format,
     required this.root,
+    required this.pkgAsset,
     this.prefix,
     this.directoryIndex = true,
   });
@@ -32,6 +35,7 @@ class Option {
     return Option(
       format: format ?? this.format,
       root: root ?? this.root,
+      pkgAsset: pkgAsset,
       prefix: prefix ?? this.prefix,
       directoryIndex: index ?? directoryIndex,
     );
@@ -60,6 +64,7 @@ class Output {
       final output = Output._(
         context,
         ThemeManager.build(
+          assetDir: opt.pkgAsset,
           layoutType: opt.format,
           lang: lang,
           dir: p.join(context.root, 'theme'),
@@ -74,6 +79,7 @@ class Output {
     }
 
     final theme = ThemeManager.build(
+      assetDir: opt.pkgAsset,
       layoutType: opt.format,
       lang: 'en',
       dir: p.join(context.root, 'theme'),
