@@ -15,7 +15,7 @@ dependencies:
       url: https://lindeer:cljs118!@gitee.com/lindeer/markdown.git
       ref: t/footnote
   json_schema2: ^2.0.2+6
-  jinja: 0.4.0-dev.51
+  jinja: ^0.4.2
   html: ^0.15.0
   shelf_static: ^1.1.1
   shelf: ^1.3.2
