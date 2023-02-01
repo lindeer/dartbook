@@ -1,6 +1,6 @@
 name: dartbook
-description: A sample command-line application.
-version: 0.1.0
+description: A dart implementation of gitbook-cli for guys who loves writing.
+version: 1.0.0
 homepage: https://github.com/lindeer/dartbook
 
 environment:
