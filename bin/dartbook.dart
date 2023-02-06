@@ -1,8 +1,9 @@
 import 'dart:async' show FutureOr;
-import 'dart:io' show Platform, exit;
+import 'dart:io' show Directory, File, Platform, exit;
 import 'dart:isolate' show Isolate;
 
 import 'package:args/command_runner.dart';
+import 'package:collection/collection.dart';
 import 'package:dartbook/cli/context.dart';
 import 'package:dartbook/cli/output.dart';
 import 'package:path/path.dart' as p;
@@ -24,6 +25,7 @@ void main(List<String> args) {
   final parser = runner.argParser;
   parser.addFlag('verbose', abbr: 'v', help: 'Show additional diagnostic info');
 
+  runner.addCommand(_InitCommand());
   runner.addCommand(_BuildCommand());
   runner.addCommand(_ServeCommand());
   runner.addCommand(_DiffCommand());
@@ -39,6 +41,59 @@ Future<String> _resolveAssetRoot() async {
   final uri = Uri.parse('package:dartbook/theme-res');
   final pkgUri = await Isolate.resolvePackageUri(uri);
   return pkgUri?.toFilePath() ?? '';
+}
+
+class _InitCommand extends Command<int> {
+
+  _InitCommand() {
+    argParser.addOption('languages', abbr: 'l',
+        help: "specify multilingualism, separated by ',', e.g. fr,de,en."
+    );
+  }
+
+  @override
+  String get name => 'init';
+
+  @override
+  String get description => 'setup and create files for a book';
+
+  @override
+  String get invocation => '${runner!.executableName} $name [options] [root]';
+
+  @override
+  FutureOr<int> run() async {
+    final root = argResults?.rest.firstOrNull ?? '.';
+    final languages = argResults?['languages']?.toString().split(',') ?? <String>[];
+    if (languages.isEmpty) {
+      _createEmptyBook(root);
+    } else {
+      for (final l in languages) {
+        final path = p.join(root, l);
+        _createEmptyBook(path);
+      }
+    }
+    return 0;
+  }
+}
+
+void _createEmptyBook(String path) {
+  final dir = Directory(path);
+  if (!dir.existsSync()) {
+    dir.createSync(recursive: true);
+  }
+  File(p.join(path, 'README.md')).writeAsStringSync(
+'''
+# Introduction
+
+'''
+  );
+  File(p.join(path, 'SUMMARY.md')).writeAsStringSync(
+'''
+# Summary
+
+* [Introduction](README.md)
+'''
+  );
 }
 
 abstract class _MainCommand extends Command<int> {
