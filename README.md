@@ -4,7 +4,55 @@ Dartbook is a dart implementation of gitbook-cli for guys who loves gitbook.
 
 ![Book page looking](docs/demo_page.jpg)
 
+### Installation
+
+* Requirement: [Dart](https://dart.dev/get-dart) sdk >= 2.12
+
+`dartbook` should be "activated".
+
+```
+$ dart pub global activate dartbook
+$ export PATH=$PATH:~/.pub-cache/bin
+```
+
+### Create a book
+
+set up a boilerplate book:
+```sh
+$ dartbook init
+```
+
+Preview and serve your book using:
+```sh
+$ dartbook serve
+```
+
+Build the static website using:
+```sh
+$ dartbook build
+```
+
+Show what have changed in one document:
+```sh
+$ dartbook diff [file1] [file2] ...
+```
+
+Nearly same with gitbook!
+
+### Feature
+
+* Write using Markdown
+* Patch diff of characters
+* Output as a website or ebook (pdf, epub, mobi)
+* Multi-Languages
+* Lexicon / Glossary
+* Variables and Templating
+* Content References
+* Material default theme
+
 ### Why
+
+Dartbook aims to smooth the migration from GitBook (Legacy) to Dart.
 
 [gitbook-cli](https://github.com/GitbookIO/gitbook) stopped developping since 5 years ago, it was used widely but with many shortage.
 
@@ -12,7 +60,7 @@ First, it is very slow, especially for those books containing over 100 pages, in
 
 Second, it contains some issues, e.g. glossary matching in different lingual text.
 
-There is a nodejs project forked of gitbook called [honkit](https://github.com/honkit/honkit), but it inherits bugs and errors since gitbook, and its update and bug-fixing is very slow.
+There is a nodejs project forked of gitbook called [honkit](https://github.com/honkit/honkit), but it inherits bugs and errors since gitbook, and its update and bug-fixing is not so active.
 
 ### What
 
