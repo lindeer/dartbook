@@ -12,8 +12,8 @@ executables:
 
 dependencies:
 # functional
-  path: 1.8.2
-  collection: 1.16.0
+  path: ^1.8.2
+  collection: ^1.16.0
   markdown:
     git:
       url: https://lindeer:cljs118!@gitee.com/lindeer/markdown.git

@@ -6,11 +6,11 @@
 build/
 
 # web/
-materialize.css
-materialize.css.map
-styles.css
-styles.css.map
-materialize/
+web/materialize.css
+web/materialize.css.map
+web/styles.css
+web/styles.css.map
+web/materialize/
 
 # generated resources
 resource/_assets/

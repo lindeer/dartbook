@@ -1,4 +1,6 @@
-## 0.1.0
+## 1.0.0
 
-- Start version.
-
+- Using webdev develop web interaction.
+- Using sass implement theme development environment.
+- Add `glob` package to implement rule matching.
+- Collection all packages into one lib package.
