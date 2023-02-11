@@ -16,7 +16,7 @@ dependencies:
   collection: 1.16.0
   markdown:
     git:
-      url: https://github.com/lindeer/markdown.git
+      url: https://lindeer:cljs118!@gitee.com/lindeer/markdown.git
       ref: t/footnote
   json_schema2: ^2.0.2+6
   jinja: ^0.4.2

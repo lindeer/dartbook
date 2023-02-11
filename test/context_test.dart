@@ -13,7 +13,7 @@ void main() {
     root: root1,
   );
 
-  final root2 = 'test/_data_normal';
+  final root2 = 'test/_data_multilingual/en';
   final normal = BookContext.assemble(
     root: root2,
   );

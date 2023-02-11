@@ -1,8 +1,8 @@
 Dartbook is a dart implementation of gitbook-cli for guys who loves gitbook.
 
-![Multilingual Entry](docs/demo_entry.jpg)
+![Multilingual Entry](doc/demo_entry.jpg)
 
-![Book page looking](docs/demo_page.jpg)
+![Book page looking](doc/demo_page.jpg)
 
 ### Installation
 
@@ -97,7 +97,7 @@ Git diff is based on line, that means whole line would be labeled even if one ch
 
 Just change command `git diff [<options>]` to `dartbook diff [<options>]`, it would output precisely the revised character.
 
-![](docs/diff-demo.png)
+![](doc/diff-demo.png)
 
 ### TODO
 
