@@ -6,6 +6,7 @@ import 'package:args/command_runner.dart';
 import 'package:collection/collection.dart';
 import 'package:dartbook/cli/context.dart';
 import 'package:dartbook/cli/output.dart';
+import 'package:dartbook/cli/src/default.dart';
 import 'package:path/path.dart' as p;
 import 'package:shelf_static/shelf_static.dart' show createStaticHandler;
 import 'package:shelf/shelf_io.dart' as io;
@@ -71,29 +72,38 @@ class _InitCommand extends Command<int> {
         final path = p.join(root, l);
         _createEmptyBook(path);
       }
+      _createMultilingual(root, languages);
     }
     return 0;
   }
 }
 
+void _createMultilingual(String path, List<String> languages) {
+  _ensureDirectory(path);
+  final readme = File(p.join(path, 'README.md'));
+  if (!readme.existsSync()) {
+    readme.writeAsStringSync(readmeDefault);
+  }
+  final langs = File(p.join(path, 'LANGS.md'));
+  if (!langs.existsSync()) {
+    langs.writeAsStringSync(multilingual(languages));
+  }
+}
+
 void _createEmptyBook(String path) {
+  _ensureDirectory(path);
+  File(p.join(path, 'README.md')).writeAsStringSync(readmeDefault);
+  File(p.join(path, 'SUMMARY.md')).writeAsStringSync(summaryDefault);
+}
+
+bool _ensureDirectory(String path) {
   final dir = Directory(path);
+  var created = false;
   if (!dir.existsSync()) {
     dir.createSync(recursive: true);
+    created = true;
   }
-  File(p.join(path, 'README.md')).writeAsStringSync(
-'''
-# Introduction
-
-'''
-  );
-  File(p.join(path, 'SUMMARY.md')).writeAsStringSync(
-'''
-# Summary
-
-* [Introduction](README.md)
-'''
-  );
+  return created;
 }
 
 abstract class _MainCommand extends Command<int> {
