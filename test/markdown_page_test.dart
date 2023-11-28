@@ -12,7 +12,7 @@ void main() {
         reason: 'link should contain parentheses');
     expect(parser.page('good<span>nice</span>').content, '<p>good<span>nice</span></p>\n',
         reason: 'content contains inline html');
-    expect(parser.page('good\n<p>nice</p>').content, '<p>good</p><p>nice</p>\n',
+    expect(parser.page('good\n<p>nice</p>').content, '<p>good</p>\n<p>nice</p>\n',
         reason: 'content contains paragraph html');
     expect(parser.page('good\n<span>nice</span>').content, '<p>good\n<span>nice</span></p>\n',
         reason: 'content contains html');
