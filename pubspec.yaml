@@ -14,10 +14,7 @@ dependencies:
 # functional
   path: ^1.8.2
   collection: ^1.16.0
-  markdown:
-    git:
-      url: https://lindeer:cljs118!@gitee.com/lindeer/markdown.git
-      ref: t/footnote
+  markdown: ^7.1.0
   json_schema2: ^2.0.2+6
   jinja: ^0.4.2
   html: ^0.15.0
