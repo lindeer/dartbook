@@ -1,5 +1,5 @@
-import 'dart:html';
-import 'dart:math';
+import 'dart:html' show Element, Rectangle, window, document, querySelectorAll;
+import 'dart:math' show min, max;
 
 void showTooltip(Element anchor) {
   final screenRect = Rectangle(
