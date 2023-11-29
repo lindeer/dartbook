@@ -13,7 +13,7 @@ import 'package:dartbook/models/language.dart';
 import 'package:dartbook/models/parser.dart';
 import 'package:dartbook/models/readme.dart';
 import 'package:dartbook/models/summary.dart';
-import 'package:json_schema2/json_schema2.dart';
+import 'package:json_schema/json_schema.dart' show JsonSchema;
 import 'package:path/path.dart' as p;
 
 import 'logger.dart';
@@ -195,8 +195,8 @@ class _Assembler {
   }
 
   Map<String, dynamic> _validateConfig(Map<String, dynamic> config) {
-    final schema = JsonSchema.createSchema(configSchema);
-    final errors = schema.validateWithErrors(config);
+    final schema = JsonSchema.create(configSchema);
+    final errors = schema.validate(config).errors;
     if (errors.isNotEmpty) {
       final error = errors.first;
       throw Exception("Config validation failed: '${error.message}', "
