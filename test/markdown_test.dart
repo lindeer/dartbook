@@ -11,10 +11,10 @@ void main() {
 * [French](fr/)
     """;
     final lang = MarkdownParser(Logger(false)).langs(md);
-    expect(lang.articles.length, 2);
+    expect(lang.length, 2);
 
-    final first = lang.articles.first;
-    final last = lang.articles.last;
+    final first = lang.first;
+    final last = lang.last;
     expect(first.ref, 'en/');
     expect(first.title, 'English');
 
@@ -85,7 +85,7 @@ Awesome project. Really amazing, I'm really at a loss for words ...
 *    
 
     """;
-    final parts = MarkdownParser(Logger(false)).summary(md).parts;
+    final parts = MarkdownParser(Logger(false)).summary(md);
     // expect(parts.length, 1);
     expect(parts.first.articles?.length, 1,
         reason: 'should allow ignore empty entries');
@@ -109,7 +109,7 @@ Awesome project. Really amazing, I'm really at a loss for words ...
 
 * Unfinished Chapter
     """;
-    final parts = MarkdownParser(Logger(false)).summary(md).parts;
+    final parts = MarkdownParser(Logger(false)).summary(md);
     // expect(parts.length, 1);
     expect(parts.first.articles?.length, 5,
         reason: 'should allow lists separated by whitespace');
@@ -131,7 +131,7 @@ Awesome project. Really amazing, I'm really at a loss for words ...
 
     """;
 
-    final parts = MarkdownParser(Logger(false)).summary(md).parts;
+    final parts = MarkdownParser(Logger(false)).summary(md);
     // expect(parts.length, 1);
     expect(parts.length, 3, reason: 'should split parts');
   });
@@ -156,7 +156,7 @@ Awesome project. Really amazing, I'm really at a loss for words ...
 * Chapter 4
 
     """;
-    final parts = MarkdownParser(Logger(false)).summary(md).parts;
+    final parts = MarkdownParser(Logger(false)).summary(md);
     final primary = parts.first;
     expect(primary.articles?.length, 5, reason: 'should detect chapters');
     expect(primary.articles?.take(3).map((e) => e.articles?.length ?? 0),

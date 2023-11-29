@@ -1,5 +1,5 @@
 
-import 'package:dartbook/html/summary.dart' show Article, Part, Summary;
+import 'package:dartbook/html/html.dart' show Article;
 import 'package:dartbook/models/article.dart';
 import 'package:dartbook/models/config.dart';
 import 'package:dartbook/models/const/configDefault.dart';
@@ -49,17 +49,17 @@ void main() {
   });
 
   test('summary part level', () {
-    final p1 = SummaryPart.create(Part(title: ''), '1');
+    final p1 = SummaryPart.create((title: '', articles: null), '1');
     expect(p1.childLevel, '1.1', reason: 'must create the right level');
-    final p2 = SummaryPart.create(Part(title: '', articles: [
+    final p2 = SummaryPart.create((title: '', articles: [
       Article(title: 'Test'),
     ]), '1');
     expect(p2.childLevel, '1.2', reason: 'must create the right level when has articles');
   });
 
   test('summary test', () {
-    final summary = BookSummary.create('', Summary([
-      Part(
+    final summary = BookSummary.create('', ([
+      (
         title: '',
         articles: [
           Article(title: 'My First Article', ref: 'README.md',),
@@ -68,7 +68,7 @@ void main() {
           Article(title: 'Article with absolute ref', ref: 'https://google.fr'),
         ],
       ),
-      Part(title: 'Test'),
+      (title: 'Test', articles: null),
     ]));
 
     expect(summary.parts.length, 2);
@@ -93,8 +93,8 @@ void main() {
   });
 
   test('summary navigate', () {
-    final summary = BookSummary.create('', Summary([
-      Part(
+    final summary = BookSummary.create('', ([
+      (
         title: 'Part I',
         articles: [
           Article(title: 'My First Article', ref: 'README.md',),
@@ -103,7 +103,7 @@ void main() {
           Article(title: 'Article with absolute ref', ref: 'https://google.fr'),
         ],
       ),
-      Part(
+      (
         title: 'Part II',
         articles: [
           Article(title: 'Part II Article', ref: 'README.md',),

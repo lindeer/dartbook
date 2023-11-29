@@ -1,4 +1,4 @@
-import 'package:dartbook/html/langs.dart';
+import 'package:dartbook/html/html.dart' show Article;
 
 class BookLanguage {
   final String title;
@@ -18,8 +18,8 @@ class LanguageManager {
 
   const LanguageManager(this.filename, this.items);
 
-  factory LanguageManager.create(String file, Langs langs) {
-    final list = langs.articles.map((e) => BookLanguage(e.title, e.ref ?? ''));
+  factory LanguageManager.create(String file, Iterable<Article> langs) {
+    final list = langs.map((e) => BookLanguage(e.title, e.ref ?? ''));
     final map = { for (final e in list) e.id : e };
     return LanguageManager(file, map);
   }

@@ -1,5 +1,4 @@
-import 'package:dartbook/html/langs.dart';
-import 'package:dartbook/html/summary.dart';
+import 'package:dartbook/html/html.dart';
 
 import 'book.dart';
 
@@ -9,11 +8,11 @@ abstract class Parser {
   /// extension name of supported file
   Iterable<String> get ext;
 
-  Langs langs(String content);
+  Iterable<Article> langs(String content);
 
   ({String title, String? desc}) readme(String content);
 
-  Summary summary(String content);
+  Iterable<Part> summary(String content);
 
   Iterable<({String name, String? desc})> glossary(String content);
 

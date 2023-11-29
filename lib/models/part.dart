@@ -1,6 +1,6 @@
 
 import 'package:collection/collection.dart' show IterableExtension;
-import 'package:dartbook/html/summary.dart';
+import 'package:dartbook/html/html.dart' show Part;
 
 import 'article.dart';
 

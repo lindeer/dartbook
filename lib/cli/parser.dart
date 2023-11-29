@@ -1,7 +1,5 @@
 
 import 'package:dartbook/html/html.dart';
-import 'package:dartbook/html/langs.dart';
-import 'package:dartbook/html/summary.dart';
 import 'package:dartbook/models/book.dart';
 import 'package:dartbook/models/page.dart';
 import 'package:dartbook/models/parser.dart';
@@ -26,14 +24,14 @@ class MarkdownParser implements Parser {
       Extractor.glossary(_toHtml(content));
 
   @override
-  Langs langs(String content) => Langs.from(_toHtml(content));
+  Iterable<Article> langs(String content) => Extractor.langs(_toHtml(content));
 
   @override
   ({String title, String? desc}) readme(String content) =>
       Extractor.readme(_toHtml(content));
 
   @override
-  Summary summary(String content) => Summary.from(_toHtml(content));
+  Iterable<Part> summary(String content) => Extractor.summary(_toHtml(content));
 
   @override
   String page(String md) => _toHtml(md);

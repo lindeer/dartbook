@@ -2,8 +2,6 @@ library dartbook.html;
 
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:dartbook/html/html.dart';
-import 'package:dartbook/html/langs.dart';
-import 'package:dartbook/html/summary.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -126,9 +124,9 @@ void main() {
 
 <h2>Last empty part</h2>
     """;
-    final summary = Summary.from(html);
-    expect(summary.parts.length, 7);
-    expect(summary.parts.map((e) => e.title), [
+    final parts = Extractor.summary(html);
+    expect(parts.length, 7);
+    expect(parts.map((e) => e.title), [
       'First empty part',
       'Part 1',
       '',
@@ -182,8 +180,7 @@ void main() {
     </li>
 </ul>
     """;
-    final summary = Summary.from(html);
-    final parts = summary.parts;
+    final parts = Extractor.summary(html);
     expect(parts.length, 3, reason: 'should detect parts');
     expect(parts.take(3).map((e) => e.title), ['', 'Part 2', ''],
         reason: 'should detect title');
@@ -216,9 +213,9 @@ void main() {
 <li><a href="fr/">French</a></li>
 </ul>
     """;
-    final langs = Langs.from(html);
-    final first = langs.articles.first;
-    final last = langs.articles.last;
+    final langs = Extractor.langs(html);
+    final first = langs.first;
+    final last = langs.last;
     expect(first.ref, 'en/');
     expect(first.title, 'English');
 
