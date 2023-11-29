@@ -33,7 +33,7 @@ void _parseDiffText(IOSink sink, String text) {
   final origin = StringBuffer();
   final changed = StringBuffer();
 
-  void _apply() {
+  void apply() {
     if (origin.isNotEmpty || changed.isNotEmpty) {
       _patchDiff(sink, origin.toString(), changed.toString());
       origin.clear();
@@ -51,10 +51,10 @@ void _parseDiffText(IOSink sink, String text) {
       origin.writeln(line);
       changed.writeln(line);
     } else {
-      _apply();
+      apply();
     }
   }
-  _apply();
+  apply();
 }
 
 void _patchDiff(IOSink sink, String deleted, String inserted) {

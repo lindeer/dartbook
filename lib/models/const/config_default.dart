@@ -27,7 +27,7 @@ const configDefault = <String, dynamic>{
   }
 };
 
-const FILENAME_REGEX = r'^[a-zA-Z-._\d,\s]+$';
+const _filenameRegex = r'^[a-zA-Z-._\d,\s]+$';
 
 const configSchema = <String, dynamic>{
   r'$schema': 'http://json-schema.org/draft-06/schema#',
@@ -92,25 +92,25 @@ const configSchema = <String, dynamic>{
           'default': 'LANGS.md',
           'type': 'string',
           'title': 'File to use as languages index',
-          'pattern': FILENAME_REGEX
+          'pattern': _filenameRegex
         },
         'readme': {
           'default': 'README.md',
           'type': 'string',
           'title': 'File to use as preface',
-          'pattern': FILENAME_REGEX
+          'pattern': _filenameRegex
         },
         'glossary': {
           'default': 'GLOSSARY.md',
           'type': 'string',
           'title': 'File to use as glossary index',
-          'pattern': FILENAME_REGEX
+          'pattern': _filenameRegex
         },
         'summary': {
           'default': 'SUMMARY.md',
           'type': 'string',
           'title': 'File to use as table of contents',
-          'pattern': FILENAME_REGEX
+          'pattern': _filenameRegex
         }
       },
       'additionalProperties': false

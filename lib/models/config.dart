@@ -1,4 +1,4 @@
-import 'const/configDefault.dart';
+import 'const/config_default.dart';
 
 class BookConfig {
   final String filename;

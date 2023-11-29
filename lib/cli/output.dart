@@ -104,7 +104,7 @@ class Output {
     final book = generator.book;
     final pages = book.pages;
 
-    void _outputPage(BookPage page) {
+    void outputPage(BookPage page) {
       final filename = page.filename;
       page.content = _attachPageContent(p.join(book.bookPath, filename));
       if (page.content == null) {
@@ -121,7 +121,7 @@ class Output {
     for (final page in pages.values) {
       try {
         final at = DateTime.now().millisecondsSinceEpoch;
-        _outputPage(page);
+        outputPage(page);
 
         final d = Duration(milliseconds: DateTime.now().millisecondsSinceEpoch - at);
         final mills = d.inMilliseconds.remainder(Duration.millisecondsPerSecond);
@@ -131,7 +131,7 @@ class Output {
       }
     }
 
-    _pageGenerator[book.langPath] = _outputPage;
+    _pageGenerator[book.langPath] = outputPage;
   }
 
   String? _attachPageContent(String filePath) {

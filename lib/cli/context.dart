@@ -5,7 +5,7 @@ import 'dart:io' show Directory, File, FileSystemEntity, IOException;
 import 'package:dartbook/models/book.dart';
 import 'package:dartbook/models/config.dart';
 import 'package:dartbook/models/const/config.dart';
-import 'package:dartbook/models/const/configDefault.dart';
+import 'package:dartbook/models/const/config_default.dart';
 import 'package:dartbook/models/const/ignore.dart';
 import 'package:dartbook/models/glossary.dart';
 import 'package:dartbook/models/ignore.dart';

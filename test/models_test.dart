@@ -2,7 +2,7 @@
 import 'package:dartbook/html/html.dart' show Article;
 import 'package:dartbook/models/article.dart';
 import 'package:dartbook/models/config.dart';
-import 'package:dartbook/models/const/configDefault.dart';
+import 'package:dartbook/models/const/config_default.dart';
 import 'package:dartbook/models/glossary.dart';
 import 'package:dartbook/models/ignore.dart';
 import 'package:dartbook/models/part.dart';

@@ -8,10 +8,10 @@ class TemplateLoader extends Loader {
   TemplateLoader(this.parent, this.other);
 
   @override
-  Template load(Environment environment, String template) {
-    final src = parent[template];
-    return src == null ? other.load(environment, template)
-        : environment.fromString(src, path: template);
+  Template load(Environment environment, String path) {
+    final src = parent[path];
+    return src == null ? other.load(environment, path)
+        : environment.fromString(src, path: path);
   }
 
   @override
@@ -24,5 +24,5 @@ class TemplateLoader extends Loader {
   bool get hasSourceAccess => true;
 
   @override
-  String getSource(String template) => parent[template] ?? other.getSource(template);
+  String getSource(String path) => parent[path] ?? other.getSource(path);
 }
