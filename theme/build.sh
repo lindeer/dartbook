@@ -1,5 +1,17 @@
 #!/bin/bash
 
+function checkCommand() {
+  cmd=$1
+  if ! command -v $cmd &> /dev/null
+  then
+    echo "'$cmd' command could not be found!"
+    echo "run 'dart pub global activate $cmd'"
+    exit 1
+  fi
+}
+
+checkCommand webdev && checkCommand sass
+
 if [ ! -d web/materialize ]; then
   unzip ~/Downloads/materialize-src-v1.2.0.zip
   mv materialize-src/sass web/materialize
