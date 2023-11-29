@@ -85,8 +85,8 @@ void main() {
 
   test('global parser for footnote', () {
     final parser = MarkdownParser(Logger(false));
-    final d1 = html.parse(parser.page(File('$root1/en/README.md').readAsStringSync()).content);
-    final d2 = html.parse(parser.page(File('$root1/zh/README.md').readAsStringSync()).content);
+    final d1 = html.parse(parser.page(File('$root1/en/README.md').readAsStringSync()));
+    final d2 = html.parse(parser.page(File('$root1/zh/README.md').readAsStringSync()));
     final e = d2.querySelector('sup > a');
     expect(e?.text, "1");
   });

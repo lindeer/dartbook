@@ -1,9 +1,8 @@
 library dartbook.html;
 
 import 'package:collection/collection.dart' show IterableExtension;
-import 'package:dartbook/html/glossary.dart';
+import 'package:dartbook/html/html.dart';
 import 'package:dartbook/html/langs.dart';
-import 'package:dartbook/html/readme.dart';
 import 'package:dartbook/html/summary.dart';
 import 'package:test/test.dart';
 
@@ -17,7 +16,7 @@ void main() {
 <p>other content
 ...</p>
 """;
-    final result = Readme.from(text);
+    final result = Extractor.readme(text);
     expect(result.title, 'Preface');
     expect(result.desc, 'This is the book description.');
   });
@@ -64,7 +63,7 @@ void main() {
 
 <p>Awesome project. Really amazing, I'm really at a loss for words ...</p>
 """;
-    final entries = Glossary.from(html);
+    final entries = Extractor.glossary(html);
     expect(entries.length, 5);
     assert(entries.any((e) => e.name.isNotEmpty && e.desc != null));
 
@@ -79,7 +78,7 @@ void main() {
 <h1>Names</h1>
 <h1>Addresses</h1>
 """;
-    final entries = Glossary.from(html);
+    final entries = Extractor.glossary(html);
     expect(entries.length, 0);
   });
 
@@ -89,7 +88,7 @@ void main() {
 <p>Some specific noums</p>
 <h2>Edinburg</h2>
 """;
-    final entries = Glossary.from(html);
+    final entries = Extractor.glossary(html);
     expect(entries.length, 2);
     final e = entries.firstWhereOrNull((e) => e.name == 'Edinburg');
     assert(e != null && e.desc == null);

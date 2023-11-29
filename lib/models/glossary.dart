@@ -1,4 +1,3 @@
-import 'package:dartbook/html/glossary.dart';
 
 import 'utils.dart' show slug;
 
@@ -17,7 +16,7 @@ class BookGlossary {
 
   const BookGlossary(this.filename, this.items);
 
-  factory BookGlossary.fromItems(String file, Iterable<Glossary> items) {
+  factory BookGlossary.fromItems(String file, Iterable<({String name, String? desc})> items) {
     final list = items.map((e) => GlossaryItem(e.name, desc: e.desc));
     final map = { for (final i in list) i.id : i };
     return BookGlossary(file, map);

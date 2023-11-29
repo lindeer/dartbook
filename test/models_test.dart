@@ -1,5 +1,4 @@
 
-import 'package:dartbook/html/glossary.dart';
 import 'package:dartbook/html/summary.dart' show Article, Part, Summary;
 import 'package:dartbook/models/article.dart';
 import 'package:dartbook/models/config.dart';
@@ -18,8 +17,8 @@ void main() {
 
   test('glossary creation', () {
     final glossary = BookGlossary.fromItems('', [
-      Glossary(name: 'Hello World', desc: 'Awesome!'),
-      Glossary(name: 'JavaScript', desc: 'This is a cool language!'),
+      (name: 'Hello World', desc: 'Awesome!'),
+      (name: 'JavaScript', desc: 'This is a cool language!'),
     ]);
     expect(glossary.items.length, 2);
     expect(glossary['hello-world']?.desc, 'Awesome!');

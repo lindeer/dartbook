@@ -1,7 +1,5 @@
 library dartbook;
 
-import 'package:dartbook/html/readme.dart';
-
 /// readme model in book context
 class BookReadme {
   final String filename;
@@ -10,6 +8,6 @@ class BookReadme {
 
   const BookReadme({required this.filename, required this.title, this.desc});
 
-  factory BookReadme.create(String file, Readme readme) =>
+  factory BookReadme.create(String file, ({String title, String? desc}) readme) =>
       BookReadme(filename: file, title: readme.title, desc: readme.desc);
 }

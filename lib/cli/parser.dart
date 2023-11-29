@@ -1,8 +1,6 @@
 
-import 'package:dartbook/html/glossary.dart';
+import 'package:dartbook/html/html.dart';
 import 'package:dartbook/html/langs.dart';
-import 'package:dartbook/html/page.dart';
-import 'package:dartbook/html/readme.dart';
 import 'package:dartbook/html/summary.dart';
 import 'package:dartbook/models/book.dart';
 import 'package:dartbook/models/page.dart';
@@ -24,19 +22,21 @@ class MarkdownParser implements Parser {
   Iterable<String> get ext => ['.md'];
 
   @override
-  Iterable<Glossary> glossary(String content) => Glossary.from(_toHtml(content));
+  Iterable<({String name, String? desc})> glossary(String content) =>
+      Extractor.glossary(_toHtml(content));
 
   @override
   Langs langs(String content) => Langs.from(_toHtml(content));
 
   @override
-  Readme readme(String content) => Readme.from(_toHtml(content));
+  ({String title, String? desc}) readme(String content) =>
+      Extractor.readme(_toHtml(content));
 
   @override
   Summary summary(String content) => Summary.from(_toHtml(content));
 
   @override
-  Page page(String md) => Page(_toHtml(md));
+  String page(String md) => _toHtml(md);
 
   String _toHtml(String md) {
     final lines = md.replaceAll('\r\n', '\n').split('\n');

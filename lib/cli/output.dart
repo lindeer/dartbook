@@ -141,7 +141,7 @@ class Output {
       return null;
     }
     final htmlPage = parser.page(file.readAsStringSync());
-    return htmlPage.content;
+    return htmlPage;
   }
 
   void generateAssets(String out) {

@@ -1,7 +1,4 @@
-import 'package:dartbook/html/glossary.dart';
 import 'package:dartbook/html/langs.dart';
-import 'package:dartbook/html/page.dart';
-import 'package:dartbook/html/readme.dart';
 import 'package:dartbook/html/summary.dart';
 
 import 'book.dart';
@@ -14,13 +11,13 @@ abstract class Parser {
 
   Langs langs(String content);
 
-  Readme readme(String content);
+  ({String title, String? desc}) readme(String content);
 
   Summary summary(String content);
 
-  Iterable<Glossary> glossary(String content);
+  Iterable<({String name, String? desc})> glossary(String content);
 
-  Page page(String content);
+  String page(String content);
 
   /// parse pages in book and put them all in it
   void pages(Book book);
