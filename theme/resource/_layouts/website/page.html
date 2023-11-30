@@ -6,7 +6,7 @@
 
 {% block head %}
     {{ super() }}
-    <link href="https://fonts.sourcegcdn.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="{{ 'icons.css'|resolveAsset }}" type="text/css" rel="stylesheet">
     {% if page.next and page.next.path %}
     <link rel="next" href="{{ page.next.path|resolveFile }}" />
     {% endif %}

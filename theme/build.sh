@@ -27,8 +27,8 @@ if [ ! -d $assetDir ]; then
 fi
 
 cp build/main.dart.js $assetDir/dartbook.js
-cp build/materialize.js $assetDir/materialize.js
 cp build/styles.css $assetDir/style.css
+cp -r build/{materialize.js,icons.css,fonts} $assetDir
 
 resourceDir='../lib/theme-res'
 targetAssetDir="$resourceDir/_assets"
