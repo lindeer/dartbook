@@ -13,6 +13,12 @@ import 'modifiers.dart';
 import 'template/template_engine.dart' show RenderContext;
 import 'theme_manager.dart';
 
+extension _PathExt on String {
+
+  String pathTo(String target) => p.relative(target, from: p.dirname(this));
+
+}
+
 class Generator {
   final Book book;
   final GlossaryModifier modifier;
@@ -30,10 +36,6 @@ class Generator {
   const Generator._(this.book, this.modifier, this.directoryIndex);
 
   static final _builtinFilters = <String, Function>{
-    'resolveAsset': (f) {
-      final filepath = p.join('/gitbook', f);
-      return filepath;
-    },
     'contentURL': (path) => p.dirname(path),
   };
 
@@ -52,15 +54,14 @@ class Generator {
 
   String generatePage(ThemeManager theme, BookPage page) {
     final filename = page.filename;
+    final filePath = p.join(book.langPath, filename);
     final engine = theme.engine;
     final data = RenderContext(
       filters: {
         ...theme.builtinFilters,
         ..._builtinFilters,
-        'resolveFile': (String f) {
-          f = _toUrl(f);
-          return p.relative(f, from: p.dirname(filename));
-        },
+        'resolveAsset': (String f) => filePath.pathTo(p.join('gitbook', f)),
+        'resolveFile': (String f) => filename.pathTo(_toUrl(f)),
         'fileExists': (String f) => File(book.filePath(f)).existsSync(),
       },
       data: _makePageRenderData(page),
@@ -109,6 +110,7 @@ class Generator {
       filters: {
         ...theme.builtinFilters,
         ..._builtinFilters,
+        'resolveAsset': (f) => p.join('gitbook', f),
       },
       data: _makeLingualIndexData(context),
     );
