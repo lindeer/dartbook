@@ -57,7 +57,10 @@ class Book {
       ? bookPath
       : p.normalize(p.join(bookPath, p.relative('.', from: langPath)));
 
-  String filePath(String path) => p.join(bookPath, path);
+  String fileFsPath(String path) => p.join(bookPath, path);
+
+  /// path relative to project root
+  String filePath(String path) => p.join(langPath, path);
 
   /// Return true if book is one of multilingual books
   bool get lingual => langPath.isNotEmpty;

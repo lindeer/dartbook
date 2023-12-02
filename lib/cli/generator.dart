@@ -43,7 +43,7 @@ class Generator {
     if (filename.startsWith('/')) {
       filename = filename.substring(1);
     }
-    String file = File(book.filePath(filename)).existsSync()
+    String file = File(book.fileFsPath(filename)).existsSync()
         ? book.outputName(filename)
         : filename;
     if (directoryIndex && p.basename(file) == 'index.html') {
@@ -54,7 +54,7 @@ class Generator {
 
   String generatePage(ThemeManager theme, BookPage page) {
     final filename = page.filename;
-    final filePath = p.join(book.langPath, filename);
+    final filePath = book.filePath(filename);
     final engine = theme.engine;
     final data = RenderContext(
       filters: {
@@ -62,7 +62,7 @@ class Generator {
         ..._builtinFilters,
         'resolveAsset': (String f) => filePath.pathTo(p.join('gitbook', f)),
         'resolveFile': (String f) => filename.pathTo(_toUrl(f)),
-        'fileExists': (String f) => File(book.filePath(f)).existsSync(),
+        'fileExists': (String f) => File(book.fileFsPath(f)).existsSync(),
       },
       data: _makePageRenderData(page),
     );

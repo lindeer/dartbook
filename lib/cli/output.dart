@@ -108,7 +108,7 @@ class Output {
       final filename = page.filename;
       page.content = _attachPageContent(p.join(book.bookPath, filename));
       if (page.content == null) {
-        logger.w("Page '${book.filePath(filename)}' not exists!");
+        logger.w("Page '${book.fileFsPath(filename)}' not exists!");
         return;
       }
 
