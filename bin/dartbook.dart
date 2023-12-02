@@ -1,12 +1,12 @@
 import 'dart:async' show FutureOr;
 import 'dart:io' show Directory, File, Platform, exit;
-import 'dart:isolate' show Isolate;
 
 import 'package:args/command_runner.dart';
 import 'package:collection/collection.dart';
 import 'package:dartbook/cli/context.dart';
 import 'package:dartbook/cli/output.dart';
 import 'package:dartbook/cli/src/default.dart';
+import 'package:dartbook/cli/utils.dart' as u;
 import 'package:path/path.dart' as p;
 import 'package:shelf_static/shelf_static.dart' show createStaticHandler;
 import 'package:shelf/shelf_io.dart' as io;
@@ -35,13 +35,6 @@ void main(List<String> args) {
     print(error);
     exit(64); // Exit code 64 indicates a usage error.
   });
-}
-
-
-Future<String> _resolveAssetRoot() async {
-  final uri = Uri.parse('package:dartbook/theme-res');
-  final pkgUri = await Isolate.resolvePackageUri(uri);
-  return pkgUri?.toFilePath() ?? '';
 }
 
 class _InitCommand extends Command<int> {
@@ -144,7 +137,7 @@ abstract class _MainCommand extends Command<int> {
           opt: v!,
     };
 
-    final assetRoot = await _resolveAssetRoot();
+    final assetRoot = await u.resolvePackageLocation('theme-res');
     _makeOutput(root, out, assetRoot, option);
     return 0;
   }
