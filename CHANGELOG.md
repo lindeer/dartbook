@@ -1,3 +1,12 @@
+## 1.1.0
+
+- upgrade markdown 7.1.0 to support footnotes
+- upgrade dart 3.0.0 to support multiple return
+- replace class type with Record type
+- change remote font icons to local
+- refine build script
+- DartBook support gitlab CI/CD
+
 ## 1.0.0
 
 - Using webdev develop web interaction.
