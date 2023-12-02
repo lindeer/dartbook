@@ -60,7 +60,7 @@ class Generator {
       filters: {
         ...theme.builtinFilters,
         ..._builtinFilters,
-        'resolveAsset': (String f) => filePath.pathTo(p.join('gitbook', f)),
+        'resolveAsset': (String f) => filePath.pathTo(p.join('dartbook', f)),
         'resolveFile': (String f) => filename.pathTo(_toUrl(f)),
         'fileExists': (String f) => File(book.fileFsPath(f)).existsSync(),
       },
@@ -110,7 +110,7 @@ class Generator {
       filters: {
         ...theme.builtinFilters,
         ..._builtinFilters,
-        'resolveAsset': (f) => p.join('gitbook', f),
+        'resolveAsset': (f) => p.join('dartbook', f),
       },
       data: _makeLingualIndexData(context),
     );

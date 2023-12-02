@@ -37,7 +37,7 @@ void main() {
       final raw = gen.generatePage(theme, page);
       final doc = html.parse(raw);
       final links = doc.querySelectorAll('head > link').where((e) => e.attributes['rel'] == 'stylesheet');
-      final target = p.relative('gitbook', from: p.dirname(p.join(book.langPath, filename)));
+      final target = p.relative('dartbook', from: p.dirname(p.join(book.langPath, filename)));
       expect(links.every((e) => e.attributes['href']?.startsWith(target) ?? false), true);
     });
   });

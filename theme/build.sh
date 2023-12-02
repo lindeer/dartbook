@@ -13,6 +13,7 @@ function checkCommand() {
 checkCommand webdev && checkCommand sass
 
 if [ ! -d web/materialize ]; then
+  wget -P ~/Downloads https://mirror.ghproxy.com/https://github.com/materializecss/materialize/releases/download/1.2.0/materialize-src-v1.2.0.zip
   unzip ~/Downloads/materialize-src-v1.2.0.zip
   mv materialize-src/sass web/materialize
   rm -rf materialize-src

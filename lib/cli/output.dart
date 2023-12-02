@@ -95,7 +95,7 @@ class Output {
       File(p.join(out, 'index.html')).writeAsStringSync(content);
     }
     output.generateAssets(out);
-    theme.copyAssets(p.join(out, 'gitbook'));
+    theme.copyAssets(p.join(out, 'dartbook'));
     return output;
   }
 
