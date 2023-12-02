@@ -1,0 +1,28 @@
+image: dart:3
+
+variables:
+  PUB_VARS: "--platform vm --timeout 30s --concurrency=6 --test-randomize-ordering-seed=random --reporter=expanded"
+
+before_script:
+  - dart pub global activate dartbook
+
+test:
+  stage: test
+  script:
+    - dartbook build . public # build to public path
+  only:
+    - branches # this job will affect every branch except 'main'
+  except:
+    - main
+
+# the 'pages' job will deploy and build your site to the 'public' path
+pages:
+  stage: deploy
+  script:
+    - dartbook build . public # build to public path
+  artifacts:
+    paths:
+      - public
+    expire_in: 1 week
+  only:
+    - main # this job will affect only the 'main' branch
