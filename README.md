@@ -6,7 +6,7 @@ Dartbook is a dart implementation of gitbook-cli for guys who loves gitbook.
 
 ### Installation
 
-* Requirement: [Dart](https://dart.dev/get-dart) sdk >= 2.12
+* Requirement: [Dart](https://dart.dev/get-dart) sdk >= 3.0
 
 `dartbook` should be "activated".
 
@@ -99,21 +99,7 @@ Just change command `git diff [<options>]` to `dartbook diff [<options>]`, it wo
 
 ![](doc/diff-demo.png)
 
-### TODO
 
-Dartbook is still in progress, 'cause some dependent libaries are incomplete.
+### plugins system
 
-#### work in progress
-
-1. Template engine. gitbook-3.1.1 using [nunjucks 2.5.2](https://mozilla.github.io/nunjucks) as its template engine, while there is no dart-nunjucks. Fortunately, there is [jinja.dart](pub.flutter-io.cn/packages/jinja) available, a dart implementation of jinja, a template engine which inspired nunjucks. Unforunately, it is still being in progress (2022-08-04), and some key feature not implemtented; e.g. Macros Control Structure, some template layout file in old gitbook have to replace `macro` with `with` statement to implement that goal.
-
-    Some other issues would cause crash, e.g. like `{% if a.b and a.b.c %}` if given data `{"a":{}}`(0.4.0-dev.40).
-    [Fixed since 0.4.0]
-
-2. Markdown parser. It is incomprehensible that [markdown: 5.0.0](https://pub.flutter-io.cn/packages/markdown), dart team's official library, [did not and will not implement footnotes](https://github.com/dart-lang/markdown/issues/342), which is so popular in book reading. However, recently there is a marvelous [dart_markdown: 2.0.0](https://pub.flutter-io.cn/packages/dart_markdown), supporting footnotes feature.
-
-Indeed, dart's ecosystem is far behind js.
-
-#### plugins system
-
-It is are very powerful to use plugins to extend applications, but currently we had no plan for it.
+It is very powerful to use plugins to extend applications, but currently we had no plan for it.
