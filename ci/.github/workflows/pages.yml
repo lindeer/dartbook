@@ -1,0 +1,41 @@
+name: Deploy DartBook to GitHub Pages
+
+# Trigger the workflow on push events to the main branch
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Install Dart
+      - name: Install DartBook
+        uses: dart-lang/setup-dart@v1
+
+      # Install DartBook
+      - run: dart pub global activate dartbook
+      # Build
+      - run: dartbook build . ./public
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: ./public
+
+      # Deploy the DartBook to GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
