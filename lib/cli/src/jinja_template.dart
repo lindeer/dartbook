@@ -1,4 +1,4 @@
-part of theme;
+part of '../theme_manager.dart';
 
 class _JinjaTemplate implements TemplateEngine {
   final Environment env;
