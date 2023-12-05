@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dartbook/cli/context.dart';
 import 'package:dartbook/cli/logger.dart';
 import 'package:dartbook/cli/parser.dart';
+import 'package:dartbook/models/ignore.dart';
 import 'package:html/parser.dart' as html;
 import 'package:test/test.dart';
 
@@ -17,6 +18,20 @@ void main() {
   final normal = BookContext.assemble(
     root: root2,
   );
+
+  test('context base files', () {
+    final ignore = multilingual.ignore;
+    final config = multilingual.config;
+
+    final rules = ['.git', '.git/*', '.DS_Store', 'node_modules', '_book',
+        'theme', '_layouts'];
+    expect(ignore.rules, [...rules, '_test_', 'LANGS.md', 'en', 'zh']);
+    expect(config.filename, '');
+
+    final book = multilingual.books['en']!;
+    expect(book.ignore.rules, [...rules, '_test_']);
+    expect(book.config.filename, 'book.json');
+  });
 
   test('context structure file', () {
     final book = multilingual.books['en']!;
