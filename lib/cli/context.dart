@@ -108,22 +108,17 @@ const _defaultIgnores = [
   '_layouts'
 ];
 
-
 class _ResultHolder {
-  final String bookPath;
+  final String fsRoot;
   final String langPath;
-  final Map<String, String> params;
+  final Map<String, String>? params;
   final BookIgnore ignore;
-  BookConfig? config;
-  LanguageManager? langs;
+  final BookConfig config;
 
-  _ResultHolder(
-      this.bookPath,
-      this.langPath,
-      this.params
-      ): ignore = BookIgnore();
+  const _ResultHolder(this.fsRoot, this.langPath, this.params,
+      this.ignore, this.config);
 
-  String path(String filename) => p.join(bookPath, filename);
+  String path(String filename) => p.join(fsRoot, filename);
 }
 
 class _Assembler {
@@ -133,17 +128,16 @@ class _Assembler {
   _Assembler({required this.logger, required this.parser});
 
   BookContext assemble(String root, [Map<String, String>? params]) {
-    final holder = _ResultHolder(root, '', params ?? {});
-    _parseIgnore(holder);
-    _parseConfig(holder);
-    final langs = holder.langs =
-        _safeParseStructure(holder, 'langs', _makeLanguageManager);
-    Map<String, Book> books;
-    if ((langs?.items.length ?? 0) > 0) {
-      books = _parseMultilingual(holder);
+    final ignore = _parseIgnore(root);
+    final config = _parseConfig(root, ignore);
+    final holder = _ResultHolder(root, '', params, ignore, config);
+    final langs = _safeParseStructure(holder, 'langs', _makeLanguageManager);
+    late final Map<String, Book> books;
+    if (langs != null && langs.items.isNotEmpty) {
+      books = _parseMultilingual(holder, langs);
     } else {
       final result = _parseSkeleton(holder);
-      books = { "" : result };
+      books = {"": result};
     }
     return BookContext(
       logger: logger,
@@ -151,16 +145,16 @@ class _Assembler {
       root: root,
       books: books,
       langManager: langs,
-      ignore: holder.ignore,
-      config: holder.config!,
+      ignore: ignore,
+      config: config,
     );
   }
 
-  BookIgnore _parseIgnore(_ResultHolder holder) {
-    final ignore = holder.ignore;
+  BookIgnore _parseIgnore(String root) {
+    final ignore = BookIgnore();
     ignore.addAll(_defaultIgnores);
     for (final f in ignoreFiles) {
-      final file = File(holder.path(f));
+      final file = File(p.join(root, f));
       try {
         final rules = file.readAsLinesSync().where((line) => !line.startsWith('#'));
         ignore.addAll(rules);
@@ -171,27 +165,24 @@ class _Assembler {
     return ignore;
   }
 
-  BookConfig? _parseConfig(_ResultHolder holder) {
-    final ignore = holder.ignore;
-    final files = configFiles.where((f) => !ignore.isIgnored(f));
-
-    for (final f in files) {
-      File file = File(holder.path(f));
-      if (!file.existsSync()) {
-        continue;
-      }
+  BookConfig _parseConfig(String root, BookIgnore ignore) {
+    final configs = configFiles.where((f) => !ignore.isIgnored(f)).map((f) {
+      final file = File(p.join(root, f));
+      return file.existsSync() ? (f, file) : null;
+    }).whereType<(String, File)>().map((e) {
+      final (f, file) = e;
       final config = BookConfig.schemaDefault();
       try {
         final jsonObj = json.decode(file.readAsStringSync()) as Map<String, dynamic>;
         final result = _validateConfig(jsonObj);
         config.addAll(result);
-        holder.config ??= BookConfig(f, config);
+        return BookConfig(f, config);
       } on Exception catch (e) {
         logger.d("parse config '${file.path}' error: $e");
+        return null;
       }
-    }
-    holder.config ??= BookConfig.withDefault('');
-    return holder.config;
+    }).whereType<BookConfig>();
+    return configs.isEmpty ? BookConfig.withDefault('') : configs.first;
   }
 
   Map<String, dynamic> _validateConfig(Map<String, dynamic> config) {
@@ -205,21 +196,21 @@ class _Assembler {
     return config;
   }
 
-  Map<String, Book> _parseMultilingual(_ResultHolder parent) {
-    final langs = parent.langs!;
+  Map<String, Book> _parseMultilingual(_ResultHolder parent, LanguageManager langs) {
     final children = langs.items.values.map((lang) {
       final id = lang.id;
-      final child = _ResultHolder(parent.path(id), id, parent.params);
-      child.ignore.update(parent.ignore);
-      parent.ignore.add(lang.path);
-      _parseConfig(child);
+      final root = parent.path(id);
+      final ignore = BookIgnore()..update(parent.ignore);
+      final config = _parseConfig(root, ignore);
+      final child = _ResultHolder(root, id, parent.params, ignore, config);
       final book = _parseSkeleton(child);
-      return MapEntry(id, book);
+      return (id, book);
     });
 
     parent.ignore.add(langs.filename);
+    parent.ignore.addAll(children.map((e) => e.$1));
 
-    return Map.fromEntries(children);
+    return {for (final (k, v) in children) k: v};
   }
 
   Book _parseSkeleton(_ResultHolder holder) {
@@ -231,10 +222,10 @@ class _Assembler {
         ?? BookGlossary('', {});
 
     final book = Book(
-      bookPath: holder.bookPath,
+      bookPath: holder.fsRoot,
       langPath: holder.langPath,
       ignore: holder.ignore,
-      config: holder.config!,
+      config: holder.config,
       readme: readme,
       summary: summary,
       glossary: glossary,
@@ -256,7 +247,7 @@ class _Assembler {
   /// book's config to find it.
   T _parseStructure<T>(_ResultHolder holder, String type,
       T Function(String filename, String content) func) {
-    final filename = holder.config?['structure.$type'] as String?;
+    final filename = holder.config['structure.$type'] as String?;
     if (filename == null) {
       throw Exception("Not found '$type' type in config");
     }
