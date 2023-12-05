@@ -1,39 +1,35 @@
+import 'package:path/path.dart' as p;
 import 'package:dartbook/html/html.dart' show Article;
 
 class BookLanguage {
   final String title;
   final String path;
+  final String id;
 
-  const BookLanguage(this.title, this.path);
+  const BookLanguage._(this.title, this.path, this.id);
 
-  String get id {
-    final p = path.endsWith('/') ? path.substring(0, path.length - 1) : path;
-    return p.split('/').last;
-  }
+  factory BookLanguage(String title, String path) => BookLanguage._(title, path, p.basename(path));
 }
 
 class LanguageManager {
   final String filename;
-  final Map<String, BookLanguage> items;
+  final Iterable<BookLanguage> items;
 
   const LanguageManager(this.filename, this.items);
 
   factory LanguageManager.create(String file, Iterable<Article> langs) {
     final list = langs.map((e) => BookLanguage(e.title, e.ref ?? ''));
-    final map = { for (final e in list) e.id : e };
-    return LanguageManager(file, map);
+    return LanguageManager(file, list);
   }
-
-  BookLanguage? operator [](String key) => items[key];
 
   Map<String, dynamic> get json => {
     'languages': {
       'file': {
         'path': filename,
       },
-      'list': items.entries.map((e) => <String, String>{
-        'id': e.key,
-        'title': e.value.title,
+      'list': items.map((e) => <String, String>{
+        'id': e.id,
+        'title': e.title,
       }),
     }
   };
