@@ -1,5 +1,5 @@
 import 'dart:async' show FutureOr;
-import 'dart:io' show Directory, File, Platform, exit;
+import 'dart:io' show Directory, File, Platform, Process, exit;
 
 import 'package:args/command_runner.dart';
 import 'package:collection/collection.dart';
@@ -49,6 +49,9 @@ class _InitCommand extends Command<int> {
     argParser.addOption('deploy', abbr: 'p',
         help: "init with a ci config file on a specified host. separated by ',', e.g. github,gitlab",
     );
+    argParser.addFlag('with-git', abbr: 'g', defaultsTo: true,
+      help: "init with git repo creation.",
+    );
   }
 
   @override
@@ -75,6 +78,9 @@ class _InitCommand extends Command<int> {
     }
     final hosts = argResults?['deploy']?.toString().split(',') ?? <String>[];
     await _createDeployFile(root, hosts);
+    if (argResults?['with-git'] ?? false) {
+      await _createGitRepo(root);
+    }
     return 0;
   }
 }
@@ -85,6 +91,19 @@ const _deployPaths = {
 };
 
 final _logger = Logger(true);
+
+Future<void> _createGitRepo(String root) async {
+  final cur = Directory.current;
+  Directory.current = root;
+  try {
+    await Process.run('git', ['init', '-b', 'main']);
+    await Process.run('git', ['add', '.']);
+    await Process.run('git', ['commit', '-m', 'book repo init']);
+  } on Exception catch (e) {
+    _logger.e("create git repo error: $e");
+  }
+  Directory.current = cur;
+}
 
 Future<void> _createDeployFile(String root, List<String> hosts) async {
   final paths = hosts.map((host) {
