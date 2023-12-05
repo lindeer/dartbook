@@ -199,10 +199,12 @@ class _Assembler {
   }
 
   Map<String, Book> _parseMultilingual(_ResultHolder parent, LanguageManager langs) {
+    // Parent's rule changed later, keep the origin value.
+    final rules = List.of(parent.ignore.rules);
     final children = langs.items.values.map((lang) {
       final id = lang.id;
       final root = parent.path(id);
-      final ignore = BookIgnore()..update(parent.ignore);
+      final ignore = BookIgnore()..addAll(rules);
       final config = _parseConfig(root, ignore);
       final child = _ResultHolder(root, id, parent.params, ignore, config);
       final book = _parseSkeleton(child);
