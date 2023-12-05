@@ -4,9 +4,12 @@ import 'dart:io' show Directory, File, Platform, exit;
 import 'package:args/command_runner.dart';
 import 'package:collection/collection.dart';
 import 'package:dartbook/cli/context.dart';
+import 'package:dartbook/cli/io.dart' as io;
 import 'package:dartbook/cli/output.dart';
+import 'package:dartbook/cli/logger.dart';
 import 'package:dartbook/cli/src/default.dart';
 import 'package:dartbook/cli/utils.dart' as u;
+import 'package:dartbook/cli/utils.dart';
 import 'package:path/path.dart' as p;
 import 'package:shelf_static/shelf_static.dart' show createStaticHandler;
 import 'package:shelf/shelf_io.dart' as io;
@@ -43,6 +46,9 @@ class _InitCommand extends Command<int> {
     argParser.addOption('languages', abbr: 'l',
         help: "specify multilingualism, separated by ',', e.g. fr,de,en."
     );
+    argParser.addOption('deploy', abbr: 'p',
+        help: "init with a ci config file on a specified host. separated by ',', e.g. github,gitlab",
+    );
   }
 
   @override
@@ -67,7 +73,30 @@ class _InitCommand extends Command<int> {
       }
       _createMultilingual(root, languages);
     }
+    final hosts = argResults?['deploy']?.toString().split(',') ?? <String>[];
+    await _createDeployFile(root, hosts);
     return 0;
+  }
+}
+
+const _deployPaths = {
+  'gitlab': '.gitlab-ci.yml',
+  'github': '.github/workflows/pages.yml',
+};
+
+final _logger = Logger(true);
+
+Future<void> _createDeployFile(String root, List<String> hosts) async {
+  final paths = hosts.map((host) {
+    final path = _deployPaths[host];
+    if (path == null) {
+      _logger.w("'$host' is not a supported deploy host! Valid values are [${_deployPaths.keys.join(', ')}]");
+    }
+    return path;
+  }).whereNotNull();
+  final resPath = await resolvePackageLocation('ci');
+  for (final path in paths) {
+    io.copyFileSync(p.join(resPath, path), p.join(root, path));
   }
 }
 

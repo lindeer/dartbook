@@ -52,3 +52,13 @@ bool createFolder(String dir) {
   }
   return yes;
 }
+
+int copyFileSync(String from, String to) {
+  final ff = File(from);
+  if (!ff.existsSync()) {
+    return opNotExists;
+  }
+  createFolder(p.dirname(to));
+  ff.copySync(to);
+  return opOK;
+}
