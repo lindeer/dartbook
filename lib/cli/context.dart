@@ -56,12 +56,14 @@ class BookContext {
         .assemble(root, options);
   }
 
+  bool _isIgnoreFile(String f) => ignoreFiles.contains(p.basename(f));
+
   Iterable<String> listAssets({bool relative = false}) {
     final assets = [
       if (isMultilingual)
-        ..._filterFilesIn(root, (f) => !ignore.isIgnored(f)),
+        ..._filterFilesIn(root, (f) => !_isIgnoreFile(f) && !ignore.isIgnored(f)),
       for (final book in books.values)
-        ..._filterFilesIn(book.bookPath, book.isAsset),
+        ..._filterFilesIn(book.bookPath, (f) => !_isIgnoreFile(f) && book.isAsset(f)),
     ];
     return relative ? assets.map((e) => p.relative(e, from: root)) : assets;
   }
