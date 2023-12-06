@@ -8,8 +8,8 @@ import 'package:dartbook/cli/io.dart' as io;
 import 'package:dartbook/cli/output.dart';
 import 'package:dartbook/cli/logger.dart';
 import 'package:dartbook/cli/src/default.dart';
-import 'package:dartbook/cli/utils.dart' as u;
 import 'package:dartbook/cli/utils.dart';
+import 'package:dartbook_theme_default/theme.dart' as t;
 import 'package:path/path.dart' as p;
 import 'package:shelf_static/shelf_static.dart' show createStaticHandler;
 import 'package:shelf/shelf_io.dart' as io;
@@ -152,6 +152,11 @@ abstract class _MainCommand extends Command<int> {
   _MainCommand() {
     argParser.addOption('format', abbr: 'f', allowed: ['ebook', 'website'], defaultsTo: 'website',
         help: 'what kind of output to generate');
+
+    argParser.addOption('theme', abbr: 't',
+        valueHelp: '/path/to/theme/directory',
+        help: 'File system path of theme resources.\n'
+            'run `dart pub global activate dartbook-theme-default` to install default theme');
   }
 
   @override
@@ -185,7 +190,18 @@ abstract class _MainCommand extends Command<int> {
           opt: v!,
     };
 
-    final assetRoot = await u.resolvePackageLocation('theme-res');
+    final themeDir = option['theme'];
+    late final String assetRoot;
+    if (themeDir == null) {
+      _logger.i("use 'dartbook-theme-default' style.");
+      assetRoot = await t.fsLocation();
+    } else if (!Directory(themeDir).existsSync()) {
+      _logger.w("'$themeDir' is not a valid theme directory, use 'dartbook-theme-default' instead.");
+      assetRoot = await t.fsLocation();
+    } else {
+      _logger.i("apply theme from '$themeDir'.");
+      assetRoot = themeDir;
+    }
     _makeOutput(root, out, assetRoot, option);
     return 0;
   }

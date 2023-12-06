@@ -2,7 +2,7 @@
 import 'package:dartbook/cli/context.dart';
 import 'package:dartbook/cli/generator.dart';
 import 'package:dartbook/cli/theme_manager.dart';
-import 'package:dartbook/cli/utils.dart';
+import 'package:dartbook_theme_default/theme.dart' as t;
 import "package:path/path.dart" as p;
 import 'package:html/parser.dart' as html;
 import 'package:test/test.dart';
@@ -16,7 +16,7 @@ void main() {
   late final String pkgRoot;
 
   setUp(() async {
-    pkgRoot = await resolvePackageLocation('theme-res');
+    pkgRoot = await t.fsLocation();
   });
 
   test('page generation & relative path', () {
