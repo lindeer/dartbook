@@ -9,7 +9,7 @@ import 'package:dartbook/cli/output.dart';
 import 'package:dartbook/cli/logger.dart';
 import 'package:dartbook/cli/src/default.dart';
 import 'package:dartbook/cli/utils.dart';
-import 'package:dartbook_theme_default/theme.dart' as t;
+import 'package:dartbook_theme_default/dartbook_theme_default.dart' as t;
 import 'package:path/path.dart' as p;
 import 'package:shelf_static/shelf_static.dart' show createStaticHandler;
 import 'package:shelf/shelf_io.dart' as io;
@@ -155,8 +155,7 @@ abstract class _MainCommand extends Command<int> {
 
     argParser.addOption('theme', abbr: 't',
         valueHelp: '/path/to/theme/directory',
-        help: 'File system path of theme resources.\n'
-            'run `dart pub global activate dartbook-theme-default` to install default theme');
+        help: 'File system path of theme resources.');
   }
 
   @override
