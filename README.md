@@ -1,8 +1,9 @@
 Dartbook is a dart implementation of gitbook-cli for guys who loves gitbook.
 
-![Multilingual Entry](doc/demo_entry.jpg)
+![Multilingual Entry](https://raw.githubusercontent.com/lindeer/dartbook/main/doc/demo_entry.jpg)
 
-![Book page looking](doc/demo_page.jpg)
+
+![Book page looking](https://raw.githubusercontent.com/lindeer/dartbook/main/doc/dartbook-looking.gif)
 
 ### Installation
 
