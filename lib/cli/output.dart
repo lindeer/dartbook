@@ -1,10 +1,8 @@
-import 'dart:async' show Timer;
 import 'dart:io' show File;
 
 import 'package:dartbook/models/book.dart';
 import 'package:dartbook/models/page.dart';
 import 'package:path/path.dart' as p;
-import 'package:watcher/watcher.dart' show WatchEvent;
 
 import 'context.dart';
 import 'generator.dart';
@@ -152,32 +150,6 @@ class Output {
       final to = p.join(out, file);
       createFolder(p.dirname(to));
       File(from).copySync(to);
-    }
-  }
-
-  Timer? _regenerateAction;
-
-  void onFileChanged(WatchEvent e) {
-    final path = e.path;
-    final logger = context.logger;
-    for (final book in context.books.values) {
-      if (!p.isWithin(book.bookPath, path)) {
-        continue;
-      }
-
-      final filename = p.relative(path, from: book.bookPath);
-      final page = book.pages[filename];
-      final gen = _pageGenerator[book.langPath];
-      if (page == null || gen == null) {
-        logger.w("invalid '$filename', some thing wrong with app");
-        continue;
-      }
-      _regenerateAction?.cancel();
-      _regenerateAction = Timer(Duration(milliseconds: 800), () {
-        gen.call(page);
-        logger.i("regenerate page '$filename' done.");
-        _regenerateAction = null;
-      });
     }
   }
 }
