@@ -1,3 +1,10 @@
+## 1.2.0
+
+- fix publish issues
+- refine 'init' command
+- separate dartbook and its theme resources
+- remove watcher package
+
 ## 1.1.0
 
 - upgrade markdown 7.1.0 to support footnotes

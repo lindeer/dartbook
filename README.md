@@ -87,10 +87,15 @@ Dartbook's theme based on [materialize](https://github.com/materializecss/materi
 
   1. Download latest materialize source package, e.g. [materialize-src-v1.2.0.zip](https://github.com/materializecss/materialize/releases/download/1.2.0/materialize-src-v1.2.0.zip). Extract it and move its sass directory to `$dartbookRoot/theme/web`. We need materialize's components to build our own styles.
   2. Install dart sass command line tool: `dart pub global activate webdev sass`, of course, make sure your envrionment variables include `~/.pub-cache/bin`: `export PATH=$PATH:~/.pub-cache/bin`.
-  3. `cd $dartbookRoot/theme && sass web/styles.scss web/styles.css`, and then run `webdev serve`
+  3. `cd $dartbookRoot/theme && sass web/styles.scss web/styles.css`, and then run `webdev serve`.
   4. Open `http://127.0.0.1:8080` in your browser, and start to modify something.
-  5. `main.dart` would finally compile to `dartbook.js`, its main functionality is to show glossary tooltips and bind events for them. `materialize.js` is entirely copied as dartbook's assets. `build.sh` is a helper script for file copy and rename, run it when you finally finished theme developing. The final material　produced by web (`theme/build/*.css,*.js`) would be applied into dartbook resources (`lib/theme-res/_assets`).
-  6. when you started to develop a theme in real world, you may not need chang theme resource files in `lib/theme-res`, then just create a `theme` directory as `Extension` part above told, your book project would apply newly changed theme resources.
+  5. `git clone https://github.com/lindeer/dartbook-theme-default` and export its path as `$assetRoot`.
+  6. `main.dart` would finally compile to `dartbook.js`, its main functionality is to show glossary tooltips and bind events for them. `materialize.js` is entirely copied as dartbook's assets. `build.sh` is a helper script for file copy and rename, run it when you finally finished theme developing. The final material　produced by web (`theme/build/*.css,*.js`) would be applied into dartbook resources (`$assetRoot/_assets`).
+  7. In the directory `$assetRoot`, commit your changes and change the package name to `dartbook_theme_xxx`, what ever you like. Do not forget to change the theme name of ci files in your **book project**:
+```diff
+-  - dart pub global activate dartbook_theme_default
++  - dart pub global activate dartbook_theme_xxx
+```
 
 ### Patch diff
 
