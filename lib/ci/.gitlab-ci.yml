@@ -5,6 +5,7 @@ variables:
 
 before_script:
   - dart pub global activate dartbook
+  - dart pub global activate dartbook_theme_default
 
 test:
   stage: test
@@ -19,7 +20,10 @@ test:
 pages:
   stage: deploy
   script:
-    - dartbook build . public # build to public path
+    # gain the location of theme package
+    - THEME=$(dartbook-theme --location)
+    # build to public path and apply theme
+    - dartbook build . public --theme $THEME
   artifacts:
     paths:
       - public

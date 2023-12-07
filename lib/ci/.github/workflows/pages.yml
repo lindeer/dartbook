@@ -26,8 +26,10 @@ jobs:
 
       # Install DartBook
       - run: dart pub global activate dartbook
+      - run: dart pub global activate dartbook_theme_default
+      - run: echo "THEME=$(dartbook-theme --location)" >> $GITHUB_ENV
       # Build
-      - run: dartbook build . ./public
+      - run: dartbook build . ./public --theme "${{ env.THEME }}"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
