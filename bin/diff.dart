@@ -17,6 +17,7 @@ void diffMain(List<String> args) async {
     stderr.addStream(proc.stderr);
     stdout.addStream(proc.stdout
         .transform(utf8.decoder)
+        .transform(LineSplitter())
         .transform(_DiffTransformer())
         .transform(utf8.encoder)
     );
@@ -37,9 +38,7 @@ class _DiffTransformer extends StreamTransformerBase<String, String> {
   final patcher = DiffMatchPatch();
 
   @override
-  Stream<String> bind(Stream<String> stream) async* {
-    final lines = stream.transform(LineSplitter());
-
+  Stream<String> bind(Stream<String> lines) async* {
     await for (final line in lines) {
       if (line.startsWith('---') || line.startsWith('+++')) {
         yield '$line\n';
@@ -51,13 +50,17 @@ class _DiffTransformer extends StreamTransformerBase<String, String> {
         origin.writeln(line);
         changed.writeln(line);
       } else {
-        yield* _apply();
+        for (final delta in _apply()) {
+          yield delta;
+        }
       }
     }
-    yield* _apply();
+    for (final delta in _apply()) {
+      yield delta;
+    }
   }
 
-  Stream<String> _apply() async* {
+  Iterable<String> _apply() sync* {
     if (origin.isNotEmpty || changed.isNotEmpty) {
       final diffs = patcher.diff(origin.toString(), changed.toString());
       for (final d in diffs) {
