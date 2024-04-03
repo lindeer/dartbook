@@ -24,7 +24,10 @@ void main(List<String> args) {
     diffMain(args.sublist(pos + 1));
     return;
   }
-  final runner = CommandRunner<int>('dartbook', "A dart implementation of gitbook");
+  final runner = CommandRunner<int>(
+    'dartbook',
+    'A dart implementation of gitbook',
+  );
   final parser = runner.argParser;
   parser.addFlag('verbose', abbr: 'v', help: 'Show additional diagnostic info');
 
@@ -40,16 +43,23 @@ void main(List<String> args) {
 }
 
 class _InitCommand extends Command<int> {
-
   _InitCommand() {
-    argParser.addOption('languages', abbr: 'l',
-        help: "specify multilingualism, separated by ',', e.g. fr,de,en."
+    argParser.addOption(
+      'languages',
+      abbr: 'l',
+      help: "specify multilingualism, separated by ',', e.g. fr,de,en.",
     );
-    argParser.addOption('deploy', abbr: 'p',
-        help: "init with a ci config file on a specified host. separated by ',', e.g. github,gitlab",
+    argParser.addOption(
+      'deploy',
+      abbr: 'p',
+      help: "init with a ci config file on a specified host. separated by ',',"
+          " e.g. github,gitlab",
     );
-    argParser.addFlag('with-git', abbr: 'g', defaultsTo: true,
-      help: "init with git repo creation.",
+    argParser.addFlag(
+      'with-git',
+      abbr: 'g',
+      defaultsTo: true,
+      help: 'init with git repo creation.',
     );
   }
 
@@ -65,7 +75,7 @@ class _InitCommand extends Command<int> {
   @override
   FutureOr<int> run() async {
     final root = argResults?.rest.firstOrNull ?? '.';
-    final languages = argResults?['languages']?.toString().split(',') ?? <String>[];
+    final languages = (argResults?['languages'] as String? ?? '').split(',');
     if (languages.isEmpty) {
       _createEmptyBook(root);
     } else {
@@ -75,7 +85,8 @@ class _InitCommand extends Command<int> {
       }
       _createMultilingual(root, languages);
     }
-    final hosts = argResults?['deploy']?.toString().split(',') ?? <String>[];
+    final hosts = argResults?['deploy']?.toString().split(',') ??
+        List.empty(growable: false);
     await _createDeployFile(root, hosts);
     if (argResults?['with-git'] ?? false) {
       await _createGitRepo(root);
@@ -108,7 +119,8 @@ Future<void> _createDeployFile(String root, List<String> hosts) async {
   final paths = hosts.map((host) {
     final path = _deployPaths[host];
     if (path == null) {
-      _logger.w("'$host' is not a supported deploy host! Valid values are [${_deployPaths.keys.join(', ')}]");
+      _logger.w("'$host' is not a supported deploy host! Valid values are "
+          "[${_deployPaths.keys.join(', ')}]");
     }
     return path;
   }).whereNotNull();
@@ -147,23 +159,31 @@ bool _ensureDirectory(String path) {
 }
 
 abstract class _MainCommand extends Command<int> {
-
   _MainCommand() {
-    argParser.addOption('format', abbr: 'f', allowed: ['ebook', 'website'], defaultsTo: 'website',
-        help: 'what kind of output to generate');
+    argParser.addOption(
+      'format',
+      abbr: 'f',
+      allowed: ['ebook', 'website'],
+      defaultsTo: 'website',
+      help: 'what kind of output to generate',
+    );
 
-    argParser.addOption('theme', abbr: 't',
-        valueHelp: '/path/to/theme/directory',
-        help: 'File system path of theme resources.');
+    argParser.addOption(
+      'theme',
+      abbr: 't',
+      valueHelp: '/path/to/theme/directory',
+      help: 'File system path of theme resources.',
+    );
   }
 
   @override
-  String get invocation => '${runner!.executableName} $name [<options>] [root] [output]';
+  String get invocation => '${runner!.executableName} $name '
+      '[<options>] [root] [output]';
 
   @override
   FutureOr<int> run() async {
     final result = argResults;
-    final rest = result?.rest ?? [];
+    final rest = result?.rest ?? List.empty(growable: false);
     String root = '.';
     String out = '_book';
     if (rest.isEmpty) {
@@ -178,15 +198,21 @@ abstract class _MainCommand extends Command<int> {
     }
 
     final global = globalResults;
-    String? v;
-    final option = <String, String>{
-      for (final opt in (global?.options ?? <String>[]))
-        if ((v = global?[opt]?.toString()) != null)
-          opt: v!,
-      for (final opt in (result?.options ?? <String>[]))
-        if ((v = result?[opt]?.toString()) != null)
-          opt: v!,
-    };
+    final option = <String, String>{};
+    var keys = global?.options ?? List.empty(growable: false);
+    for (final k in keys) {
+      final v = global?[k].toString();
+      if (v != null) {
+        option[k] = v;
+      }
+    }
+    keys = result?.options ?? List.empty(growable: false);
+    for (final k in keys) {
+      final v = result?[k].toString();
+      if (v != null) {
+        option[k] = v;
+      }
+    }
 
     final themeDir = option['theme'];
     late final String assetRoot;
@@ -194,7 +220,8 @@ abstract class _MainCommand extends Command<int> {
       _logger.i("use 'dartbook-theme-default' style.");
       assetRoot = await t.fsLocation();
     } else if (!Directory(themeDir).existsSync()) {
-      _logger.w("'$themeDir' is not a valid theme directory, use 'dartbook-theme-default' instead.");
+      _logger.w("'$themeDir' is not a valid theme directory, use "
+          "'dartbook-theme-default' instead.");
       assetRoot = await t.fsLocation();
     } else {
       _logger.i("apply theme from '$themeDir'.");
@@ -204,19 +231,24 @@ abstract class _MainCommand extends Command<int> {
     return 0;
   }
 
-  Output _makeOutput(String rootDir, String outDir, String assetRoot, Map<String, String> option) {
+  Output _makeOutput(String rootDir, String outDir, String assetRoot,
+      Map<String, String> option) {
     final at = DateTime.now().millisecondsSinceEpoch;
     final context = BookContext.assemble(
       root: rootDir,
       options: option,
     );
     final fmt = option['format'] ?? 'website';
-    final output = Output.generate(context, Option(
-      format: fmt,
-      root: outDir,
-      pkgAsset: assetRoot,
-    ));
-    final d = Duration(milliseconds: DateTime.now().millisecondsSinceEpoch - at);
+    final output = Output.generate(
+      context,
+      Option(
+        format: fmt,
+        root: outDir,
+        pkgAsset: assetRoot,
+      ),
+    );
+    final duration = DateTime.now().millisecondsSinceEpoch - at;
+    final d = Duration(milliseconds: duration);
     final mills = d.inMilliseconds.remainder(Duration.millisecondsPerSecond);
     print("build output cost ${d.inSeconds}.${mills}s.");
     return output;
@@ -224,7 +256,6 @@ abstract class _MainCommand extends Command<int> {
 }
 
 class _BuildCommand extends _MainCommand {
-
   @override
   final name = 'build';
 
@@ -240,20 +271,26 @@ class _ServeCommand extends _MainCommand {
   final description = 'Serve the book as a website for testing';
 
   _ServeCommand() {
-    argParser.addOption('port', abbr: 'p', help: 'Port for server to listen on');
+    argParser.addOption(
+      'port',
+      abbr: 'p',
+      help: 'Port for server to listen on',
+    );
   }
 
   @override
-  Output _makeOutput(String rootDir, String outDir, String assetRoot, Map<String, String> option) {
+  Output _makeOutput(String rootDir, String outDir, String assetRoot,
+      Map<String, String> option) {
     final output = super._makeOutput(rootDir, outDir, assetRoot, option);
 
     print('\nStarting server ...');
     final port = int.tryParse(option['port'] ?? '') ?? 4000;
-    io.serve(
+    final f = io.serve(
       createStaticHandler(outDir, defaultDocument: 'index.html'),
       'localhost',
       port,
-    ).then((server) {
+    );
+    f.then((server) {
       print('Serving book on http://localhost:$port');
     });
     return output;
@@ -267,5 +304,4 @@ class _DiffCommand extends Command<int> {
 
   @override
   String get name => 'diff';
-
 }

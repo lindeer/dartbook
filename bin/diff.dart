@@ -15,12 +15,12 @@ void diffMain(List<String> args) async {
   try {
     final proc = await Process.start('git', ['diff', ...args]);
     stderr.addStream(proc.stderr);
-    stdout.addStream(proc.stdout
+    final out = proc.stdout
         .transform(utf8.decoder)
         .transform(LineSplitter())
         .transform(_DiffTransformer())
-        .transform(utf8.encoder)
-    );
+        .transform(utf8.encoder);
+    stdout.addStream(out);
     final result = await proc.exitCode;
     if (result != 0) {
       logger.e("exit($result");
