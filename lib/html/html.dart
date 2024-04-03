@@ -45,8 +45,8 @@ class Article {
       if (links.isNotEmpty) {
         final a = links.first;
         title = a.text;
-        ref = a.attributes['href']?.replaceAll('\\', '/')
-            .replaceAll('^\\/+', '');
+        final href = a.attributes['href'];
+        ref = href?.replaceAll('\\', '/').replaceAll('^\\/+', '');
       }
       if (title == null) return null;
       final sub = _findList(li);
@@ -59,7 +59,6 @@ class Article {
 typedef Part = ({String title, Iterable<Article>? articles});
 
 class Extractor {
-
   static ({String title, String? desc}) readme(String html) {
     final doc = parse(html);
     final headings = doc.getElementsByTagName('h1');
@@ -72,27 +71,31 @@ class Extractor {
     final doc = parse(html);
     return doc.getElementsByTagName('h2').map((h2) {
       final next = h2.nextElementSibling;
-      final p = next?.localName == 'p' ? next : next?.getElementsByTagName('p').firstOrNull;
+      final p = next?.localName == 'p'
+          ? next
+          : next?.getElementsByTagName('p').firstOrNull;
       return (name: h2.text.trim(), desc: p?.innerHtml);
     });
   }
 
   static Iterable<Part> summary(String html) {
     final root = Element.html('<div>$html</div>');
-    final parts = _splitParts(root) ?? [];
+    final parts = _splitParts(root) ?? Iterable.empty();
     return parts;
   }
 
   static Iterable<Article> langs(String html) {
     final parts = summary(html);
-    return (parts.isEmpty ? const []
-        : (parts.first.articles ?? const []));
+    return parts.isEmpty
+        ? Iterable.empty()
+        : (parts.first.articles ?? Iterable.empty());
   }
 
   static Part _makePart(String? title, Element? ul) {
     final articles = ul == null ? null : Article._parseList(ul);
     return (title: title ?? '', articles: articles);
   }
+
   static bool _isPartNode(Element e) {
     final name = e.localName;
     return name != null && _partSelector.contains(name);

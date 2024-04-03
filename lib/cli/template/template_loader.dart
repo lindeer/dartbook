@@ -1,24 +1,21 @@
+import 'package:jinja/jinja.dart' as j;
 
-import 'package:jinja/jinja.dart' show Environment, Loader, Template;
-
-class TemplateLoader extends Loader {
+class TemplateLoader extends j.Loader {
   final Map<String, String> parent;
-  final Loader other;
+  final j.Loader other;
 
   TemplateLoader(this.parent, this.other);
 
   @override
-  Template load(Environment environment, String path) {
+  j.Template load(j.Environment environment, String path) {
     final src = parent[path];
-    return src == null ? other.load(environment, path)
+    return src == null
+        ? other.load(environment, path)
         : environment.fromString(src, path: path);
   }
 
   @override
-  List<String> listTemplates() => [
-    ...parent.keys,
-    ...other.listTemplates(),
-  ];
+  List<String> listTemplates() => [...parent.keys, ...other.listTemplates()];
 
   @override
   bool get hasSourceAccess => true;

@@ -1,4 +1,3 @@
-
 import 'dart:isolate' show Isolate;
 
 /// get the file system location of the given path in package

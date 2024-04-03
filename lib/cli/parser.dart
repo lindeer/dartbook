@@ -1,15 +1,14 @@
-
 import 'package:dartbook/html/html.dart';
 import 'package:dartbook/models/book.dart';
 import 'package:dartbook/models/page.dart';
 import 'package:dartbook/models/parser.dart';
-import 'package:markdown/markdown.dart' show Document, ExtensionSet, renderToHtml;
+import 'package:markdown/markdown.dart' as mkd;
 
 import 'logger.dart';
 
 class MarkdownParser implements Parser {
   final Logger logger;
-  final document = Document(extensionSet: ExtensionSet.gitHubFlavored);
+  final document = mkd.Document(extensionSet: mkd.ExtensionSet.gitHubFlavored);
 
   MarkdownParser(this.logger);
 
@@ -44,7 +43,7 @@ class MarkdownParser implements Parser {
     document.footnoteLabels.clear();
     document.linkReferences.clear();
     final nodes = document.parseLines(lines);
-    return '${renderToHtml(nodes)}\n';
+    return '${mkd.renderToHtml(nodes)}\n';
   }
 
   @override
@@ -59,6 +58,8 @@ class MarkdownParser implements Parser {
         logger.w("path of article '${article.title}' is null!");
       }
     });
-    book.pages..clear()..addAll(all);
+    book.pages
+      ..clear()
+      ..addAll(all);
   }
 }

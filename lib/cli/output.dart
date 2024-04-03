@@ -12,12 +12,16 @@ import 'theme_manager.dart';
 class Option {
   /// format of generation, e.g. website, pdf
   final String format;
+
   /// Root folder for the output
   final String root;
+
   /// Root folder of package assets
   final String pkgAsset;
+
   /// Prefix for generation
   final String? prefix;
+
   /// Use directory index url instead of "index.html"
   final bool directoryIndex;
 
@@ -73,7 +77,8 @@ class Output {
         ),
       );
       output.generatePages(p.join(out, lang));
-      logger.i("book generation cost ${DateTime.now().millisecondsSinceEpoch - at}ms");
+      final d = DateTime.now().millisecondsSinceEpoch - at;
+      logger.i("book generation cost $d ms.");
     }
 
     final theme = ThemeManager.build(
@@ -121,11 +126,15 @@ class Output {
         final at = DateTime.now().millisecondsSinceEpoch;
         outputPage(page);
 
-        final d = Duration(milliseconds: DateTime.now().millisecondsSinceEpoch - at);
-        final mills = d.inMilliseconds.remainder(Duration.millisecondsPerSecond);
-        logger.d("generate page '${p.join(book.langPath, page.filename)}' cost ${d.inSeconds}.${mills}s.");
+        final interval = DateTime.now().millisecondsSinceEpoch - at;
+        final d = Duration(milliseconds: interval);
+        final mills = d.inMilliseconds.remainder(
+          Duration.millisecondsPerSecond,
+        );
+        final path = p.join(book.langPath, page.filename);
+        logger.d("generate page '$path' cost ${d.inSeconds}.${mills}s.");
       } on Exception catch (e) {
-        logger.d("generate page '${page.filename}' failed by ${e.toString()}, ignored.");
+        logger.d("generate page '${page.filename}' failed by $e, ignored.");
       }
     }
 

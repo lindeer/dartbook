@@ -1,4 +1,3 @@
-
 class RenderContext {
   final Map<String, Function> filters;
   final Map<String, dynamic> data;
@@ -10,7 +9,6 @@ class RenderContext {
 }
 
 abstract class TemplateEngine {
-
   String renderPage(RenderContext context);
 
   String renderLingualIndex(RenderContext context);
