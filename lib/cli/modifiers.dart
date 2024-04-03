@@ -1,21 +1,35 @@
-
 import 'package:dartbook/models/glossary.dart';
 import 'package:dartbook/models/utils.dart' show slug;
-import 'package:html/dom.dart' show Document, DocumentFragment, Element, Node, Text;
+import 'package:html/dom.dart' as dom;
 
-const _ignoredClass = {'no-glossary', 'glossary-item'};
-const _ignoredTag = ['code', 'pre', 'a', 'script', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+const _ignoredClass = {
+  'no-glossary',
+  'glossary-item',
+};
+const _ignoredTag = [
+  'code',
+  'pre',
+  'a',
+  'script',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+];
 
 bool _classIgnored(String className) => className.contains(' ')
     ? _ignoredClass.intersection(className.split(' ').toSet()).isNotEmpty
     : _ignoredClass.contains(className);
 
-bool _isIgnored(Element node) {
+bool _isIgnored(dom.Element node) {
   final name = node.localName;
-  return (name != null && _ignoredTag.contains(name)) || _classIgnored(node.className);
+  return (name != null && _ignoredTag.contains(name)) ||
+      _classIgnored(node.className);
 }
 
-final _quoteRegExp = RegExp(r'([\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:])');
+final _quoteRegExp = RegExp(r'([\\.+*?\[^\]$(){}=!<>|:])');
 final _wordCharacter = RegExp(r'\w');
 
 RegExp _makeRegExp(String entry) {
@@ -37,20 +51,20 @@ class GlossaryModifier {
   GlossaryModifier(this.entries);
 
   /// for each entry, modify the whole dom tree, and then next entry
-  void annotate(Document doc) {
+  void annotate(dom.Document doc) {
     final matchedEntries = <String, GlossaryItem>{};
     for (final entry in entries) {
       final name = entry.name;
       final regex = (_regexCache[name] ??= _makeRegExp(name));
-      List<Node>? replacing;
+      List<dom.Node>? replacing;
       doc.visit((node) {
-        if (node is Element && _isIgnored(node)) {
+        if (node is dom.Element && _isIgnored(node)) {
           return false;
         }
-        if (node.nodeType != Node.TEXT_NODE) {
+        if (node.nodeType != dom.Node.TEXT_NODE) {
           return true;
         }
-        final data = (node as Text).data;
+        final data = (node as dom.Text).data;
         if (data.trim().isEmpty) {
           return true;
         }
@@ -62,7 +76,7 @@ class GlossaryModifier {
         if (e != null) {
           final parent = node.parent;
           parent?.insertBefore(e, node);
-          final list = (replacing ??= <Node>[]);
+          final list = (replacing ??= <dom.Node>[]);
           list.add(node);
         }
         return true;
@@ -76,30 +90,37 @@ class GlossaryModifier {
     final container = doc.getElementById('body-container');
     if (container != null) {
       for (final entry in matchedEntries.values) {
-        final desc = entry.desc;
-        if (desc != null) {
-          container.append(Element.html('<div id="glossary-${entry.id}" class="glossary-detail">$desc</div>'));
+        final (id, desc) = (entry.id, entry.desc);
+        final rawHtml = desc == null
+            ? null
+            : '<div id="glossary-$id" class="glossary-detail">$desc</div>';
+        if (rawHtml != null) {
+          container.append(dom.Element.html(rawHtml));
         }
       }
     }
   }
 }
 
-Node? _replaceNode(Node node, RegExp regex, String Function(Match match) matcher) {
-  final old = (node as Text).data;
+dom.Node? _replaceNode(
+  dom.Node node,
+  RegExp regex,
+  String Function(Match match) matcher,
+) {
+  final old = (node as dom.Text).data;
   final html = old.replaceAllMapped(regex, matcher);
   if (old == html) {
     return null;
   } else if (html.contains('<')) {
-    return DocumentFragment.html(html);
+    return dom.DocumentFragment.html(html);
   } else {
     node.text = html;
     return null;
   }
 }
 
-extension _NodeExt on Node {
-  void visit(bool Function(Node e) visitor) {
+extension _NodeExt on dom.Node {
+  void visit(bool Function(dom.Node e) visitor) {
     final accept = visitor.call(this);
     if (!accept) {
       return;
@@ -111,17 +132,15 @@ extension _NodeExt on Node {
   }
 }
 
-void addHeadingId(Node doc) {
- final nodes = doc is Element ? [doc] : doc.children;
- for (final e in nodes) {
-   final elements = e.querySelectorAll('h1,h2,h3,h4,h5,h6');
-   for (final e in elements) {
-     _addId(e);
-   }
- }
+void addHeadingId(dom.Node doc) {
+  final nodes = doc is dom.Element ? [doc] : doc.children;
+  for (final e in nodes) {
+    final elements = e.querySelectorAll('h1,h2,h3,h4,h5,h6');
+    elements.forEach(_addId);
+  }
 }
 
-void _addId(Element e) {
+void _addId(dom.Element e) {
   if (e.id == '') {
     e.id = slug(e.text);
   }

@@ -52,8 +52,10 @@ class BookContext {
   }) {
     final logger = Logger(options?['verbose'] == "true");
     final parser = MarkdownParser(logger);
-    return _Assembler(logger: logger, parser: parser)
-        .assemble(root, options);
+    return _Assembler(
+      logger: logger,
+      parser: parser,
+    ).assemble(root, options);
   }
 
   bool _isIgnoreFile(String f) => ignoreFiles.contains(p.basename(f));
@@ -61,14 +63,23 @@ class BookContext {
   Iterable<String> listAssets({bool relative = false}) {
     final assets = [
       if (isMultilingual)
-        ..._filterFilesIn(root, (f) => !_isIgnoreFile(f) && !ignore.isIgnored(f)),
+        ..._filterFilesIn(
+          root,
+          (String f) => !_isIgnoreFile(f) && !ignore.isIgnored(f),
+        ),
       for (final book in books.values)
-        ..._filterFilesIn(book.bookPath, (f) => !_isIgnoreFile(f) && book.isAsset(f)),
+        ..._filterFilesIn(
+          book.bookPath,
+          (String f) => !_isIgnoreFile(f) && book.isAsset(f),
+        ),
     ];
     return relative ? assets.map((e) => p.relative(e, from: root)) : assets;
   }
 
-  static Iterable<String> _filterFilesIn(String dir, bool Function(String path) filter) {
+  static Iterable<String> _filterFilesIn(
+    String dir,
+    bool Function(String path) filter,
+  ) {
     final queue = Queue.of([Directory(dir)]);
     final result = <String>[];
     while (queue.isNotEmpty) {
@@ -117,8 +128,13 @@ class _ResultHolder {
   final BookIgnore ignore;
   final BookConfig config;
 
-  const _ResultHolder(this.fsRoot, this.langPath, this.params,
-      this.ignore, this.config);
+  const _ResultHolder(
+    this.fsRoot,
+    this.langPath,
+    this.params,
+    this.ignore,
+    this.config,
+  );
 
   String path(String filename) => p.join(fsRoot, filename);
 }
@@ -158,7 +174,7 @@ class _Assembler {
     for (final f in ignoreFiles) {
       final file = File(p.join(root, f));
       try {
-        final rules = file.readAsLinesSync().where((line) => !line.startsWith('#'));
+        final rules = file.readAsLinesSync().where((l) => !l.startsWith('#'));
         ignore.addAll(rules);
       } on Exception catch (e) {
         logger.d("parse ignore '${file.path}' error: $e");
@@ -168,22 +184,28 @@ class _Assembler {
   }
 
   BookConfig _parseConfig(String root, BookIgnore ignore) {
-    final configs = configFiles.where((f) => !ignore.isIgnored(f)).map((f) {
-      final file = File(p.join(root, f));
-      return file.existsSync() ? (f, file) : null;
-    }).whereType<(String, File)>().map((e) {
-      final (f, file) = e;
-      final config = BookConfig.schemaDefault();
-      try {
-        final jsonObj = json.decode(file.readAsStringSync()) as Map<String, dynamic>;
-        final result = _validateConfig(jsonObj);
-        config.addAll(result);
-        return BookConfig(f, config);
-      } on Exception catch (e) {
-        logger.d("parse config '${file.path}' error: $e");
-        return null;
-      }
-    }).whereType<BookConfig>();
+    final configs = configFiles
+        .where((f) => !ignore.isIgnored(f))
+        .map((f) {
+          final file = File(p.join(root, f));
+          return file.existsSync() ? (f, file) : null;
+        })
+        .whereType<(String, File)>()
+        .map((e) {
+          final (f, file) = e;
+          final config = BookConfig.schemaDefault();
+          try {
+            final jsonObj =
+                json.decode(file.readAsStringSync()) as Map<String, dynamic>;
+            final result = _validateConfig(jsonObj);
+            config.addAll(result);
+            return BookConfig(f, config);
+          } on Exception catch (e) {
+            logger.d("parse config '${file.path}' error: $e");
+            return null;
+          }
+        })
+        .whereType<BookConfig>();
     return configs.isEmpty ? BookConfig.withDefault('') : configs.first;
   }
 
@@ -198,7 +220,10 @@ class _Assembler {
     return config;
   }
 
-  Map<String, Book> _parseMultilingual(_ResultHolder parent, LanguageManager langs) {
+  Map<String, Book> _parseMultilingual(
+    _ResultHolder parent,
+    LanguageManager langs,
+  ) {
     // Parent's rule changed later, keep the origin value.
     final rules = List.of(parent.ignore.rules);
     final children = langs.items.map((lang) {
@@ -219,11 +244,11 @@ class _Assembler {
 
   Book _parseSkeleton(_ResultHolder holder) {
     final readme = _parseStructure(holder, 'readme', _makeReadme);
-    final summary = _parseStructure(holder, 'summary', (String filename, String content) {
+    final summary = _parseStructure(holder, 'summary', (filename, content) {
       return BookSummary.create(filename, parser.summary(content), readme);
     });
-    final glossary = _safeParseStructure(holder, 'glossary', _makeGlossary)
-        ?? BookGlossary('', {});
+    final glossary = _safeParseStructure(holder, 'glossary', _makeGlossary) ??
+        BookGlossary.empty;
 
     final book = Book(
       bookPath: holder.fsRoot,

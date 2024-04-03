@@ -1,4 +1,3 @@
-
 import 'dart:convert' show json;
 import 'dart:io' show File;
 
@@ -14,9 +13,7 @@ import 'template/template_engine.dart' show RenderContext;
 import 'theme_manager.dart';
 
 extension _PathExt on String {
-
   String pathTo(String target) => p.relative(target, from: p.dirname(this));
-
 }
 
 class Generator {
@@ -77,29 +74,31 @@ class Generator {
     final summary = book.summary.json;
 
     final configData = _makeConfigData(book.config, book.langPath);
+    final jsCtx = {
+      ...book.pageJson(page, withContent: false),
+      ...configData,
+      'gitbook': {
+        '_k': '_empty',
+      },
+      'basePath': book.langPath.isEmpty ? '.' : '..',
+      'book': {
+        'language': book.language,
+      },
+    };
     final result = <String, dynamic>{
       ...book.pageJson(page),
       ...summary,
       ...configData,
       'glossary': {
+        '_k': '_empty',
       },
       'gitbook': {
+        '_k': '_empty',
       },
       'template': {
-        'getJSContext': () => json.encode({
-          ...book.pageJson(page, withContent: false),
-          ...configData,
-          'gitbook': {
-          },
-          'basePath': book.langPath.isEmpty ? '.' : '..',
-          'book': {
-            'language': book.language,
-          },
-        }),
+        'getJSContext': () => json.encode(jsCtx),
       },
-      'getPageByPath': (String path) {
-        return book.pages[path];
-      },
+      'getPageByPath': (String path) => book.pages[path],
       ..._makePluginData(),
     };
     return result;
@@ -125,6 +124,7 @@ class Generator {
         'dir': '',
       },
       'gitbook': {
+        '_k': '_empty',
       },
       ..._makePluginData(),
       ..._makeConfigData(config, ''),
@@ -139,6 +139,7 @@ class Generator {
         ...config.values,
         'styles': config['styles'] ?? <String, String>{},
         'links': {
+          '_k': '_empty',
         },
         'pluginsConfig': {
           'theme-default': {
@@ -155,9 +156,8 @@ class Generator {
       'plugins': {
         'resources': {
           'js': [],
-          'css': [
-          ]
-        }
+          'css': [],
+        },
       },
     };
   }
