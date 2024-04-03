@@ -1,4 +1,3 @@
-
 const markdownExt = [
   '.md',
   '.markdown',
@@ -7,5 +6,5 @@ const markdownExt = [
 
 const asciidocExt = [
   '.adoc',
-  '.asciidoc'
+  '.asciidoc',
 ];

@@ -1,5 +1,3 @@
-
-import 'package:collection/collection.dart' show IterableExtension;
 import 'package:dartbook/html/html.dart' show Article, Part;
 
 import 'article.dart';
@@ -13,29 +11,35 @@ class BookSummary {
 
   const BookSummary(this.filename, this.parts);
 
-  factory BookSummary.create(String file, Iterable<Part> parts, [BookReadme? readme]) {
-    final items = parts.mapIndexed((i, e) {
+  factory BookSummary.create(String file, Iterable<Part> parts,
+      [BookReadme? readme]) {
+    final items = parts.indexed.map((r) {
       /// if tile page is not readme file
-      if (i == 0 && readme != null && readme.filename != e.articles?.first.ref) {
+      final (i, e) = r;
+      var p = e;
+      final ref = e.articles?.first.ref;
+      if (i == 0 && readme != null && readme.filename != ref) {
         final list = e.articles;
-        e = (title: e.title, articles: [
-          Article(title: readme.title, ref: readme.filename),
-          if (list != null)
-            ...list,
-        ]);
+        p = (
+          title: e.title,
+          articles: [
+            Article(title: readme.title, ref: readme.filename),
+            if (list != null) ...list,
+          ],
+        );
       }
-      return SummaryPart.create(e, '${i + 1}');
+      return SummaryPart.create(p, '${i + 1}');
     });
     return BookSummary(file, items.toList(growable: false));
   }
 
-  SummaryPart operator[](int pos) => parts[pos];
+  SummaryPart operator [](int pos) => parts[pos];
 
   Map<String, dynamic> get json => {
-    'summary': {
-      'parts': parts.map((e) => e.json),
-    }
-  };
+        'summary': {
+          'parts': parts.map((e) => e.json),
+        },
+      };
 
   String parentLevel(String level) {
     final levels = level.split('.');
@@ -84,7 +88,8 @@ class BookSummary {
     return result;
   }
 
-  static void _retrieve(Iterable<SummaryArticle> articles, void Function(SummaryArticle article) it) {
+  static void _retrieve(Iterable<SummaryArticle> articles,
+      void Function(SummaryArticle article) it) {
     for (final a in articles) {
       it(a);
       final list = a.articles;

@@ -1,4 +1,3 @@
-
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:dartbook/html/html.dart' show Part;
 
@@ -24,9 +23,9 @@ class SummaryPart {
       }
     });
     return SummaryPart(
-        level: level,
-        title: part.title,
-        articles: articles,
+      level: level,
+      title: part.title,
+      articles: articles,
     );
   }
 

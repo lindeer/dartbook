@@ -1,4 +1,3 @@
-
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:dartbook/html/html.dart' show Article;
 
@@ -66,13 +65,14 @@ class SummaryArticle {
   }
 
   /// directly retrieve children if skipRoot is true
-  SummaryArticle? filter(bool Function(SummaryArticle e) test, {bool skipRoot = false}) {
+  SummaryArticle? filter(bool Function(SummaryArticle e) test,
+      {bool skipRoot = false}) {
     if (!skipRoot && test(this)) {
       return this;
     }
     // final result = articles?.reduce((result, e) => (result.filter(test) ?? e));
     // return result != null && test(result) ? result : null;
-    for (final a in (articles ?? const <SummaryArticle>[])) {
+    for (final a in (articles ?? Iterable.empty())) {
       final result = a.filter(test);
       if (result != null) {
         return result;
@@ -93,16 +93,11 @@ class SummaryArticle {
       'level': article.level,
       'title': article.title,
       'depth': depth,
-      if (r != null)
-        'ref': r,
-      if (path != null)
-        'path': path,
-      if (anchor != null)
-        'anchor': anchor,
-      if (url != null)
-        'url': url,
-      if (items != null)
-        'articles': items.map(_toJson).toList(growable: false),
+      if (r != null) 'ref': r,
+      if (path != null) 'path': path,
+      if (anchor != null) 'anchor': anchor,
+      if (url != null) 'url': url,
+      if (items != null) 'articles': items.map(_toJson).toList(growable: false),
     };
   }
 

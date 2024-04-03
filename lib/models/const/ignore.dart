@@ -1,4 +1,3 @@
-
 const ignoreFiles = [
   '.ignore',
   '.gitignore',

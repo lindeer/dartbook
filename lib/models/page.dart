@@ -1,4 +1,3 @@
-
 class BookPage {
   final String filename;
   final Map<String, String>? attributes;

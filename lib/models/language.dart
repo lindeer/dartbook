@@ -8,7 +8,8 @@ class BookLanguage {
 
   const BookLanguage._(this.title, this.path, this.id);
 
-  factory BookLanguage(String title, String path) => BookLanguage._(title, path, p.basename(path));
+  factory BookLanguage(String title, String path) =>
+      BookLanguage._(title, path, p.basename(path));
 }
 
 class LanguageManager {
@@ -23,14 +24,14 @@ class LanguageManager {
   }
 
   Map<String, dynamic> get json => {
-    'languages': {
-      'file': {
-        'path': filename,
-      },
-      'list': items.map((e) => <String, String>{
-        'id': e.id,
-        'title': e.title,
-      }),
-    }
-  };
+        'languages': {
+          'file': {
+            'path': filename,
+          },
+          'list': items.map((e) => <String, String>{
+                'id': e.id,
+                'title': e.title,
+              }),
+        },
+      };
 }

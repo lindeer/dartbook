@@ -266,8 +266,10 @@ class _Assembler {
   LanguageManager _makeLanguageManager(String filename, String content) =>
       LanguageManager.create(filename, parser.langs(content));
 
-  BookReadme _makeReadme(String filename, String content) =>
-      BookReadme.create(filename, parser.readme(content));
+  BookReadme _makeReadme(String filename, String content) {
+    final readme = parser.readme(content);
+    return BookReadme.create(filename, readme.title, readme.desc);
+  }
 
   BookGlossary _makeGlossary(String filename, String content) =>
       BookGlossary.fromItems(filename, parser.glossary(content));

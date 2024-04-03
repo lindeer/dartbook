@@ -1,4 +1,3 @@
-
 import 'package:path/path.dart' as p;
 
 import 'article.dart';
@@ -12,6 +11,7 @@ import 'summary.dart';
 class Book {
   /// root directory of book
   final String bookPath;
+
   /// path of lingual book
   final String langPath;
   final BookIgnore ignore;
@@ -21,11 +21,13 @@ class Book {
   final BookReadme readme;
   final BookSummary summary;
   final BookGlossary glossary;
+
   /// language from config, e.g. book.json
   final String? lang;
 
   /// pages in a book
   final pages = <String, BookPage>{};
+
   /// assets in a book
   final assets = <String>[];
 
@@ -85,12 +87,12 @@ class Book {
   }
 
   bool isAsset(String filename) {
-    return filename != readme.filename
-        && filename != summary.filename
-        && filename != glossary.filename
-        && filename != config.filename
-        && !pages.keys.contains(filename)
-        && !isIgnoredFile(filename);
+    return filename != readme.filename &&
+        filename != summary.filename &&
+        filename != glossary.filename &&
+        filename != config.filename &&
+        !pages.keys.contains(filename) &&
+        !isIgnoredFile(filename);
   }
 
   Map<String, dynamic> pageJson(BookPage page, {bool withContent = true}) {
@@ -99,13 +101,10 @@ class Book {
     final attributes = page.attributes;
     return {
       'page': {
-        if (withContent)
-          'content': page.content,
+        if (withContent) 'content': page.content,
         'dir': page.dir,
-        if (attributes != null)
-          ...attributes,
-        if (article != null)
-          ...navJson(article),
+        if (attributes != null) ...attributes,
+        if (article != null) ...navJson(article),
       },
       'file': {
         'path': file,
@@ -120,10 +119,8 @@ class Book {
       'title': article.title,
       'level': article.level,
       'depth': article.depth,
-      if (next != null)
-        'next': next.json,
-      if (prev != null)
-        'previous': prev.json,
+      if (next != null) 'next': next.json,
+      if (prev != null) 'previous': prev.json,
     };
   }
 
@@ -139,10 +136,10 @@ class Book {
     final name = base == 'README' || readme.filename == filename
         ? p.join(p.dirname(filename), 'index.html')
         : _skipName.contains(filename)
-        ? filename
-        : newExt != null
-        ? p.setExtension(filename, newExt)
-        : filename;
+            ? filename
+            : newExt != null
+                ? p.setExtension(filename, newExt)
+                : filename;
     return p.normalize(name);
   }
 }

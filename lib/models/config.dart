@@ -4,7 +4,7 @@ class BookConfig {
   final String filename;
   final Map<String, dynamic> values;
 
-  BookConfig.withDefault(this.filename): values = Map.of(schemaDefault());
+  BookConfig.withDefault(this.filename) : values = Map.of(schemaDefault());
 
   const BookConfig(this.filename, this.values);
 
@@ -50,8 +50,8 @@ class BookConfig {
   void merge(Map<String, dynamic> v) => values.addAll(v);
 
   Map<String, dynamic> get json => {
-    'config': values,
-  };
+        'config': values,
+      };
 
   static Map<String, dynamic> schemaDefault({Map<String, dynamic>? defaults}) {
     final schema = configSchema;
@@ -64,8 +64,9 @@ class BookConfig {
 
   /// returns a object that built with default values from json schema
   static dynamic _makeDefault(
-      Map<String, dynamic> schema,
-      Map<String, dynamic>? defVal) {
+    Map<String, dynamic> schema,
+    Map<String, dynamic>? defVal,
+  ) {
     final type = schema['type'];
     if (type == 'object') {
       final properties = schema['properties'] as Map<String, dynamic>?;

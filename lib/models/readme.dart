@@ -8,6 +8,6 @@ class BookReadme {
 
   const BookReadme({required this.filename, required this.title, this.desc});
 
-  factory BookReadme.create(String file, ({String title, String? desc}) readme) =>
-      BookReadme(filename: file, title: readme.title, desc: readme.desc);
+  factory BookReadme.create(String file, String title, String? desc) =>
+      BookReadme(filename: file, title: title, desc: desc);
 }

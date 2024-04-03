@@ -4,7 +4,7 @@ String slug(String content, [String separator = '-']) {
   return Uri.encodeComponent(content.replaceAll(' ', separator)).toLowerCase();
 }
 
-class PathUtils {
+final class PathUtils {
   static bool isExternal(String uri) {
     try {
       final scheme = _schema(uri);
@@ -20,7 +20,8 @@ class PathUtils {
 
   static String _schema(String uri) => Uri.parse(uri).scheme;
 
-  static String normalize(String path) => p.normalize(path).replaceAll('\\', '/');
+  static String normalize(String path) =>
+      p.normalize(path).replaceAll('\\', '/');
 
   static String flatten(String path) {
     final uri = normalize(path);
@@ -31,5 +32,6 @@ class PathUtils {
     }
   }
 
-  static bool areIdentical(String p1, String p2) => normalize(p1) == normalize(p2);
+  static bool areIdentical(String p1, String p2) =>
+      normalize(p1) == normalize(p2);
 }

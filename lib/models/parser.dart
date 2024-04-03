@@ -26,13 +26,11 @@ class ParserManager {
   final Map<String, Parser> parsers;
 
   ParserManager(Iterable<Parser> list)
-      : parsers = { for (final p in list) p.name : p };
+      : parsers = {for (final p in list) p.name: p};
 
   Parser? operator [](String name) => parsers[name];
 
-  Iterable<String> get allExtensions => [
-    for (final p in parsers.values) ...p.ext,
-  ];
+  Iterable<String> get allExtensions => parsers.values.expand((p) => p.ext);
 
   Parser? byExt(String ext) {
     for (final p in parsers.values) {
