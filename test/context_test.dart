@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:dartbook/cli/context.dart';
@@ -22,8 +21,15 @@ void main() {
     final ignore = multilingual.ignore;
     final config = multilingual.config;
 
-    final rules = ['.git', '.git/*', '.DS_Store', 'node_modules', '_book',
-        'theme', '_layouts'];
+    final rules = [
+      '.git',
+      '.git/*',
+      '.DS_Store',
+      'node_modules',
+      '_book',
+      'theme',
+      '_layouts'
+    ];
     expect(ignore.rules, [...rules, '_test_', 'LANGS.md', 'en', 'zh']);
     expect(config.filename, '');
 
@@ -99,10 +105,12 @@ void main() {
 
   test('global parser for footnote', () {
     final parser = MarkdownParser(Logger(false));
-    final d1 = html.parse(parser.page(File('$root1/en/README.md').readAsStringSync()));
+    var str = File('$root1/en/README.md').readAsStringSync();
+    final d1 = html.parse(parser.page(str));
     final foots = d1.querySelectorAll('section > ol > li');
     expect(foots.length, 2);
-    final d2 = html.parse(parser.page(File('$root1/zh/README.md').readAsStringSync()));
+    str = File('$root1/zh/README.md').readAsStringSync();
+    final d2 = html.parse(parser.page(str));
     final e = d2.querySelector('sup > a');
     expect(e?.text, "1");
   });

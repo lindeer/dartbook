@@ -1,4 +1,3 @@
-
 import 'package:dartbook/html/html.dart' show Article;
 import 'package:dartbook/models/article.dart';
 import 'package:dartbook/models/config.dart';
@@ -29,55 +28,74 @@ void main() {
   test('summary article child level', () {
     final empty = SummaryArticle.create(Article(title: ''), '1.1');
     expect(empty.childLevel, '1.1.1');
-    final article = SummaryArticle.create(Article(
+    final article = SummaryArticle.create(
+      Article(
         title: '',
         articles: [
           Article(title: 'Test'),
-        ]), '1.1');
+        ],
+      ),
+      '1.1',
+    );
     expect(article.childLevel, '1.1.2');
   });
 
   test('summary article isFile', () {
-    final a1 = SummaryArticle.create(Article(title: '', ref: 'hello.md'), '1.1');
+    final a1 = SummaryArticle.create(
+      Article(title: '', ref: 'hello.md'),
+      '1.1',
+    );
     expect(a1.path == 'hello.md', true);
 
-    final a2 = SummaryArticle.create(Article(title: '', ref: '/hello.md'), '1.1');
+    final a2 = SummaryArticle.create(
+      Article(title: '', ref: '/hello.md'),
+      '1.1',
+    );
     expect(a2.path == 'hello.md', true);
 
-    final a3 = SummaryArticle.create(Article(title: '', ref: '/hello.md#world'), '1.1');
+    final a3 = SummaryArticle.create(
+      Article(title: '', ref: '/hello.md#world'),
+      '1.1',
+    );
     expect(a3.path == 'hello.md', true);
   });
 
   test('summary part level', () {
     final p1 = SummaryPart.create((title: '', articles: null), '1');
     expect(p1.childLevel, '1.1', reason: 'must create the right level');
-    final p2 = SummaryPart.create((title: '', articles: [
-      Article(title: 'Test'),
-    ]), '1');
-    expect(p2.childLevel, '1.2', reason: 'must create the right level when has articles');
+    final p2 = SummaryPart.create((
+      title: '',
+      articles: [
+        Article(title: 'Test'),
+      ],
+    ), '1');
+    expect(
+      p2.childLevel,
+      '1.2',
+      reason: 'must create the right level when has articles',
+    );
   });
 
   test('summary test', () {
-    final summary = BookSummary.create('', ([
-      (
-        title: '',
-        articles: [
-          Article(title: 'My First Article', ref: 'README.md',),
-          Article(title: 'My Second Article', ref: 'article.md',),
-          Article(title: 'Article without ref'),
-          Article(title: 'Article with absolute ref', ref: 'https://google.fr'),
-        ],
-      ),
-      (title: 'Test', articles: null),
-    ]));
+    final firstArticles = [
+      Article(title: 'My First Article', ref: 'README.md'),
+      Article(title: 'My Second Article', ref: 'article.md'),
+      Article(title: 'Article without ref'),
+      Article(title: 'Article with absolute ref', ref: 'https://google.fr'),
+    ];
+    final summary = BookSummary.create(
+      '',
+      [
+        (title: '', articles: firstArticles),
+        (title: 'Test', articles: null),
+      ],
+    );
 
     expect(summary.parts.length, 2);
-    expect(summary[0].articles?.length ?? 0, 4,
-        reason: 'can return a Part');
+    expect(summary[0].articles?.length ?? 0, 4, reason: 'can return a Part');
     final p2 = summary[1];
     expect(p2.title, 'Test');
-    expect(p2.articles?.length ?? 0, 0,
-        reason: 'can return a Part[1]');
+    expect(p2.articles?.length ?? 0, 0, reason: 'can return a Part[1]');
 
     final a = summary.byLevel('1.1');
     expect(a?.title, 'My First Article');
@@ -93,23 +111,34 @@ void main() {
   });
 
   test('summary navigate', () {
-    final summary = BookSummary.create('', ([
-      (
-        title: 'Part I',
-        articles: [
-          Article(title: 'My First Article', ref: 'README.md',),
-          Article(title: 'My Second Article', ref: 'article.md',),
-          Article(title: 'Article without ref'),
-          Article(title: 'Article with absolute ref', ref: 'https://google.fr'),
-        ],
+    final partI = [
+      Article(
+        title: 'My First Article',
+        ref: 'README.md',
       ),
-      (
-        title: 'Part II',
-        articles: [
-          Article(title: 'Part II Article', ref: 'README.md',),
-        ],
+      Article(
+        title: 'My Second Article',
+        ref: 'article.md',
       ),
-    ]));
+      Article(title: 'Article without ref'),
+      Article(
+        title: 'Article with absolute ref',
+        ref: 'https://google.fr',
+      ),
+    ];
+    final partII = [
+      Article(
+        title: 'Part II Article',
+        ref: 'README.md',
+      ),
+    ];
+    final summary = BookSummary.create(
+      '',
+      [
+        (title: 'Part I', articles: partI),
+        (title: 'Part II', articles: partII),
+      ],
+    );
 
     final article = summary.byLevel('1.4');
     expect(article?.title, 'Article with absolute ref');
@@ -133,7 +162,7 @@ void main() {
       "hello": {
         "world": 1,
         "test": 'Hello',
-        "isFalse": false
+        "isFalse": false,
       }
     });
 

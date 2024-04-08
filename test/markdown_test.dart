@@ -22,7 +22,6 @@ void main() {
     expect(last.title, 'French');
   });
 
-
   test('Readme parsing', () {
     const md = """
 # This is the title
@@ -161,19 +160,27 @@ Awesome project. Really amazing, I'm really at a loss for words ...
     expect(primary.articles?.length, 5, reason: 'should detect chapters');
     expect(primary.articles?.take(3).map((e) => e.articles?.length ?? 0),
         [2, 0, 0], reason: 'should support articles');
-    expect(primary.articles?.take(5).map((e) => e.ref), [
-      'chapter-1/README.md',
-      'chapter-2/README.md',
-      'chapter-3/README.md',
-      'chapter-4/README.md',
-      null,
-    ], reason: 'should normalize paths from .md');
-    expect(primary.articles?.take(5).map((e) => e.title), [
-      'Chapter 1',
-      'Chapter 2',
-      'Chapter 3',
-      'Chapter 4',
-      'Unfinished Chapter',
-    ], reason: 'should extract title from .md');
+    expect(
+      primary.articles?.take(5).map((e) => e.ref),
+      [
+        'chapter-1/README.md',
+        'chapter-2/README.md',
+        'chapter-3/README.md',
+        'chapter-4/README.md',
+        null,
+      ],
+      reason: 'should normalize paths from .md',
+    );
+    expect(
+      primary.articles?.take(5).map((e) => e.title),
+      [
+        'Chapter 1',
+        'Chapter 2',
+        'Chapter 3',
+        'Chapter 4',
+        'Unfinished Chapter',
+      ],
+      reason: 'should extract title from .md',
+    );
   });
 }

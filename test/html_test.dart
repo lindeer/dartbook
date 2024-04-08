@@ -67,7 +67,10 @@ void main() {
 
     final first = entries.first;
     expect(first.name, 'Magic');
-    expect(first.desc, 'Sufficiently advanced technology, beyond the understanding of the observer producing a sense of wonder.');
+    expect(
+      first.desc,
+      'Sufficiently advanced technology, beyond the understanding of the observer producing a sense of wonder.',
+    );
   });
 
   test('empty desc', () {
@@ -126,15 +129,20 @@ void main() {
     """;
     final parts = Extractor.summary(html);
     expect(parts.length, 7);
-    expect(parts.map((e) => e.title), [
+    const expected = [
       'First empty part',
       'Part 1',
       '',
       'Empty part',
       'Part 2',
       'Penultimate empty part',
-      'Last empty part'
-    ], reason: 'should detect empty parts');
+      'Last empty part',
+    ];
+    expect(
+      parts.map((e) => e.title),
+      expected,
+      reason: 'should detect empty parts',
+    );
   });
 
   test('normal summary', () {
@@ -182,26 +190,45 @@ void main() {
     """;
     final parts = Extractor.summary(html);
     expect(parts.length, 3, reason: 'should detect parts');
-    expect(parts.take(3).map((e) => e.title), ['', 'Part 2', ''],
-        reason: 'should detect title');
+    expect(
+      parts.take(3).map((e) => e.title),
+      ['', 'Part 2', ''],
+      reason: 'should detect title',
+    );
 
     final primary = parts.first;
     expect(primary.articles?.length, 5, reason: 'should detect chapters');
 
     final second = parts.toList(growable: false)[1];
-    expect(second.articles?.length, 1, reason: 'should detect chapters in other parts');
-    expect(primary.articles?.take(3).map((e) => e.articles?.length ?? 0), [2,0,0],
-        reason: 'should support articles');
+    expect(
+      second.articles?.length,
+      1,
+      reason: 'should detect chapters in other parts',
+    );
+    expect(
+      primary.articles?.take(3).map((e) => e.articles?.length ?? 0),
+      [2, 0, 0],
+      reason: 'should support articles',
+    );
 
     final first5 = primary.articles?.take(5);
     expect(first5?.map((e) => e.ref).last, null, reason: 'should detect paths');
-    expect(first5?.map((e) => e.title).contains(null), false, reason: 'should detect titles');
+    expect(
+      first5?.map((e) => e.title).contains(null),
+      false,
+      reason: 'should detect titles',
+    );
 
-    expect(primary.articles?.take(3).map((e) => e.ref), [
+    const expected = [
       'chapter-1/README.md',
       'chapter-2/README.md',
       'chapter-3/README.md',
-    ], reason: 'should normalize paths from .md');
+    ];
+    expect(
+      primary.articles?.take(3).map((e) => e.ref),
+      expected,
+      reason: 'should normalize paths from .md',
+    );
   });
 
   test('Languages parsing', () {
