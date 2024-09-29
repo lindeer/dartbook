@@ -123,7 +123,7 @@ Future<void> _createDeployFile(String root, List<String> hosts) async {
           "[${_deployPaths.keys.join(', ')}]");
     }
     return path;
-  }).whereNotNull();
+  }).nonNulls;
   final resPath = await resolvePackageLocation('ci');
   for (final path in paths) {
     io.copyFileSync(p.join(resPath, path), p.join(root, path));

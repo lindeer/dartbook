@@ -7,7 +7,11 @@ class TemplateLoader extends j.Loader {
   TemplateLoader(this.parent, this.other);
 
   @override
-  j.Template load(j.Environment environment, String path) {
+  j.Template load(
+    j.Environment environment,
+    String path, {
+    Map<String, Object?>? globals,
+  }) {
     final src = parent[path];
     return src == null
         ? other.load(environment, path)
