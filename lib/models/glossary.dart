@@ -1,5 +1,6 @@
 import 'utils.dart' show slug;
 
+/// A glossary item for a book.
 class GlossaryItem {
   final String name;
   final String? desc;
@@ -12,6 +13,7 @@ class GlossaryItem {
   String get id => slug(name);
 }
 
+/// A glossary object for a book, including [filename] and item list.
 class BookGlossary {
   final String filename;
   final Map<String, GlossaryItem> items;
@@ -20,6 +22,7 @@ class BookGlossary {
 
   static const empty = BookGlossary('', {});
 
+  /// Create a BookGlossary with given glossary objects.
   factory BookGlossary.fromItems(
     String file,
     Iterable<({String name, String? desc})> items,

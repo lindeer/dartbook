@@ -5,12 +5,15 @@ import 'part.dart';
 import 'readme.dart';
 import 'utils.dart' show PathUtils;
 
+/// Composed by several parts with a given path.
 class BookSummary {
   final String filename;
   final List<SummaryPart> parts;
 
   const BookSummary(this.filename, this.parts);
 
+  /// Create a summary object by a [file] path, several [parts], and maybe a
+  /// [readme].
   factory BookSummary.create(String file, Iterable<Part> parts,
       [BookReadme? readme]) {
     final items = parts.indexed.map((r) {
@@ -47,6 +50,7 @@ class BookSummary {
     return sub.join('.');
   }
 
+  /// Find a article object by given [level].
   SummaryArticle? byLevel(String level) {
     try {
       return _locate(level);
@@ -69,6 +73,7 @@ class BookSummary {
     return root.byLevel(level.substring(index + 1));
   }
 
+  /// Find a article object by given [path].
   SummaryArticle? byPath(String path) {
     SummaryArticle? result;
     for (final part in parts) {
@@ -99,6 +104,7 @@ class BookSummary {
     }
   }
 
+  /// Retrieve an article tree by the observer pattern.
   void walk(void Function(SummaryArticle article) it) {
     for (final part in parts) {
       final list = part.articles;
@@ -108,6 +114,7 @@ class BookSummary {
     }
   }
 
+  /// Find an article object with a given callback [test].
   SummaryArticle? findArticle(bool Function(SummaryArticle a) test) {
     SummaryArticle? result;
     for (final part in parts) {
@@ -124,6 +131,7 @@ class BookSummary {
     return result;
   }
 
+  /// Find the sibling article.
   SummaryArticle? nextArticle(SummaryArticle article) {
     final level = article.level;
     bool wasPrev = false;
@@ -134,6 +142,7 @@ class BookSummary {
     });
   }
 
+  /// Find the previous sibling article.
   SummaryArticle? prevArticle(SummaryArticle article) {
     final level = article.level;
     SummaryArticle? prev;

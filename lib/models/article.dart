@@ -3,6 +3,7 @@ import 'package:dartbook/html/html.dart' show Article;
 
 import 'utils.dart' show PathUtils;
 
+/// A article object for a book.
 class SummaryArticle {
   final String level;
   final String title;

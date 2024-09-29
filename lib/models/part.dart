@@ -3,6 +3,9 @@ import 'package:dartbook/html/html.dart' show Part;
 
 import 'article.dart';
 
+/// A part object including several [SummaryArticle],
+/// while with [title] and [level]. We could know the depth by [level].
+/// A part is just an article tree.
 class SummaryPart {
   final String level;
   final String title;

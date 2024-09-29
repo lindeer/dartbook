@@ -1,3 +1,4 @@
+/// A page object for in book context.
 class BookPage {
   final String filename;
   final Map<String, String>? attributes;

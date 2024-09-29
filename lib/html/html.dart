@@ -6,6 +6,7 @@ import 'package:html/dom.dart' show Element;
 const _listSelector = 'ol, ul';
 const _partSelector = 'h2, h3, h4';
 
+/// A link reference object for pure html raw text.
 class Article {
   final String title;
   final String? ref;
@@ -56,8 +57,10 @@ class Article {
   }
 }
 
+/// A record type for a chapter object.
 typedef Part = ({String title, Iterable<Article>? articles});
 
+/// A helper class for extracting readme and glossary from raw html.
 class Extractor {
   static ({String title, String? desc}) readme(String html) {
     final doc = parse(html);
@@ -67,6 +70,7 @@ class Extractor {
     return (title: h1?.text.trim() ?? '', desc: p?.text.trim());
   }
 
+  /// Extract a glossary list from raw html text.
   static Iterable<({String name, String? desc})> glossary(String html) {
     final doc = parse(html);
     return doc.getElementsByTagName('h2').map((h2) {
@@ -78,12 +82,14 @@ class Extractor {
     });
   }
 
+  /// Extract a part list from raw html text as a summary.
   static Iterable<Part> summary(String html) {
     final root = Element.html('<div>$html</div>');
     final parts = _splitParts(root) ?? Iterable.empty();
     return parts;
   }
 
+  /// Extract a article list from raw html text as a lang index.
   static Iterable<Article> langs(String html) {
     final parts = summary(html);
     return parts.isEmpty

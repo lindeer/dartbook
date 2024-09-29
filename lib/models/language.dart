@@ -1,6 +1,7 @@
 import 'package:path/path.dart' as p;
 import 'package:dartbook/html/html.dart' show Article;
 
+/// A language item for a book.
 class BookLanguage {
   final String title;
   final String path;
@@ -12,12 +13,14 @@ class BookLanguage {
       BookLanguage._(title, path, p.basename(path));
 }
 
+/// Several language items for a multilingual book.
 class LanguageManager {
   final String filename;
   final Iterable<BookLanguage> items;
 
   const LanguageManager(this.filename, this.items);
 
+  /// Create a [LanguageManager] by several html lang items with a filepath.
   factory LanguageManager.create(String file, Iterable<Article> langs) {
     final list = langs.map((e) => BookLanguage(e.title, e.ref ?? ''));
     return LanguageManager(file, list);

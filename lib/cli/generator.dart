@@ -16,6 +16,7 @@ extension _PathExt on String {
   String pathTo(String target) => p.relative(target, from: p.dirname(this));
 }
 
+/// Generate raw html text for a given book item object.
 class Generator {
   final Book book;
   final GlossaryModifier modifier;
@@ -49,6 +50,7 @@ class Generator {
     return p.normalize(file);
   }
 
+  /// Generate raw html text for one book [page].
   String generatePage(ThemeManager theme, BookPage page) {
     final filename = page.filename;
     final filePath = book.filePath(filename);
@@ -104,6 +106,7 @@ class Generator {
     return result;
   }
 
+  /// Generate raw html text for the lingual page.
   String lingualPage(ThemeManager theme, BookContext context) {
     final render = RenderContext(
       filters: {

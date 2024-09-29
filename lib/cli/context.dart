@@ -19,6 +19,9 @@ import 'package:path/path.dart' as p;
 import 'logger.dart';
 import 'parser.dart';
 
+/// Actually a book manager for a multilingual book. It holds several [books]
+/// with lang path as its key, ```''``` is the key if book root is noraml book.
+/// And a LanguageManager if necessary.
 class BookContext {
   final Logger logger;
   final Parser parser;
@@ -60,6 +63,7 @@ class BookContext {
 
   bool _isIgnoreFile(String f) => ignoreFiles.contains(p.basename(f));
 
+  /// All asset file paths in book root directory.
   Iterable<String> listAssets({bool relative = false}) {
     final assets = [
       if (isMultilingual)
