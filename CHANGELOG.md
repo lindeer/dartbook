@@ -1,3 +1,10 @@
+## 1.2.1
+
+- Separate dartbook-theme for development.
+- Git-diff process output stream.
+- Code format
+- Upgrade Dart version 3.5.3
+
 ## 1.2.0
 
 - fix publish issues

@@ -1,6 +1,6 @@
 name: dartbook
 description: A dart implementation of gitbook-cli for guys who loves writing.
-version: 1.2.0
+version: 1.2.1
 homepage: https://github.com/lindeer/dartbook
 
 environment:
