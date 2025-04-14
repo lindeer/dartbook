@@ -75,7 +75,7 @@ class _InitCommand extends Command<int> {
   @override
   FutureOr<int> run() async {
     final root = argResults?.rest.firstOrNull ?? '.';
-    final languages = (argResults?['languages'] as String? ?? '').split(',');
+    final languages = (argResults?['languages'] as String?)?.split(',') ?? [];
     if (languages.isEmpty) {
       _createEmptyBook(root);
     } else {
