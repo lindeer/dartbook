@@ -1,5 +1,5 @@
 import 'dart:async' show FutureOr;
-import 'dart:io' show Directory, File, Process, exit;
+import 'dart:io' show Directory, File, Process, exit, stderr, stdout;
 
 import 'package:args/command_runner.dart';
 import 'package:collection/collection.dart';
@@ -106,13 +106,24 @@ Future<void> _createGitRepo(String root) async {
   final cur = Directory.current;
   Directory.current = root;
   try {
-    await Process.run('git', ['init', '-b', 'main']);
-    await Process.run('git', ['add', '.']);
-    await Process.run('git', ['commit', '-m', 'book repo init']);
+    final r = await _runGit(['init', '-b', 'main']);
+    if (r != 0) {
+      await _runGit(['init']);
+      await _runGit(['checkout', '-b', 'main']);
+    }
+    await _runGit(['add', '.']);
+    await _runGit(['commit', '-m', 'book repo init']);
   } on Exception catch (e) {
     _logger.e("create git repo error: $e");
   }
   Directory.current = cur;
+}
+
+Future<int> _runGit(List<String> args) async {
+  final result = await Process.run('git', args);
+  stdout.write(result.stdout);
+  stderr.write(result.stderr);
+  return result.exitCode;
 }
 
 Future<void> _createDeployFile(String root, List<String> hosts) async {
