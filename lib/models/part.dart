@@ -22,7 +22,8 @@ class SummaryPart {
       if (e is SummaryArticle) {
         return e as SummaryArticle;
       } else {
-        return SummaryArticle.create(e, '$level.${i + 1}');
+        final prefix = level.isEmpty ? '' : '$level.';
+        return SummaryArticle.create(e, '$prefix${i + 1}');
       }
     });
     return SummaryPart(

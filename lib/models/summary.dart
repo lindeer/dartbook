@@ -31,7 +31,7 @@ class BookSummary {
           ],
         );
       }
-      return SummaryPart.create(p, '${i + 1}');
+      return SummaryPart.create(p, '');
     });
     return BookSummary(file, items.toList(growable: false));
   }
