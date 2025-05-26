@@ -31,7 +31,7 @@ class BookSummary {
           ],
         );
       }
-      return SummaryPart.create(p, '');
+      return SummaryPart.create(p, parts.length > 1 ? '${i + 1}' : '');
     });
     return BookSummary(file, items.toList(growable: false));
   }
@@ -61,8 +61,11 @@ class BookSummary {
 
   SummaryArticle? _locate(String level) {
     final index = level.indexOf('.');
-    final firstLevel = level.substring(0, index);
+    final firstLevel = index < 0 ? level : level.substring(0, index);
     final pos = int.parse(firstLevel) - 1;
+    if (index < 0) {
+      return parts.first.articles?.toList(growable: false)[pos];
+    }
     final part = parts[pos];
     final root = SummaryArticle(
       level: firstLevel,

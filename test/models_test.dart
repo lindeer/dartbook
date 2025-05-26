@@ -108,6 +108,16 @@ void main() {
 
     final a4 = summary.byPath('NOT_EXISTING.md');
     expect(a4?.title, null);
+
+    final another = BookSummary.create(
+      '',
+      [
+        (title: '', articles: firstArticles),
+      ],
+    );
+    final b = another.byLevel('1');
+    expect(b?.title, 'My First Article');
+
   });
 
   test('summary navigate', () {
@@ -144,6 +154,7 @@ void main() {
     expect(article?.title, 'Article with absolute ref');
     final next = summary.nextArticle(article!);
     expect(next?.title, 'Part II Article');
+    expect(next?.level, '2.1');
     final prev = summary.prevArticle(next!);
     expect(prev?.title, article.title);
 
