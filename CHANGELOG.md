@@ -1,3 +1,9 @@
+## 1.2.2
+- Fix empty book creation.
+- Fix git repo creation.
+- Level without prefix if single part.
+- Upgrade dartbook-theme-default version.
+
 ## 1.2.1
 
 - Separate dartbook-theme for development.
