@@ -111,6 +111,7 @@ Future<void> _createGitRepo(String root) async {
       await _runGit(['init']);
       await _runGit(['checkout', '-b', 'main']);
     }
+    File('.gitignore').writeAsStringSync('_book\n');
     await _runGit(['add', '.']);
     await _runGit(['commit', '-m', 'book repo init']);
   } on Exception catch (e) {
