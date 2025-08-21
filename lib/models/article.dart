@@ -45,7 +45,7 @@ class SummaryArticle {
     if (r == null) return null;
     int pos = r.indexOf('#');
     final pathname = pos < 0 ? r : r.substring(0, pos);
-    return PathUtils.flatten(pathname);
+    return Uri.decodeFull(PathUtils.flatten(pathname));
   }
 
   String? get anchor {

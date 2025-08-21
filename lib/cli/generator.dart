@@ -50,6 +50,9 @@ class Generator {
     return p.normalize(file);
   }
 
+  /// Files in html were encoded
+  static String _e(String f) => Uri.encodeFull(f);
+
   /// Generate raw html text for one book [page].
   String generatePage(ThemeManager theme, BookPage page) {
     final filename = page.filename;
@@ -60,7 +63,7 @@ class Generator {
         ...theme.builtinFilters,
         ..._builtinFilters,
         'resolveAsset': (String f) => filePath.pathTo(p.join('dartbook', f)),
-        'resolveFile': (String f) => filename.pathTo(_toUrl(f)),
+        'resolveFile': (String f) => _e(filename.pathTo(_toUrl(f))),
         'fileExists': (String f) => File(book.fileFsPath(f)).existsSync(),
       },
       data: _makePageRenderData(page),
