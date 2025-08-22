@@ -1,3 +1,5 @@
+import 'package:dartbook/cli/logger.dart';
+import 'package:dartbook/cli/parser.dart';
 import 'package:dartbook/html/html.dart' show Article;
 import 'package:dartbook/models/article.dart';
 import 'package:dartbook/models/config.dart';
@@ -166,6 +168,26 @@ void main() {
     expect(noRef?.title, 'Article without ref');
     final prevNoRef = summary.prevArticle(noRef!);
     expect(prevNoRef?.title, prevOne.title);
+  });
+
+  const md = """
+# Summary
+
+* [Chapter 1](chapter-1/README.md)
+*    
+* [首页](chapter-2/首页.md)
+    """;
+
+  test('summary parsing', () {
+    final parser = MarkdownParser(Logger(false));
+    final summary = BookSummary.create('test.md', parser.summary(md));
+    final first = summary.parts.first.articles?.first;
+    final last = summary.parts.first.articles?.last;
+
+    expect(first?.ref, 'chapter-1/README.md');
+    expect(first?.path, 'chapter-1/README.md');
+    expect(last?.ref, 'chapter-2/%E9%A6%96%E9%A1%B5.md');
+    expect(last?.path, 'chapter-2/首页.md');
   });
 
   test('config change', () {
