@@ -1,3 +1,6 @@
+## 1.2.3
+- Fix decoding path.
+
 ## 1.2.2
 - Fix empty book creation.
 - Fix git repo creation.
